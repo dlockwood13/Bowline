@@ -2,33 +2,62 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  
+  <!-- ─── VIEWPORT: Native app experience on iOS & Android ─── -->
+  <meta name="viewport" 
+        content="width=device-width, initial-scale=1.0, viewport-fit=cover, 
+                 user-scalable=no, maximum-scale=1.0, minimum-scale=1.0" />
+  
+  <!-- ─── APP MANIFEST ─── -->
+  <link rel="manifest" href="src/assets/manifest.json" />
+  
+  <!-- ─── TITLE & DESCRIPTION ─── -->
   <title>Bowline — A calmer way through your day</title>
   <meta name="description" content="A daily support app for ADHD, autism, AuDHD, dyslexia, dyspraxia, executive dysfunction, and burnout." />
+  
+  <!-- ─── THEME COLORS (iOS & Android status bar) ─── -->
   <meta name="theme-color" content="#3F8F73" />
-
-  <!-- Preload critical assets -->
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="apple-mobile-web-app-title" content="Bowline" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+  
+  <!-- ─── ICONS ─── -->
+  <link rel="icon" type="image/svg+xml" href="src/assets/bowline-mark.svg" />
+  <link rel="apple-touch-icon" href="src/assets/bowline-mark-180.png" />
+  <link rel="icon" type="image/png" sizes="192x192" href="src/assets/bowline-mark-192.png" />
+  <link rel="icon" type="image/png" sizes="512x512" href="src/assets/bowline-mark-512.png" />
+  
+  <!-- ─── PRELOAD CRITICAL ASSETS (Performance) ─── -->
   <link rel="preload" href="src/assets/bowline-mark.svg" as="image" type="image/svg+xml" />
   <link rel="preload" href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400&display=swap" as="style" />
   <link rel="preload" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css" as="style" />
-
-  <link rel="icon" type="image/svg+xml" href="src/assets/bowline-mark.svg" />
-  <link rel="apple-touch-icon" href="src/assets/bowline-mark.svg" />
-
-  <!-- DNS prefetch for external CDNs -->
+  
+  <!-- ─── DNS PREFETCH & PRECONNECT ─── -->
   <link rel="dns-prefetch" href="https://fonts.googleapis.com" />
   <link rel="dns-prefetch" href="https://fonts.gstatic.com" />
   <link rel="dns-prefetch" href="https://cdn.jsdelivr.net" />
-
+  
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  
+  <!-- ─── STYLESHEETS ─── -->
   <link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css" />
   <link rel="stylesheet" href="src/styles/main.css" />
+  
+  <!-- ─── META: Prevent unwanted browser behaviors ─── -->
+  <meta name="msapplication-tap-highlight" content="no" />
+  <meta name="format-detection" content="telephone=no" />
+  <meta name="format-detection" content="email=no" />
+  <meta name="color-scheme" content="light dark" />
+  
+  <!-- ─── META: iOS home screen ─── -->
+  <meta name="mobile-web-app-capable" content="yes" />
 </head>
 <body>
 
-  <!-- ─── SVG sprite (define the bowline mark once, use everywhere) ─── -->
+  <!-- ─── SVG SPRITE (define the bowline mark once, use everywhere) ─── -->
   <svg width="0" height="0" style="position:absolute" aria-hidden="true">
     <defs>
       <symbol id="bowline-mark" viewBox="0 0 64 64">
@@ -42,19 +71,34 @@
     </defs>
   </svg>
 
+  <!-- ─── APP CONTAINER ─── -->
   <div class="app" id="app">
     <div class="topbar">
       <div id="topbar-content"></div>
     </div>
-    <div class="content" id="content"></div>
+    <div class="screen" id="content"></div>
     <nav class="nav" role="navigation" aria-label="Main navigation">
-      <button onclick="go('today')"     id="nb-today"     aria-label="Today view">    <i class="ti ti-sun"            aria-hidden="true"></i>Today</button>
-      <button onclick="go('now')"       id="nb-now"       aria-label="Now - current step">      <i class="ti ti-player-play"    aria-hidden="true"></i>Now</button>
-      <button onclick="go('plan')"      id="nb-plan"      aria-label="Plan - manage tasks">     <i class="ti ti-checklist"      aria-hidden="true"></i>Plan</button>
-      <button onclick="go('tldr')"      id="nb-tldr"      aria-label="TL;DR - understand a message">     <i class="ti ti-message-2"      aria-hidden="true"></i>TL;DR</button>
-      <button onclick="go('reset')"     id="nb-reset"     aria-label="Reset - guided resets">    <i class="ti ti-refresh"        aria-hidden="true"></i>Reset</button>
-      <button onclick="go('diagnosis')" id="nb-diagnosis" aria-label="Journey - your diagnosis path"><i class="ti ti-map"            aria-hidden="true"></i>Journey</button>
-      <button onclick="go('me')"        id="nb-me"        aria-label="Me - profile and settings">       <i class="ti ti-user"           aria-hidden="true"></i>Me</button>
+      <button onclick="go('today')"     id="nb-today"     aria-label="Today view">
+        <i class="ti ti-sun"            aria-hidden="true"></i><span>Today</span>
+      </button>
+      <button onclick="go('now')"       id="nb-now"       aria-label="Now - current step">
+        <i class="ti ti-player-play"    aria-hidden="true"></i><span>Now</span>
+      </button>
+      <button onclick="go('plan')"      id="nb-plan"      aria-label="Plan - manage tasks">
+        <i class="ti ti-checklist"      aria-hidden="true"></i><span>Plan</span>
+      </button>
+      <button onclick="go('tldr')"      id="nb-tldr"      aria-label="TL;DR - understand a message">
+        <i class="ti ti-message-2"      aria-hidden="true"></i><span>TL;DR</span>
+      </button>
+      <button onclick="go('reset')"     id="nb-reset"     aria-label="Reset - guided resets">
+        <i class="ti ti-refresh"        aria-hidden="true"></i><span>Reset</span>
+      </button>
+      <button onclick="go('diagnosis')" id="nb-diagnosis" aria-label="Journey - your diagnosis path">
+        <i class="ti ti-map"            aria-hidden="true"></i><span>Journey</span>
+      </button>
+      <button onclick="go('me')"        id="nb-me"        aria-label="Me - profile and settings">
+        <i class="ti ti-user"           aria-hidden="true"></i><span>Me</span>
+      </button>
     </nav>
   </div>
 
@@ -63,7 +107,33 @@
 
     window.go = go;
 
-    // Splash screen is critical path - load immediately
+    // ─── Register Service Worker (PWA support) ─── 
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register('src/app/service-worker.js').catch(err => {
+        console.warn('Service Worker registration failed:', err);
+      });
+    }
+
+    // ─── Prevent pinch zoom on iOS ─── 
+    document.addEventListener('gesturestart', (e) => {
+      e.preventDefault();
+    });
+
+    // ─── Prevent pull-to-refresh on Android ─── 
+    let lastY = 0;
+    document.addEventListener('touchstart', (e) => {
+      lastY = e.touches[0].clientY;
+    }, false);
+    
+    document.addEventListener('touchmove', (e) => {
+      const currentY = e.touches[0].clientY;
+      if (currentY > lastY && window.scrollY === 0) {
+        e.preventDefault();
+      }
+      lastY = currentY;
+    }, { passive: false });
+
+    // ─── Splash screen is critical path - load immediately ─── 
     Promise.all([
       import('./src/features/splash/splash.js'),
     ]).then(() => {
@@ -88,6 +158,13 @@
     }).catch(err => {
       console.error('Failed to load splash screen:', err);
     });
+
+    // ─── Lock to portrait on mobile (optional) ─── 
+    if (window.screen && window.screen.orientation && window.screen.orientation.lock) {
+      window.screen.orientation.lock('portrait').catch(err => {
+        console.warn('Screen orientation lock not supported:', err);
+      });
+    }
   </script>
 </body>
 </html>
