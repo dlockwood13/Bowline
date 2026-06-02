@@ -7,6 +7,11 @@
   <meta name="description" content="A daily support app for ADHD, autism, AuDHD, dyslexia, dyspraxia, executive dysfunction, and burnout." />
   <meta name="theme-color" content="#3F8F73" />
 
+  <!-- Preload critical assets -->
+  <link rel="preload" href="src/assets/bowline-mark.svg" as="image" type="image/svg+xml" />
+  <link rel="preload" href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400&display=swap" as="style" />
+  <link rel="preload" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css" as="style" />
+
   <link rel="icon" type="image/svg+xml" href="src/assets/bowline-mark.svg" />
   <link rel="apple-touch-icon" href="src/assets/bowline-mark.svg" />
 
@@ -15,10 +20,14 @@
   <link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css" />
   <link rel="stylesheet" href="src/styles/main.css" />
+
+  <!-- DNS prefetch for external CDNs -->
+  <link rel="dns-prefetch" href="https://fonts.googleapis.com" />
+  <link rel="dns-prefetch" href="https://cdn.jsdelivr.net" />
 </head>
 <body>
 
-  <!-- ─── SVG sprite (define the bowline mark once, use everywhere) ─── -->
+  <!-- SVG sprite (define the bowline mark once, use everywhere) -->
   <svg width="0" height="0" style="position:absolute" aria-hidden="true">
     <defs>
       <symbol id="bowline-mark" viewBox="0 0 64 64">
@@ -37,30 +46,44 @@
       <div id="topbar-content"></div>
     </div>
     <div class="content" id="content"></div>
-    <nav class="nav">
-      <button onclick="go('today')"     id="nb-today">    <i class="ti ti-sun"            aria-hidden="true"></i>Today</button>
-      <button onclick="go('now')"       id="nb-now">      <i class="ti ti-player-play"    aria-hidden="true"></i>Now</button>
-      <button onclick="go('plan')"      id="nb-plan">     <i class="ti ti-checklist"      aria-hidden="true"></i>Plan</button>
-      <button onclick="go('tldr')"      id="nb-tldr">     <i class="ti ti-message-2"      aria-hidden="true"></i>TL;DR</button>
-      <button onclick="go('reset')"     id="nb-reset">    <i class="ti ti-refresh"        aria-hidden="true"></i>Reset</button>
-      <button onclick="go('diagnosis')" id="nb-diagnosis"><i class="ti ti-map"            aria-hidden="true"></i>Journey</button>
-      <button onclick="go('me')"        id="nb-me">       <i class="ti ti-user"           aria-hidden="true"></i>Me</button>
+    <nav class="nav" role="navigation" aria-label="Main navigation">
+      <button onclick="go('today')"     id="nb-today"     aria-label="Today view">    <i class="ti ti-sun"            aria-hidden="true"></i>Today</button>
+      <button onclick="go('now')"       id="nb-now"       aria-label="Now (current step)">      <i class="ti ti-player-play"    aria-hidden="true"></i>Now</button>
+      <button onclick="go('plan')"      id="nb-plan"      aria-label="Plan view">     <i class="ti ti-checklist"      aria-hidden="true"></i>Plan</button>
+      <button onclick="go('tldr')"      id="nb-tldr"      aria-label="TL;DR - understand a message">     <i class="ti ti-message-2"      aria-hidden="true"></i>TL;DR</button>
+      <button onclick="go('reset')"     id="nb-reset"     aria-label="Reset options">    <i class="ti ti-refresh"        aria-hidden="true"></i>Reset</button>
+      <button onclick="go('diagnosis')" id="nb-diagnosis" aria-label="Journey through your diagnosis"><i class="ti ti-map"            aria-hidden="true"></i>Journey</button>
+      <button onclick="go('me')"        id="nb-me"        aria-label="Profile settings">       <i class="ti ti-user"           aria-hidden="true"></i>Me</button>
     </nav>
   </div>
 
   <script type="module">
     import { go } from './src/app/router.js';
-    import './src/features/splash/splash.js';
-    import './src/features/today/today.js';
-    import './src/features/now/now.js';
-    import './src/features/plan/plan.js';
-    import './src/features/tldr/tldr.js';
-    import './src/features/reset/reset.js';
-    import './src/features/diagnosis/diagnosis.js';
-    import './src/features/me/me.js';
+    
+    // Lazy load feature modules after initial render
+    const features = [
+      './src/features/splash/splash.js',
+      './src/features/today/today.js',
+      './src/features/now/now.js',
+      './src/features/plan/plan.js',
+      './src/features/tldr/tldr.js',
+      './src/features/reset/reset.js',
+      './src/features/diagnosis/diagnosis.js',
+      './src/features/me/me.js',
+    ];
 
     window.go = go;
-    go('splash');
+    
+    // Splash screen is critical, load immediately
+    import('./src/features/splash/splash.js').then(() => {
+      go('splash');
+      
+      // Load other features in the background (non-blocking)
+      const toLoad = features.slice(1);
+      toLoad.forEach(module => {
+        import(module).catch(e => console.warn(`Failed to load ${module}:`, e));
+      });
+    });
   </script>
 </body>
 </html>
