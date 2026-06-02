@@ -184,4 +184,4 @@ These hold across colour, type, motion, and copy:
 
 ---
 
-*Last updated: brand refresh, 2025*
+*Last updated: brand refresh, 2026*
