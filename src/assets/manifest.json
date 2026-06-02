@@ -1,0 +1,93 @@
+{
+  "name": "Bowline — A calmer way through your day",
+  "short_name": "Bowline",
+  "description": "A daily support app for ADHD, autism, AuDHD, dyslexia, dyspraxia, executive dysfunction, and burnout.",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "orientation": "portrait-primary",
+  "theme_color": "#3F8F73",
+  "background_color": "#F7F4ED",
+  "icons": [
+    {
+      "src": "bowline-mark-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "bowline-mark-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "bowline-mark-192-maskable.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "maskable"
+    },
+    {
+      "src": "bowline-mark-512-maskable.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ],
+  "screenshots": [
+    {
+      "src": "screenshot-narrow.png",
+      "sizes": "540x720",
+      "type": "image/png",
+      "form_factor": "narrow"
+    },
+    {
+      "src": "screenshot-wide.png",
+      "sizes": "1280x720",
+      "type": "image/png",
+      "form_factor": "wide"
+    }
+  ],
+  "categories": ["health", "lifestyle", "productivity"],
+  "shortcuts": [
+    {
+      "name": "Today",
+      "short_name": "Today",
+      "description": "View today's support",
+      "url": "/?view=today",
+      "icons": [
+        {
+          "src": "bowline-mark-192.png",
+          "sizes": "192x192",
+          "type": "image/png"
+        }
+      ]
+    },
+    {
+      "name": "Now",
+      "short_name": "Now",
+      "description": "Current step guidance",
+      "url": "/?view=now",
+      "icons": [
+        {
+          "src": "bowline-mark-192.png",
+          "sizes": "192x192",
+          "type": "image/png"
+        }
+      ]
+    },
+    {
+      "name": "Plan",
+      "short_name": "Plan",
+      "description": "Manage your tasks",
+      "url": "/?view=plan",
+      "icons": [
+        {
+          "src": "bowline-mark-192.png",
+          "sizes": "192x192",
+          "type": "image/png"
+        }
+      ]
+    }
+  ]
+}
