@@ -1,414 +1,712 @@
-import { state, ACCENT } from '../../data/state.js';
-import { register, setTopbar, go } from '../../app/router.js';
+/* ==========================================================================
+   BOWLINE – Design System
+   Nature-grounded biophilic palette
+   Built on Attention Restoration Theory (Kaplan) and Ulrich stress-recovery
+   research. Cool greens + warm earth + soft sky for cognitive ease.
+   ========================================================================== */
 
-// Save the original task list so essentials mode can be reversed
-if (!state._originalTasks) state._originalTasks = null;
-if (state.essentialsMode === undefined) state.essentialsMode = false;
-if (!state.moodLog) state.moodLog = [];
 
-// 12 moods, each with compassionate support content
-const MOODS = [
-  {
-    k: 'clear', l: 'Clear', icon: 'ti-sun', color: 'teal',
-    message: 'Good day to begin. Use the energy gently.',
-    suggestions: [
-      'Do the harder task first while capacity is high',
-      'Plan tomorrow before this clarity fades',
-      'Take a 5-minute break before context switching',
-    ],
-    ctaText: 'See my anchors', ctaIcon: 'ti-list', ctaAction: 'today',
-  },
-  {
-    k: 'foggy', l: 'Foggy', icon: 'ti-cloud', color: 'lavender',
-    message: 'Brain feels slow today. That is OK. Show essentials first.',
-    suggestions: [
-      'Drink water — dehydration deepens fog',
-      'Eat something within 30 minutes if you have not',
-      'Choose one task only, not three',
-      'Body doubling can help when starting feels impossible',
-    ],
-    ctaText: 'Switch to essentials', ctaIcon: 'ti-minimize', ctaAction: 'essentials',
-  },
-  {
-    k: 'tired', l: 'Tired', icon: 'ti-moon', color: 'sky',
-    message: 'Tired brains cannot push through. They can only do less.',
-    suggestions: [
-      'Today is a smaller day. The plan can change',
-      'Move 1-2 tasks to tomorrow now, before they nag',
-      'Schedule recovery time after anything draining',
-      'Rest is a valid use of today',
-    ],
-    ctaText: 'Switch to essentials', ctaIcon: 'ti-minimize', ctaAction: 'essentials',
-  },
-  {
-    k: 'anxious', l: 'Anxious', icon: 'ti-wind', color: 'amber',
-    message: 'Anxiety adds noise. Reducing the noise comes before the task.',
-    suggestions: [
-      'Slow exhales: 4 rounds, longer out-breath than in',
-      'Feet flat on the floor. Notice 3 things you can see',
-      'Do not check email or messages for the next 20 minutes',
-      'A reset takes 5 minutes. The task will still be here',
-    ],
-    ctaText: 'Open anxiety reset', ctaIcon: 'ti-refresh', ctaAction: 'reset:anxiety',
-  },
-  {
-    k: 'over', l: 'Overstimulated', icon: 'ti-volume-3', color: 'peach',
-    message: 'Your senses are full. Reduce input before doing anything else.',
-    suggestions: [
-      'Lower brightness, headphones on, away from noise',
-      'Loosen anything tight on your body',
-      'No new tasks for the next hour, only what is critical',
-      'A sensory reset takes 10 minutes',
-    ],
-    ctaText: 'Open sensory reset', ctaIcon: 'ti-refresh', ctaAction: 'reset:over',
-  },
-  {
-    k: 'burnt', l: 'Burnt out', icon: 'ti-flame', color: 'peach',
-    message: 'Burnout is real. Today is for survival, not output.',
-    suggestions: [
-      'Drop everything non-essential, even things you committed to',
-      'Tell one person you trust that you are struggling',
-      'Eat, drink water, sleep. That is the whole list',
-      'Burnout recovery takes weeks. Today is one of those days',
-    ],
-    ctaText: 'Switch to essentials', ctaIcon: 'ti-minimize', ctaAction: 'essentials',
-  },
-  {
-    k: 'pain', l: 'In pain', icon: 'ti-bandage', color: 'lavender',
-    message: 'Pain reduces capacity. That is a fact, not a setting.',
-    suggestions: [
-      'Take any medication you need',
-      'Get comfortable, set yourself up properly',
-      'Today is smaller. Drop tasks freely',
-      'Tell someone you are struggling, just to be witnessed',
-    ],
-    ctaText: 'Open pain reset', ctaIcon: 'ti-refresh', ctaAction: 'reset:pain',
-  },
-  {
-    k: 'sad', l: 'Low or sad', icon: 'ti-mood-sad', color: 'sky',
-    message: 'Sadness is information. Today can hold it.',
-    suggestions: [
-      'You do not need to feel productive to be OK',
-      'Go outside for 5 minutes if you can',
-      'Reach out to one person, even just to say hi',
-      'A reduced day is still a valid day',
-    ],
-    ctaText: 'See my anchors', ctaIcon: 'ti-list', ctaAction: 'today',
-  },
-  {
-    k: 'angry', l: 'Angry', icon: 'ti-flame', color: 'amber',
-    message: 'Anger is data. Something feels wrong or unfair.',
-    suggestions: [
-      'Do not reply to anyone for the next 10 minutes',
-      'Move your body: pace, stretch, anything physical',
-      'Name specifically what is making you angry',
-      'The reply you write after cooling down will be better',
-    ],
-    ctaText: 'Open anger reset', ctaIcon: 'ti-refresh', ctaAction: 'reset:anger',
-  },
-  {
-    k: 'shut', l: 'Shut down', icon: 'ti-moon', color: 'sky',
-    message: 'Shutdown is your system protecting you. Do not push.',
-    suggestions: [
-      'Essentials only: water, food, somewhere quiet',
-      'No decisions today. Decision-making is offline',
-      'Cancel what you can. Tell people you need quiet',
-      'Recovery can take hours or days. Both are normal',
-    ],
-    ctaText: 'Open shutdown reset', ctaIcon: 'ti-refresh', ctaAction: 'reset:shutdown',
-  },
-  {
-    k: 'wired', l: 'Wired', icon: 'ti-bolt', color: 'amber',
-    message: 'Lots of energy but no focus. Channel it before it crashes.',
-    suggestions: [
-      'Move your body first: 5 minutes of walking helps',
-      'Pick the most physical task you have',
-      'Body doubling locks scattered energy into one thing',
-      'Caffeine probably will not help right now',
-    ],
-    ctaText: 'Try the next step', ctaIcon: 'ti-player-play', ctaAction: 'now',
-  },
-  {
-    k: 'notsure', l: 'Not sure', icon: 'ti-question-mark', color: 'teal',
-    message: 'Not sure is a valid mood. Let us check the basics.',
-    suggestions: [
-      'When did you last drink water?',
-      'When did you last eat?',
-      'How much sleep did you get?',
-      'When did you last go outside?',
-    ],
-    ctaText: 'Run a basics check', ctaIcon: 'ti-refresh', ctaAction: 'reset:unknown',
-  },
-];
+/* ───────────────────────────────────────────────────────────────────────
+   1. DESIGN TOKENS
+   ─────────────────────────────────────────────────────────────────────── */
 
-// ─── Main render ──────────────────────────────────────────
-export function renderToday() {
-  setTopbar('Today', 'A calmer way through your day');
+:root {
 
-  // Mood not yet selected → show mood picker
-  if (!state.mood) return renderMoodPicker();
+  /* ─── Brand fonts ────────────────────────────────────────────── */
+  --font:        'Atkinson Hyperlegible', system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  --font-mono:   'SF Mono', Menlo, Consolas, 'Liberation Mono', monospace;
 
-  // Mood selected → show mood-aware Today
-  renderTodayView();
+  /* ─── Warm-leaning neutrals for accessibility & ease ─────────── */
+  --bg-page:     #F7F4ED;    /* Oat - the everywhere background */
+  --bg-card:     #FFFCF5;    /* Cream - slightly lifted card surface */
+  --bg-sunken:   #EFEbE0;    /* Sand - for nested or pressed states */
+  --bg-overlay:  rgba(43, 56, 49, 0.55); /* Forest, semi-transparent */
+
+  /* ─── Text (warm-leaning neutrals, never pure black) ─────────── */
+  --text-primary:    #2B3831; /* Deep forest – primary text */
+  --text-secondary:  #4F5B53; /* Lichen – secondary text */
+  --text-muted:      #7B857D; /* Stone – meta, captions */
+  --text-inverse:    #FAF7F0; /* On dark backgrounds */
+
+  /* ─── Borders & dividers ────────────────────────────────────── */
+  --border:       #D9D2C2;    /* Soft warm border */
+  --border-strong: #B8B0A0;   /* Stronger divider when needed */
+  --border-focus:  #6B8F71;   /* Moss – focus ring */
+
+  /* ─── Accent tokens (existing names, nature-grounded values) ─── */
+
+  /* TEAL – Moss / Forest (primary accent, restoration + call) */
+  --teal:        #6B8F71;     /* Moss – the signature accent */
+  --teal-l:      #D9E5D1;     /* Pale moss – backgrounds, fills */
+  --teal-d:      #3F5E47;     /* Deep forest – text on pale moss */
+  --teal-deep:   #2B3F33;     /* Darkest forest – display, hero text */
+
+  /* LAVENDER – Heather / Soft purple-grey (subtle, grounding) */
+  --lavender:    #8B7AA8;     /* Heather – gentle, grounding */
+  --lavender-l:  #E4DEEC;     /* Pale heather */
+  --lavender-d:  #5C4E78;     /* Deep heather */
+
+  /* SKY – Soft sky-blue (open, breath, low arousal) */
+  --sky:         #7A9AB0;     /* Sky – open, calm */
+  --sky-l:       #DEEFF7;     /* Pale sky */
+  --sky-d:       #4A6B82;     /* Deep sky */
+
+  /* AMBER – Honey / Warm amber (warmth without urgency) */
+  --amber:       #C99A5E;     /* Honey – warm without urgency */
+  --amber-l:     #F2E4CD;     /* Pale honey */
+  --amber-d:     #8A6533;     /* Deep honey */
+
+  /* PEACH – Clay / Terracotta (energy at sunset wavelengths) */
+  --peach:       #D49379;     /* Clay – earthy, warm energy */
+  --peach-l:     #F4DDD0;     /* Pale clay */
+  --peach-d:     #9C5E42;     /* Deep clay */
+
+  /* ─── Semantic state colors ────────────────────────────────── */
+  --success:     var(--teal);
+  --info:        var(--sky);
+  --warning:     var(--amber);
+  --alert:       var(--peach); /* Note: not red – we use clay for alert to avoid the cortisol spike of red */
+  --crisis:      #B85850;     /* Reserved – only used for crisis CTAs */
+
+  /* ─── Radii ──────────────────────────────────────────────────── */
+  --r-xs:        4px;
+  --r-sm:        6px;
+  --r-md:        10px;
+  --r-lg:        16px;
+  --r-xl:        20px;
+  --r-pill:      999px;
+
+  /* ─── Shadows (warm-tinted, not grey – feels more organic) ──── */
+  --shadow-xs:   0 1px 2px rgba(43, 56, 49, 0.04);
+  --shadow-sm:   0 2px 4px rgba(43, 56, 49, 0.06), 0 1px 2px rgba(43, 56, 49, 0.04);
+  --shadow-md:   0 4px 12px rgba(43, 56, 49, 0.08), 0 2px 4px rgba(43, 56, 49, 0.04);
+  --shadow-lg:   0 12px 32px rgba(43, 56, 49, 0.10), 0 4px 8px rgba(43, 56, 49, 0.06);
+  --shadow-focus: 0 0 0 3px rgba(107, 143, 113, 0.25);
+
+  /* ─── Spacing scale ──────────────────────────────────────────── */
+  --space-1:     4px;
+  --space-2:     8px;
+  --space-3:     12px;
+  --space-4:     16px;
+  --space-5:     20px;
+  --space-6:     24px;
+  --space-8:     32px;
+  --space-10:    40px;
+  --space-12:    48px;
+
+  /* ─── Typography scale ──────────────────────────────────────── */
+  --text-xs:     11px;
+  --text-sm:     13px;
+  --text-base:   15px;
+  --text-md:     16px;
+  --text-lg:     18px;
+  --text-xl:     22px;
+  --text-2xl:    28px;
+  --text-3xl:    36px;
+
+  --leading-tight:   1.2;
+  --leading-normal:  1.5;
+  --leading-relaxed: 1.7;
+
+  /* ─── Motion (gentle, never jarring) ──────────────────────── */
+  --ease-out:     cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-in-out:  cubic-bezier(0.65, 0, 0.35, 1);
+  --duration-fast:   120ms;
+  --duration-base:   200ms;
+  --duration-slow:   320ms;
+
+  /* ─── Theme colour for browser chrome ───────────────────────── */
+  --theme-color:  #3F8F73;
 }
 
-// ─── Mood picker ──────────────────────────────────────────
-function renderMoodPicker() {
-  document.getElementById('content').innerHTML = `
-    <div class="screen">
-      <div class="card teal">
-        <div class="card-label">How are you starting today?</div>
-        <div class="card-sub" style="margin-top:6px;margin-bottom:12px">
-          Pick whatever fits. There is no wrong answer, and you can change it later.
-        </div>
-        <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px">
-          ${MOODS.map(m => `
-            <button class="mood-btn"
-              onclick="setMood('${m.k}')"
-              style="display:flex;flex-direction:column;gap:4px;padding:14px 6px">
-              <i class="ti ${m.icon}" style="font-size:22px;color:var(--${m.color})"></i>
-              <span style="font-size:12px">${m.l}</span>
-            </button>
-          `).join('')}
-        </div>
-      </div>
 
-      <div class="notice green" style="margin-top:14px">
-        <strong>Why we ask.</strong> Bowline adjusts what you see based on how you feel.
-        The plan you need on a clear day is not the plan you need on a hard one.
-      </div>
-    </div>`;
+/* ─── DARK MODE (auto-applies if user prefers) ────────────────── */
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg-page:        #1C2420;
+    --bg-card:        #232C27;
+    --bg-sunken:      #161D19;
+    --bg-overlay:     rgba(0, 0, 0, 0.65);
+
+    --text-primary:    #E8EAE3;
+    --text-secondary:  #B8C0B5;
+    --text-muted:      #8A938A;
+    --text-inverse:    #1C2420;
+
+    --border:         #3A4540;
+    --border-strong:  #556059;
+
+    /* Slightly desaturated for dark mode – colours stay restful */
+    --teal:        #8FB596;     --teal-l:     #2F4438;     --teal-d:    #B8D2BD;
+    --lavender:    #A697C0;     --lavender-l: #3A3247;     --lavender-d: #C8BCD;
+    --sky:         #98B6CC;     --sky-l:      #2F4452;     --sky-d:     #BDD2E0;
+    --amber:       #D9B47C;     --amber-l:    #4A3E29;     --amber-d:   #E8C998;
+    --peach:       #E0A98F;     --peach-l:    #4A3528;     --peach-d:   #EDC2AA;
+  }
 }
 
-// ─── Mood-aware Today view ────────────────────────────────
-function renderTodayView() {
-  const mood = MOODS.find(m => m.k === state.mood);
-  if (!mood) { state.mood = null; renderToday(); return; }
 
-  const undone = state.tasks.filter(t => !t.done);
-  const done   = state.tasks.filter(t =>  t.done);
-  const cur    = undone[0];
+/* ═════════════════════════════════════════════════════════════════════
+   ────────────────────────────────────────────────────────────────────
+   2. RESET & BASE
+   ────────────────────────────────────────────────────────────────────── */
 
-  document.getElementById('content').innerHTML = `
-    <div class="screen">
-
-      <!-- Mood card with full support -->
-      <div class="card ${mood.color}">
-        <div style="display:flex;align-items:flex-start;gap:12px">
-          <i class="ti ${mood.icon}" style="font-size:28px;color:var(--${mood.color});flex-shrink:0"></i>
-          <div style="flex:1">
-            <div class="card-label">Today you are</div>
-            <div class="card-main">${mood.l}</div>
-            <div class="card-sub" style="margin-top:6px;line-height:1.6">${mood.message}</div>
-          </div>
-          <button onclick="changeMood()"
-            style="border:none;background:none;cursor:pointer;color:var(--text-muted);padding:4px;flex-shrink:0"
-            aria-label="Change mood">
-            <i class="ti ti-pencil" style="font-size:18px"></i>
-          </button>
-        </div>
-
-        <!-- Suggestions for this mood -->
-        <div style="margin-top:14px;padding-top:14px;border-top:1.5px solid var(--border)">
-          <div class="card-label" style="margin-bottom:8px">Suggestions for today</div>
-          ${mood.suggestions.map(s => `
-            <div style="display:flex;gap:8px;align-items:flex-start;padding:6px 0">
-              <i class="ti ti-point" style="color:var(--${mood.color});font-size:18px;flex-shrink:0;margin-top:2px"></i>
-              <div style="font-size:14px;line-height:1.5">${s}</div>
-            </div>
-          `).join('')}
-        </div>
-
-        <!-- Mood CTA -->
-        <button class="btn primary" style="margin-top:14px;margin-bottom:0" onclick="handleMoodCta('${mood.ctaAction}')">
-          <i class="ti ${mood.ctaIcon}"></i> ${mood.ctaText}
-        </button>
-      </div>
-
-      ${state.essentialsMode ? `
-        <div class="notice amber" style="margin-bottom:0.85rem">
-          <strong>Essentials mode is on.</strong> Showing reduced task list.
-          <button onclick="exitEssentials()"
-            style="border:none;background:none;cursor:pointer;color:var(--amber-d);font-weight:700;text-decoration:underline;margin-top:6px;padding:0;font-family:var(--font);font-size:13px">
-            Show all tasks again
-          </button>
-        </div>
-      ` : ''}
-
-      ${renderMoodHistory()}
-
-      <!-- Current step -->
-      <div class="section-label">
-        <i class="ti ti-bolt" style="color:var(--teal);font-size:14px"></i> Now
-      </div>
-      <div class="card teal">
-        <div class="card-label">Your next step</div>
-        <div class="card-main">${cur ? cur.text : 'All done for now. Rest is valid.'}</div>
-        ${cur ? `
-          <div class="card-sub">${cur.meta}</div>
-          <button class="btn primary" style="margin-top:12px;margin-bottom:0" onclick="go('now')">
-            <i class="ti ti-player-play"></i> Start this
-          </button>
-        ` : ''}
-      </div>
-
-      <!-- Task list -->
-      <div class="section-label">
-        <i class="ti ti-list" style="color:var(--lavender);font-size:14px"></i> Your anchors
-      </div>
-      ${state.tasks.length === 0 ? `
-        <div class="card">
-          <div class="card-sub" style="text-align:center;padding:1rem 0">
-            No tasks yet. Add some in Plan.
-          </div>
-        </div>
-      ` : `
-        <div class="card" style="padding:0.5rem 1.25rem">
-          ${undone.map(t => `
-            <div class="task-row">
-              <div class="task-check"
-                style="border-color:${ACCENT[t.color] || '#d3d1c7'}"
-                onclick="toggleTask(${t.id})"></div>
-              <div style="flex:1">
-                <div class="task-text">${t.text}</div>
-                <div class="task-meta">${t.meta}</div>
-              </div>
-              <span style="width:6px;height:6px;border-radius:50%;background:${ACCENT[t.color] || '#888780'};margin-top:8px;flex-shrink:0"></span>
-            </div>
-          `).join('')}
-          ${done.map(t => `
-            <div class="task-row" style="opacity:0.45">
-              <div class="task-check done" onclick="toggleTask(${t.id})"><i class="ti ti-check" style="font-size:14px"></i></div>
-              <div class="task-text done">${t.text}</div>
-            </div>
-          `).join('')}
-        </div>
-      `}
-
-      <!-- Quick actions -->
-      <div class="section-label">Quick actions</div>
-      <button class="btn sky" onclick="go('tldr')"><i class="ti ti-message-2"></i> Understand a message</button>
-      <button class="btn lavender" onclick="go('reset')"><i class="ti ti-refresh"></i> I need a reset first</button>
-      <button class="btn" onclick="go('plan')"><i class="ti ti-plus"></i> Add a task</button>
-      ${!state.essentialsMode ? `
-        <button class="btn amber-btn" onclick="enableEssentials()"><i class="ti ti-minimize"></i> Show essentials only</button>
-      ` : ''}
-    </div>`;
+*, *::before, *::after {
+  box-sizing: border-box;
 }
 
-// ─── Mood history (last 7 days) ────────────────────────────
-function renderMoodHistory() {
-  if (state.moodLog.length < 2) return '';
-  const recent = state.moodLog.slice(-7);
-  return `
-    <div class="section-label">
-      <i class="ti ti-chart-line" style="color:var(--sky);font-size:14px"></i> Recent moods
-    </div>
-    <div class="card" style="padding:1rem 1.25rem">
-      <div style="display:flex;gap:6px;align-items:flex-end">
-        ${recent.map(entry => {
-          const m = MOODS.find(mm => mm.k === entry.mood);
-          if (!m) return '';
-          return `
-            <div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:4px">
-              <div style="width:28px;height:28px;border-radius:6px;background:var(--${m.color}-l);display:flex;align-items:center;justify-content:center" title="${entry.date} — ${m.l}">
-                <i class="ti ${m.icon}" style="font-size:15px;color:var(--${m.color})"></i>
-              </div>
-              <div style="font-size:9px;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.5px">${entry.short}</div>
-            </div>`;
-        }).join('')}
-      </div>
-      ${state.moodLog.length >= 3 ? `
-        <div style="font-size:12px;color:var(--text-secondary);margin-top:10px;line-height:1.5">
-          ${getMoodInsight()}
-        </div>
-      ` : ''}
-    </div>`;
+html {
+  -webkit-text-size-adjust: 100%;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
-function getMoodInsight() {
-  const recent = state.moodLog.slice(-7);
-  const hardMoods = ['anxious', 'over', 'burnt', 'shut', 'pain', 'sad'];
-  const hardCount = recent.filter(e => hardMoods.includes(e.mood)).length;
-
-  if (hardCount >= 4) {
-    return 'You have had several hard days recently. That is a lot. Is there someone you could talk to, or one demand you could drop?';
-  }
-  if (hardCount >= 2) {
-    return 'A few harder days lately. What helped on the easier ones?';
-  }
-  return 'Your last week has been mostly manageable. Worth remembering when the next hard day comes.';
+body {
+  margin: 0;
+  font-family: var(--font);
+  font-size: var(--text-base);
+  line-height: var(--leading-normal);
+  color: var(--text-primary);
+  background: var(--bg-page);
+  min-height: 100vh;
+  /* Subtle organic texture – barely visible, but adds warmth */
+  background-image:
+    radial-gradient(circle at 25% 15%, rgba(107, 143, 113, 0.04) 0%, transparent 50%),
+    radial-gradient(circle at 75% 80%, rgba(201, 154, 94, 0.03) 0%, transparent 50%);
+  background-attachment: fixed;
 }
 
-// ─── Window handlers ──────────────────────────────────────
-window.setMood = function (k) {
-  state.mood = k;
+h1, h2, h3, h4, h5, h6 {
+  font-weight: 700;
+  line-height: var(--leading-tight);
+  letter-spacing: -0.01em;
+  color: var(--text-primary);
+  margin: 0;
+}
 
-  const today = new Date();
-  const short = today.toLocaleDateString('en-GB', { weekday: 'short' }).slice(0, 2);
-  const date  = today.toLocaleDateString('en-GB');
+p { margin: 0; }
 
-  // Replace if already logged today, else add
-  if (state.moodLog.length && state.moodLog[state.moodLog.length - 1].date === date) {
-    state.moodLog[state.moodLog.length - 1] = { mood: k, date, short };
-  } else {
-    state.moodLog.push({ mood: k, date, short });
+button {
+  font-family: inherit;
+  cursor: pointer;
+  border: none;
+  background: none;
+  color: inherit;
+}
+
+input, textarea, select {
+  font-family: inherit;
+  font-size: inherit;
+  color: var(--text-primary);
+}
+
+a {
+  color: var(--teal-d);
+  text-decoration: none;
+  transition: color var(--duration-fast) var(--ease-out);
+}
+
+a:hover { color: var(--teal); }
+
+::selection {
+  background: var(--teal-l);
+  color: var(--teal-deep);
+}
+
+
+/* ═════════════════════════════════════════════════════════════════════
+   ────────────────────────────────────────────────────────────────────
+   3. LAYOUT
+   ────────────────────────────────────────────────────────────────────── */
+
+.app {
+  display: grid;
+  grid-template-rows: auto 1fr auto;
+  min-height: 100vh;
+  background: var(--bg-page);
+}
+
+.screen {
+  max-width: 720px;
+  margin: 0 auto;
+  padding: var(--space-4) var(--space-4) var(--space-12);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+@media (max-width: 480px) {
+  .screen {
+    padding: var(--space-3) var(--space-3) var(--space-10);
   }
+}
 
-  if (state.moodLog.length > 14) state.moodLog = state.moodLog.slice(-14);
-  renderToday();
-};
+#content {
+  min-height: 100vh;
+}
 
-window.changeMood = function () {
-  state.mood = null;
-  renderToday();
-};
 
-window.toggleTask = function (id) {
-  const t = state.tasks.find(t => t.id === id);
-  if (t) t.done = !t.done;
-  renderToday();
-};
+/* ═════════════════════════════════════════════════════════════════════
+   ────────────────────────────────────────────────────────────────────
+   4. TOPBAR
+   ────────────────────────────────────────────────────────────────────── */
 
-window.handleMoodCta = function (action) {
-  if (action === 'today')      { renderToday(); return; }
-  if (action === 'now')        { go('now'); return; }
-  if (action === 'essentials') { enableEssentials(); return; }
-  if (action.startsWith('reset:')) {
-    const resetKey = action.split(':')[1];
-    state.resetMode = resetKey;
-    state.resetView = 'flow';
-    state.resetStep = 0;
-    go('reset');
-    return;
+.topbar {
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  background: rgba(247, 244, 237, 0.85);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border-bottom: 1px solid var(--border);
+  padding: var(--space-3) var(--space-4);
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+}
+
+.topbar-row {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  flex: 1;
+}
+
+.bowline-mark {
+  width: 40px;
+  height: 40px;
+  flex-shrink: 0;
+}
+
+.topbar h1 {
+  font-size: var(--text-xl);
+  font-weight: 700;
+  color: var(--text-primary);
+  letter-spacing: -0.015em;
+}
+
+.topbar .sub {
+  font-size: var(--text-sm);
+  color: var(--text-muted);
+  margin-top: 2px;
+}
+
+@media (prefers-color-scheme: dark) {
+  .topbar {
+    background: rgba(28, 36, 32, 0.85);
   }
-};
+}
 
-window.enableEssentials = function () {
-  if (!state._originalTasks) {
-    state._originalTasks = state.tasks.map(t => ({ ...t }));
+
+/* ═════════════════════════════════════════════════════════════════════
+   ────────────────────────────────────────────────────────────────────
+   5. CARDS
+   ────────────────────────────────────────────────────────────────────── */
+
+.card {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--r-lg);
+  padding: var(--space-5) var(--space-5);
+  box-shadow: var(--shadow-xs);
+  transition: box-shadow var(--duration-base) var(--ease-out),
+              transform var(--duration-base) var(--ease-out);
+}
+
+.card:hover {
+  box-shadow: var(--shadow-sm);
+}
+
+.card-label {
+  font-size: var(--text-xs);
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  margin-bottom: var(--space-2);
+}
+
+.card-main {
+  font-weight: 700;
+  font-size: var(--text-lg);
+  line-height: var(--leading-tight);
+  color: var(--text-primary);
+  letter-spacing: -0.01em;
+}
+
+.card-sub {
+  font-size: var(--text-sm);
+  color: var(--text-secondary);
+  line-height: var(--leading-normal);
+  margin-top: var(--space-2);
+}
+
+/* Coloured cards – left edge accent, no full-fill (less visually loud) */
+.card.teal {
+  background: linear-gradient(135deg, var(--teal-l) 0%, var(--bg-card) 80%);
+  border-color: var(--teal);
+  border-left-width: 3px;
+}
+.card.lavender {
+  background: linear-gradient(135deg, var(--lavender-l) 0%, var(--bg-card) 80%);
+  border-color: var(--lavender);
+  border-left-width: 3px;
+}
+.card.sky {
+  background: linear-gradient(135deg, var(--sky-l) 0%, var(--bg-card) 80%);
+  border-color: var(--sky);
+  border-left-width: 3px;
+}
+.card.amber {
+  background: linear-gradient(135deg, var(--amber-l) 0%, var(--bg-card) 80%);
+  border-color: var(--amber);
+  border-left-width: 3px;
+}
+.card.peach {
+  background: linear-gradient(135deg, var(--peach-l) 0%, var(--bg-card) 80%);
+  border-color: var(--peach);
+  border-left-width: 3px;
+}
+
+
+/* ═════════════════════════════════════════════════════════════════════
+   ────────────────────────────────────────────────────────────────────
+   6. BUTTONS
+   ────────────────────────────────────────────────────────────────────── */
+
+.btn {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  width: 100%;
+  padding: var(--space-3) var(--space-5);
+  background: var(--bg-card);
+  border: 1.5px solid var(--border);
+  border-radius: var(--r-md);
+  color: var(--text-primary);
+  font-family: var(--font);
+  font-size: var(--text-sm);
+  font-weight: 600;
+  letter-spacing: -0.005em;
+  text-align: left;
+  cursor: pointer;
+  margin-bottom: var(--space-2);
+  transition: all var(--duration-base) var(--ease-out);
+  box-shadow: var(--shadow-xs);
+}
+
+.btn:hover {
+  border-color: var(--border-strong);
+  box-shadow: var(--shadow-sm);
+  transform: translateY(-1px);
+}
+
+.btn:active {
+  transform: translateY(0);
+  box-shadow: var(--shadow-xs);
+}
+
+.btn:focus-visible {
+  outline: none;
+  box-shadow: var(--shadow-focus);
+  border-color: var(--teal);
+}
+
+.btn i.ti {
+  font-size: 18px;
+  flex-shrink: 0;
+  color: var(--text-secondary);
+}
+
+.btn.primary {
+  background: var(--teal);
+  border-color: var(--teal);
+  color: var(--text-inverse);
+}
+.btn.primary:hover { background: var(--teal-d); border-color: var(--teal-d); }
+.btn.primary i.ti { color: var(--text-inverse); }
+
+.btn.teal {
+  background: var(--teal-l);
+  border-color: var(--teal);
+  color: var(--teal-d);
+}
+.btn.teal i.ti { color: var(--teal); }
+
+.btn.lavender {
+  background: var(--lavender-l);
+  border-color: var(--lavender);
+  color: var(--lavender-d);
+}
+.btn.lavender i.ti { color: var(--lavender); }
+
+.btn.sky {
+  background: var(--sky-l);
+  border-color: var(--sky);
+  color: var(--sky-d);
+}
+.btn.sky i.ti { color: var(--sky); }
+
+.btn.amber-btn,
+.btn.amber {
+  background: var(--amber-l);
+  border-color: var(--amber);
+  color: var(--amber-d);
+}
+.btn.amber-btn i.ti, .btn.amber i.ti { color: var(--amber); }
+
+.btn.peach {
+  background: var(--peach-l);
+  border-color: var(--peach);
+  color: var(--peach-d);
+}
+.btn.peach i.ti { color: var(--peach); }
+
+
+/* ═════════════════════════════════════════════════════════════════════
+   ────────────────────────────────────────────────────────────────────
+   7. NOTICES & ALERTS
+   ────────────────────────────────────────────────────────────────────── */
+
+.notice {
+  padding: var(--space-4) var(--space-5);
+  border-radius: var(--r-md);
+  font-size: var(--text-sm);
+  line-height: var(--leading-normal);
+}
+
+.notice.green {
+  background: var(--teal-l);
+  border-left: 3px solid var(--teal);
+  color: var(--teal-d);
+}
+.notice.green strong { color: var(--teal-deep); }
+
+.notice.amber {
+  background: var(--amber-l);
+  border-left: 3px solid var(--amber);
+  color: var(--amber-d);
+}
+.notice.amber strong { color: var(--amber-d); }
+
+
+/* ═════════════════════════════════════════════════════════════════════
+   ────────────────────────────────────────────────────────────────────
+   8. NAVIGATION & TABS
+   ────────────────────────────────────────────────────────────────────── */
+
+.nav {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: var(--space-2);
+  padding: var(--space-3);
+  background: var(--bg-card);
+  border-top: 1px solid var(--border);
+}
+
+.nav button {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-1);
+  padding: var(--space-2);
+  font-size: var(--text-xs);
+  color: var(--text-secondary);
+  background: none;
+  border: none;
+  cursor: pointer;
+  transition: all var(--duration-fast) var(--ease-out);
+  border-radius: var(--r-sm);
+}
+
+.nav button:hover {
+  color: var(--text-primary);
+  background: var(--bg-sunken);
+}
+
+.nav button.active {
+  color: var(--teal);
+  background: var(--teal-l);
+}
+
+.nav button i {
+  font-size: 20px;
+}
+
+@media (max-width: 480px) {
+  .nav {
+    grid-template-columns: repeat(7, 1fr);
+    gap: var(--space-1);
+    padding: var(--space-2);
   }
-  state.tasks = state.tasks.filter(t =>
-    t.meta.includes('Essentials') || t.text.toLowerCase().includes('appointment')
-  );
-  state.essentialsMode = true;
-  renderToday();
-};
-
-window.exitEssentials = function () {
-  if (state._originalTasks) {
-    // Merge: keep done state from current, restore all tasks
-    const doneIds = new Set(state.tasks.filter(t => t.done).map(t => t.id));
-    state.tasks = state._originalTasks.map(t => ({
-      ...t,
-      done: doneIds.has(t.id) ? true : t.done,
-    }));
-    state._originalTasks = null;
+  .nav button {
+    font-size: 10px;
+    gap: 0;
   }
-  state.essentialsMode = false;
-  renderToday();
-};
+}
 
-window.showEssentials = window.enableEssentials;
 
-register('today', renderToday);
+/* ═════════════════════════════════════════════════════════════════════
+   ────────────────────────────────────────────────────────────────────
+   9. SECTIONS & LABELS
+   ────────────────────────────────────────────────────────────────────── */
+
+.section-label {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  margin-top: var(--space-4);
+  margin-bottom: var(--space-2);
+  font-weight: 600;
+  font-size: var(--text-sm);
+  color: var(--text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.section-label i {
+  flex-shrink: 0;
+}
+
+
+/* ═════════════════════════════════════════════════════════════════════
+   ────────────────────────────────────────────────────────────────────
+   10. TASKS & ITEMS
+   ────────────────────────────────────────────────────────────────────── */
+
+.task-row {
+  display: flex;
+  gap: var(--space-3);
+  align-items: flex-start;
+  padding: var(--space-2) 0;
+  border-bottom: 1px solid var(--border);
+}
+
+.task-row:last-child {
+  border-bottom: none;
+}
+
+.task-check {
+  width: 20px;
+  height: 20px;
+  min-width: 20px;
+  border: 2px solid;
+  border-radius: 4px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all var(--duration-fast) var(--ease-out);
+  margin-top: 2px;
+}
+
+.task-check:hover {
+  background: var(--bg-sunken);
+}
+
+.task-check.done {
+  background: var(--teal);
+  border-color: var(--teal);
+  color: var(--text-inverse);
+}
+
+.task-check i {
+  font-size: 12px;
+}
+
+.task-text {
+  flex: 1;
+  font-size: var(--text-sm);
+  font-weight: 500;
+  color: var(--text-primary);
+  line-height: var(--leading-normal);
+}
+
+.task-text.done {
+  opacity: 0.5;
+  text-decoration: line-through;
+}
+
+.task-meta {
+  font-size: 12px;
+  color: var(--text-muted);
+  margin-top: 2px;
+  line-height: 1.4;
+}
+
+
+/* ═════════════════════════════════════════════════════════════════════
+   ────────────────────────────────────────────────────────────────────
+   11. MOOD BUTTONS & PICKER
+   ────────────────────────────────────────────────────────────────────── */
+
+.mood-btn {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+  padding: var(--space-3) var(--space-2);
+  background: var(--bg-sunken);
+  border: 1px solid var(--border);
+  border-radius: var(--r-md);
+  cursor: pointer;
+  transition: all var(--duration-fast) var(--ease-out);
+  align-items: center;
+  text-align: center;
+}
+
+.mood-btn:hover {
+  background: var(--bg-card);
+  box-shadow: var(--shadow-sm);
+  transform: translateY(-2px);
+}
+
+.mood-btn:active {
+  transform: translateY(0);
+}
+
+.mood-btn i {
+  font-size: 22px;
+}
+
+.mood-btn span {
+  font-size: var(--text-xs);
+  font-weight: 500;
+  color: var(--text-primary);
+}
+
+
+/* ═════════════════════════════════════════════════════════════════════
+   ────────────────────────────────────────────────────────────────────
+   12. UTILITIES & HELPERS
+   ────────────────────────────────────────────────────────────────────── */
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border-width: 0;
+}
+
+/* Performance: use will-change sparingly for animated elements */
+.card {
+  will-change: auto;
+}
+
+.card:hover {
+  will-change: box-shadow, transform;
+}
+
+/* Reduce motion for users who prefer it */
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
