@@ -1,20 +1,26 @@
 /* ==========================================================================
    BOWLINE – Design System
-   Nature-grounded biophilic palette
+   Nature-grounded biophilic palette + Mobile-First Native App Compatibility
    Built on Attention Restoration Theory (Kaplan) and Ulrich stress-recovery
    research. Cool greens + warm earth + soft sky for cognitive ease.
    ========================================================================== */
 
 
-/* ───────────────────────────────────────────────────────────────────────
-   1. DESIGN TOKENS
-   ─────────────────────────────────────────────────────────────────────── */
+/* ────────────────────────────────────────────────────────────────────
+   1. DESIGN TOKENS & MOBILE VIEWPORT
+   ────────────────────────────────────────────────────────────────────── */
 
 :root {
 
   /* ─── Brand fonts ────────────────────────────────────────────── */
-  --font:        'Atkinson Hyperlegible', system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
-  --font-mono:   'SF Mono', Menlo, Consolas, 'Liberation Mono', monospace;
+  --font:        'Atkinson Hyperlegible', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+  --font-mono:   'Menlo', 'Courier New', monospace;
+
+  /* ─── Mobile safe zone (iPhone notch, Android system UI) ────── */
+  --safe-area-inset-top:    env(safe-area-inset-top, 0);
+  --safe-area-inset-right:  env(safe-area-inset-right, 0);
+  --safe-area-inset-bottom: env(safe-area-inset-bottom, 0);
+  --safe-area-inset-left:   env(safe-area-inset-left, 0);
 
   /* ─── Warm-leaning neutrals for accessibility & ease ─────────── */
   --bg-page:     #F7F4ED;    /* Oat - the everywhere background */
@@ -33,7 +39,7 @@
   --border-strong: #B8B0A0;   /* Stronger divider when needed */
   --border-focus:  #6B8F71;   /* Moss – focus ring */
 
-  /* ─── Accent tokens (existing names, nature-grounded values) ─── */
+  /* ─── Accent tokens (nature-grounded values) ─────────────────── */
 
   /* TEAL – Moss / Forest (primary accent, restoration + call) */
   --teal:        #6B8F71;     /* Moss – the signature accent */
@@ -65,8 +71,8 @@
   --success:     var(--teal);
   --info:        var(--sky);
   --warning:     var(--amber);
-  --alert:       var(--peach); /* Note: not red – we use clay for alert to avoid the cortisol spike of red */
-  --crisis:      #B85850;     /* Reserved – only used for crisis CTAs */
+  --alert:       var(--peach);
+  --crisis:      #B85850;
 
   /* ─── Radii ──────────────────────────────────────────────────── */
   --r-xs:        4px;
@@ -76,14 +82,14 @@
   --r-xl:        20px;
   --r-pill:      999px;
 
-  /* ─── Shadows (warm-tinted, not grey – feels more organic) ──── */
+  /* ─── Shadows (warm-tinted, not grey) ────────────────────────── */
   --shadow-xs:   0 1px 2px rgba(43, 56, 49, 0.04);
   --shadow-sm:   0 2px 4px rgba(43, 56, 49, 0.06), 0 1px 2px rgba(43, 56, 49, 0.04);
   --shadow-md:   0 4px 12px rgba(43, 56, 49, 0.08), 0 2px 4px rgba(43, 56, 49, 0.04);
   --shadow-lg:   0 12px 32px rgba(43, 56, 49, 0.10), 0 4px 8px rgba(43, 56, 49, 0.06);
   --shadow-focus: 0 0 0 3px rgba(107, 143, 113, 0.25);
 
-  /* ─── Spacing scale ──────────────────────────────────────────── */
+  /* ─── Spacing scale (optimized for touch targets) ──────────── */
   --space-1:     4px;
   --space-2:     8px;
   --space-3:     12px;
@@ -108,7 +114,7 @@
   --leading-normal:  1.5;
   --leading-relaxed: 1.7;
 
-  /* ─── Motion (gentle, never jarring) ──────────────────────── */
+  /* ─── Motion (gentle, respects prefers-reduced-motion) ─────── */
   --ease-out:     cubic-bezier(0.16, 1, 0.3, 1);
   --ease-in-out:  cubic-bezier(0.65, 0, 0.35, 1);
   --duration-fast:   120ms;
@@ -117,6 +123,9 @@
 
   /* ─── Theme colour for browser chrome ───────────────────────── */
   --theme-color:  #3F8F73;
+
+  /* ─── Haptic feedback (iOS/Android) ───────────────────────── */
+  --haptic-duration: 50ms;
 }
 
 
@@ -139,7 +148,7 @@
 
     /* Slightly desaturated for dark mode – colours stay restful */
     --teal:        #8FB596;     --teal-l:     #2F4438;     --teal-d:    #B8D2BD;
-    --lavender:    #A697C0;     --lavender-l: #3A3247;     --lavender-d: #C8BCD;
+    --lavender:    #A697C0;     --lavender-l: #3A3247;     --lavender-d: #C8BCDB;
     --sky:         #98B6CC;     --sky-l:      #2F4452;     --sky-d:     #BDD2E0;
     --amber:       #D9B47C;     --amber-l:    #4A3E29;     --amber-d:   #E8C998;
     --peach:       #E0A98F;     --peach-l:    #4A3528;     --peach-d:   #EDC2AA;
@@ -147,34 +156,49 @@
 }
 
 
-/* ═════════════════════════════════════════════════════════════════════
-   ────────────────────────────────────────────────────────────────────
-   2. RESET & BASE
-   ────────────────────────────────────────────────────────────────────── */
+/* ════════════════════════════════════════════════════════════════
+   2. RESET & BASE (iOS/Android Safe)
+   ════════════════════════════════════════════════════════════════ */
 
 *, *::before, *::after {
   box-sizing: border-box;
+  -webkit-tap-highlight-color: transparent; /* iOS/Android: remove default tap highlight */
 }
 
 html {
   -webkit-text-size-adjust: 100%;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  -webkit-user-select: none;
+  -webkit-touch-callout: none;
+  width: 100%;
+  height: 100%;
+  position: fixed;
+  overflow: hidden;
 }
 
 body {
   margin: 0;
+  padding: 0;
   font-family: var(--font);
   font-size: var(--text-base);
   line-height: var(--leading-normal);
   color: var(--text-primary);
   background: var(--bg-page);
-  min-height: 100vh;
+  width: 100%;
+  height: 100%;
+  position: fixed;
+  overflow: hidden;
   /* Subtle organic texture – barely visible, but adds warmth */
   background-image:
     radial-gradient(circle at 25% 15%, rgba(107, 143, 113, 0.04) 0%, transparent 50%),
     radial-gradient(circle at 75% 80%, rgba(201, 154, 94, 0.03) 0%, transparent 50%);
   background-attachment: fixed;
+  
+  /* Prevent elastic scroll on iOS */
+  overscroll-behavior: none;
+  -webkit-user-select: none;
+  -webkit-touch-callout: none;
 }
 
 h1, h2, h3, h4, h5, h6 {
@@ -193,77 +217,144 @@ button {
   border: none;
   background: none;
   color: inherit;
+  -webkit-user-select: none;
+  -webkit-touch-callout: none;
+  /* Haptic feedback trigger (iOS 13+, Android) */
+  -webkit-appearance: none;
+  appearance: none;
+}
+
+button:active {
+  opacity: 0.8; /* Visual feedback for tap on mobile */
 }
 
 input, textarea, select {
   font-family: inherit;
   font-size: inherit;
   color: var(--text-primary);
+  -webkit-appearance: none;
+  appearance: none;
+  border-radius: 0; /* Prevent iOS zoom on input */
+}
+
+input[type="text"],
+input[type="email"],
+input[type="number"],
+textarea {
+  font-size: 16px; /* Prevent iOS auto-zoom on input focus */
 }
 
 a {
   color: var(--teal-d);
   text-decoration: none;
   transition: color var(--duration-fast) var(--ease-out);
+  -webkit-user-select: none;
 }
 
-a:hover { color: var(--teal); }
+a:active { opacity: 0.8; }
 
 ::selection {
   background: var(--teal-l);
   color: var(--teal-deep);
 }
 
+/* Prevent iOS scroll bounce */
+html, body {
+  position: fixed;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+}
 
-/* ═════════════════════════════════════════════════════════════════════
-   ────────────────────────────────────────────────────────────────────
-   3. LAYOUT
-   ────────────────────────────────────────────────────────────────────── */
+
+/* ════════════════════════════════════════════════════════════════
+   3. LAYOUT (Full Viewport, Safe Areas)
+   ════════════════════════════════════════════════════════════════ */
 
 .app {
   display: grid;
   grid-template-rows: auto 1fr auto;
+  width: 100vw;
+  height: 100vh;
   min-height: 100vh;
   background: var(--bg-page);
+  overflow: hidden;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  padding-top: var(--safe-area-inset-top);
+  padding-bottom: var(--safe-area-inset-bottom);
+  padding-left: var(--safe-area-inset-left);
+  padding-right: var(--safe-area-inset-right);
 }
 
 .screen {
-  max-width: 720px;
-  margin: 0 auto;
+  max-width: 100%;
+  width: 100%;
+  margin: 0;
   padding: var(--space-4) var(--space-4) var(--space-12);
+  padding-left: calc(var(--space-4) + var(--safe-area-inset-left));
+  padding-right: calc(var(--space-4) + var(--safe-area-inset-right));
   display: flex;
   flex-direction: column;
   gap: var(--space-3);
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch; /* Momentum scrolling on iOS */
+  scroll-behavior: smooth;
+}
+
+/* Better scrollbar on Android */
+.screen::-webkit-scrollbar {
+  width: 4px;
+}
+
+.screen::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.screen::-webkit-scrollbar-thumb {
+  background: var(--border);
+  border-radius: var(--r-pill);
 }
 
 @media (max-width: 480px) {
   .screen {
     padding: var(--space-3) var(--space-3) var(--space-10);
+    padding-left: calc(var(--space-3) + var(--safe-area-inset-left));
+    padding-right: calc(var(--space-3) + var(--safe-area-inset-right));
   }
 }
 
 #content {
-  min-height: 100vh;
+  flex: 1;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  width: 100%;
 }
 
 
-/* ═════════════════════════════════════════════════════════════════════
-   ────────────────────────────────────────────────────────────────────
-   4. TOPBAR
-   ────────────────────────────────────────────────────────────────────── */
+/* ════════════════════════════════════════════════════════════════
+   4. TOPBAR (Safe Area Aware)
+   ════════════════════════════════════════════════════════════════ */
 
 .topbar {
   position: sticky;
   top: 0;
   z-index: 50;
-  background: rgba(247, 244, 237, 0.85);
+  background: rgba(247, 244, 237, 0.95);
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
   border-bottom: 1px solid var(--border);
   padding: var(--space-3) var(--space-4);
+  padding-top: calc(var(--space-3) + var(--safe-area-inset-top));
+  padding-left: calc(var(--space-4) + var(--safe-area-inset-left));
+  padding-right: calc(var(--space-4) + var(--safe-area-inset-right));
   display: flex;
   align-items: center;
   gap: var(--space-3);
+  min-height: 56px; /* Touch target minimum */
 }
 
 .topbar-row {
@@ -277,6 +368,7 @@ a:hover { color: var(--teal); }
   width: 40px;
   height: 40px;
   flex-shrink: 0;
+  -webkit-user-select: none;
 }
 
 .topbar h1 {
@@ -294,15 +386,14 @@ a:hover { color: var(--teal); }
 
 @media (prefers-color-scheme: dark) {
   .topbar {
-    background: rgba(28, 36, 32, 0.85);
+    background: rgba(28, 36, 32, 0.95);
   }
 }
 
 
-/* ═════════════════════════════════════════════════════════════════════
-   ────────────────────────────────────────────────────────────────────
-   5. CARDS
-   ────────────────────────────────────────────────────────────────────── */
+/* ════════════════════════════════════════════════════════════════
+   5. CARDS (Mobile Touch-Friendly)
+   ════════════════════════════════════════════════════════════════ */
 
 .card {
   background: var(--bg-card);
@@ -312,10 +403,12 @@ a:hover { color: var(--teal); }
   box-shadow: var(--shadow-xs);
   transition: box-shadow var(--duration-base) var(--ease-out),
               transform var(--duration-base) var(--ease-out);
+  -webkit-user-select: text;
 }
 
-.card:hover {
+.card:active {
   box-shadow: var(--shadow-sm);
+  transform: scale(0.98);
 }
 
 .card-label {
@@ -325,6 +418,7 @@ a:hover { color: var(--teal); }
   text-transform: uppercase;
   color: var(--text-muted);
   margin-bottom: var(--space-2);
+  -webkit-user-select: none;
 }
 
 .card-main {
@@ -342,7 +436,7 @@ a:hover { color: var(--teal); }
   margin-top: var(--space-2);
 }
 
-/* Coloured cards – left edge accent, no full-fill (less visually loud) */
+/* Coloured cards – left edge accent */
 .card.teal {
   background: linear-gradient(135deg, var(--teal-l) 0%, var(--bg-card) 80%);
   border-color: var(--teal);
@@ -370,16 +464,17 @@ a:hover { color: var(--teal); }
 }
 
 
-/* ═════════════════════════════════════════════════════════════════════
-   ────────────────────────────────────────────────────────────────────
-   6. BUTTONS
-   ────────────────────────────────────────────────────────────────────── */
+/* ════════════════════════════════════════════════════════════════
+   6. BUTTONS (Touch-Optimized, 48px minimum)
+   ════════════════════════════════════════════════════════════════ */
 
 .btn {
   display: flex;
   align-items: center;
+  justify-content: center;
   gap: var(--space-3);
   width: 100%;
+  min-height: 48px; /* Touch target minimum (WCAG) */
   padding: var(--space-3) var(--space-5);
   background: var(--bg-card);
   border: 1.5px solid var(--border);
@@ -389,22 +484,20 @@ a:hover { color: var(--teal); }
   font-size: var(--text-sm);
   font-weight: 600;
   letter-spacing: -0.005em;
-  text-align: left;
+  text-align: center;
   cursor: pointer;
   margin-bottom: var(--space-2);
   transition: all var(--duration-base) var(--ease-out);
   box-shadow: var(--shadow-xs);
-}
-
-.btn:hover {
-  border-color: var(--border-strong);
-  box-shadow: var(--shadow-sm);
-  transform: translateY(-1px);
+  -webkit-user-select: none;
+  -webkit-appearance: none;
+  appearance: none;
 }
 
 .btn:active {
-  transform: translateY(0);
+  transform: scale(0.97);
   box-shadow: var(--shadow-xs);
+  opacity: 0.9;
 }
 
 .btn:focus-visible {
@@ -417,6 +510,7 @@ a:hover { color: var(--teal); }
   font-size: 18px;
   flex-shrink: 0;
   color: var(--text-secondary);
+  pointer-events: none; /* Prevent icon tap issues */
 }
 
 .btn.primary {
@@ -424,7 +518,7 @@ a:hover { color: var(--teal); }
   border-color: var(--teal);
   color: var(--text-inverse);
 }
-.btn.primary:hover { background: var(--teal-d); border-color: var(--teal-d); }
+.btn.primary:active { background: var(--teal-d); border-color: var(--teal-d); }
 .btn.primary i.ti { color: var(--text-inverse); }
 
 .btn.teal {
@@ -464,16 +558,16 @@ a:hover { color: var(--teal); }
 .btn.peach i.ti { color: var(--peach); }
 
 
-/* ═════════════════════════════════════════════════════════════════════
-   ────────────────────────────────────────────────────────────────────
+/* ════════════════════════════════════════════════════════════════
    7. NOTICES & ALERTS
-   ────────────────────────────────────────────────────────────────────── */
+   ════════════════════════════════════════════════════════════════ */
 
 .notice {
   padding: var(--space-4) var(--space-5);
   border-radius: var(--r-md);
   font-size: var(--text-sm);
   line-height: var(--leading-normal);
+  -webkit-user-select: text;
 }
 
 .notice.green {
@@ -491,26 +585,31 @@ a:hover { color: var(--teal); }
 .notice.amber strong { color: var(--amber-d); }
 
 
-/* ═════════════════════════════════════════════════════════════════════
-   ────────────────────────────────────────────────────────────────────
-   8. NAVIGATION & TABS
-   ────────────────────────────────────────────────────────────────────── */
+/* ════════════════════════════════════════════════════════════════
+   8. NAVIGATION & TABS (Safe Area + Touch)
+   ════════════════════════════════════════════════════════════════ */
 
 .nav {
   display: grid;
   grid-template-columns: repeat(7, 1fr);
   gap: var(--space-2);
   padding: var(--space-3);
+  padding-bottom: calc(var(--space-3) + var(--safe-area-inset-bottom));
   background: var(--bg-card);
   border-top: 1px solid var(--border);
+  width: 100%;
+  min-height: 60px;
+  -webkit-user-select: none;
 }
 
 .nav button {
   display: flex;
   flex-direction: column;
   align-items: center;
+  justify-content: center;
   gap: var(--space-1);
   padding: var(--space-2);
+  min-height: 48px; /* Touch target minimum */
   font-size: var(--text-xs);
   color: var(--text-secondary);
   background: none;
@@ -518,11 +617,14 @@ a:hover { color: var(--teal); }
   cursor: pointer;
   transition: all var(--duration-fast) var(--ease-out);
   border-radius: var(--r-sm);
+  -webkit-appearance: none;
+  appearance: none;
 }
 
-.nav button:hover {
+.nav button:active {
   color: var(--text-primary);
   background: var(--bg-sunken);
+  transform: scale(0.95);
 }
 
 .nav button.active {
@@ -532,6 +634,7 @@ a:hover { color: var(--teal); }
 
 .nav button i {
   font-size: 20px;
+  pointer-events: none;
 }
 
 @media (max-width: 480px) {
@@ -539,18 +642,20 @@ a:hover { color: var(--teal); }
     grid-template-columns: repeat(7, 1fr);
     gap: var(--space-1);
     padding: var(--space-2);
+    padding-bottom: calc(var(--space-2) + var(--safe-area-inset-bottom));
+    min-height: 56px;
   }
   .nav button {
     font-size: 10px;
     gap: 0;
+    padding: var(--space-1);
   }
 }
 
 
-/* ═════════════════════════════════════════════════════════════════════
-   ────────────────────────────────────────────────────────────────────
+/* ════════════════════════════════════════════════════════════════
    9. SECTIONS & LABELS
-   ────────────────────────────────────────────────────────────────────── */
+   ════════════════════════════════════════════════════════════════ */
 
 .section-label {
   display: flex;
@@ -563,17 +668,18 @@ a:hover { color: var(--teal); }
   color: var(--text-secondary);
   text-transform: uppercase;
   letter-spacing: 0.05em;
+  -webkit-user-select: none;
 }
 
 .section-label i {
   flex-shrink: 0;
+  pointer-events: none;
 }
 
 
-/* ═════════════════════════════════════════════════════════════════════
-   ────────────────────────────────────────────────────────────────────
-   10. TASKS & ITEMS
-   ────────────────────────────────────────────────────────────────────── */
+/* ════════════════════════════════════════════════════════════════
+   10. TASKS & ITEMS (Touch-Friendly)
+   ════════════════════════════════════════════════════════════════ */
 
 .task-row {
   display: flex;
@@ -581,6 +687,8 @@ a:hover { color: var(--teal); }
   align-items: flex-start;
   padding: var(--space-2) 0;
   border-bottom: 1px solid var(--border);
+  min-height: 44px; /* Touch target */
+  -webkit-user-select: none;
 }
 
 .task-row:last-child {
@@ -588,9 +696,9 @@ a:hover { color: var(--teal); }
 }
 
 .task-check {
-  width: 20px;
-  height: 20px;
-  min-width: 20px;
+  width: 24px;
+  height: 24px;
+  min-width: 24px;
   border: 2px solid;
   border-radius: 4px;
   cursor: pointer;
@@ -598,11 +706,15 @@ a:hover { color: var(--teal); }
   align-items: center;
   justify-content: center;
   transition: all var(--duration-fast) var(--ease-out);
-  margin-top: 2px;
+  margin-top: var(--space-1);
+  flex-shrink: 0;
+  -webkit-appearance: none;
+  appearance: none;
+  -webkit-user-select: none;
 }
 
-.task-check:hover {
-  background: var(--bg-sunken);
+.task-check:active {
+  transform: scale(0.9);
 }
 
 .task-check.done {
@@ -613,6 +725,7 @@ a:hover { color: var(--teal); }
 
 .task-check i {
   font-size: 12px;
+  pointer-events: none;
 }
 
 .task-text {
@@ -621,6 +734,7 @@ a:hover { color: var(--teal); }
   font-weight: 500;
   color: var(--text-primary);
   line-height: var(--leading-normal);
+  -webkit-user-select: text;
 }
 
 .task-text.done {
@@ -636,10 +750,9 @@ a:hover { color: var(--teal); }
 }
 
 
-/* ═════════════════════════════════════════════════════════════════════
-   ────────────────────────────────────────────────────────────────────
-   11. MOOD BUTTONS & PICKER
-   ────────────────────────────────────────────────────────────────────── */
+/* ════════════════════════════════════════════════════════════════
+   11. MOOD BUTTONS & PICKER (Touch-Optimized)
+   ════════════════════════════════════════════════════════════════ */
 
 .mood-btn {
   display: flex;
@@ -653,20 +766,22 @@ a:hover { color: var(--teal); }
   transition: all var(--duration-fast) var(--ease-out);
   align-items: center;
   text-align: center;
-}
-
-.mood-btn:hover {
-  background: var(--bg-card);
-  box-shadow: var(--shadow-sm);
-  transform: translateY(-2px);
+  min-height: 80px; /* Touch-friendly */
+  min-width: 70px;
+  -webkit-appearance: none;
+  appearance: none;
+  -webkit-user-select: none;
 }
 
 .mood-btn:active {
-  transform: translateY(0);
+  background: var(--bg-card);
+  box-shadow: var(--shadow-sm);
+  transform: scale(0.95);
 }
 
 .mood-btn i {
   font-size: 22px;
+  pointer-events: none;
 }
 
 .mood-btn span {
@@ -676,10 +791,9 @@ a:hover { color: var(--teal); }
 }
 
 
-/* ═════════════════════════════════════════════════════════════════════
-   ────────────────────────────────────────────────────────────────────
-   12. UTILITIES & HELPERS
-   ────────────────────────────────────────────────────────────────────── */
+/* ════════════════════════════════════════════════════════════════
+   12. UTILITIES & HELPERS (Mobile Optimized)
+   ════════════════════════════════════════════════════════════════ */
 
 .sr-only {
   position: absolute;
@@ -693,13 +807,13 @@ a:hover { color: var(--teal); }
   border-width: 0;
 }
 
-/* Performance: use will-change sparingly for animated elements */
+/* Performance: use will-change sparingly */
 .card {
   will-change: auto;
 }
 
-.card:hover {
-  will-change: box-shadow, transform;
+.card:active {
+  will-change: transform;
 }
 
 /* Reduce motion for users who prefer it */
@@ -709,4 +823,53 @@ a:hover { color: var(--teal); }
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
   }
+}
+
+/* Landscape mode adjustments */
+@media (max-height: 500px) and (orientation: landscape) {
+  .screen {
+    padding-top: var(--space-2);
+    padding-bottom: var(--space-2);
+  }
+  .nav {
+    min-height: 50px;
+  }
+  .nav button {
+    min-height: 40px;
+  }
+}
+
+/* Large phone/tablet adjustments */
+@media (min-width: 768px) {
+  .screen {
+    max-width: 720px;
+    margin: 0 auto;
+  }
+}
+
+/* Notch/dynamic island safe area awareness */
+@supports (padding: max(0px)) {
+  body {
+    padding-top: max(var(--space-3), env(safe-area-inset-top));
+    padding-bottom: max(var(--space-3), env(safe-area-inset-bottom));
+  }
+}
+
+/* Prevent scrollbar on iOS */
+html {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+html::-webkit-scrollbar {
+  display: none;
+}
+
+/* Haptic feedback class (use on interactive elements) */
+.haptic {
+  transition: all var(--haptic-duration) ease-out;
+}
+
+.haptic:active {
+  opacity: 0.7;
 }
