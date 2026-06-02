@@ -1,63 +1,1900 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Bowline — A calmer way through your day</title>
-  <meta name="description" content="A daily support app for ADHD, autism, AuDHD, dyslexia, dyspraxia, executive dysfunction, and burnout." />
-  <meta name="theme-color" content="#3F8F73" />
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, maximum-scale=1.0, user-scalable=no" />
+<meta name="theme-color" content="#0D0B14" />
+<meta name="apple-mobile-web-app-capable" content="yes" />
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+<meta name="apple-mobile-web-app-title" content="FORGE" />
+<title>FORGE — Forge the self</title>
+<link rel="manifest" href="manifest.json" />
+<link rel="apple-touch-icon" href="icon-192.png" />
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;0,9..144,600;1,9..144,400;1,9..144,500&family=Hanken+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#0D0B14;
+  --bg-2:#110E1A;
+  --surface:#17131F;
+  --surface-2:#1E1829;
+  --line:#2C2440;
+  --line-soft:#221C30;
+  --bronze:#A78BFA;
+  --bronze-hi:#C4B5FD;
+  --bronze-deep:#7C3AED;
+  --ember:#F472B6;
+  --sage:#34D399;
+  --text:#F1ECF9;
+  --text-2:#B8AECB;
+  --text-3:#7E748F;
+  --radius:20px;
+  --radius-s:14px;
+  --shadow:0 18px 40px -20px rgba(0,0,0,.8);
+  --ease:cubic-bezier(.22,.61,.36,1);
+}
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{height:100%}
+body{
+  font-family:"Hanken Grotesk",sans-serif;
+  background:var(--bg);
+  color:var(--text);
+  overflow-x:hidden;
+  -webkit-font-smoothing:antialiased;
+  text-rendering:optimizeLegibility;
+}
+/* atmospheric background */
+body::before{
+  content:"";position:fixed;inset:0;z-index:-2;
+  background:
+    radial-gradient(120% 80% at 50% -10%, rgba(167,139,250,.13), transparent 60%),
+    radial-gradient(90% 70% at 8% 15%, rgba(34,211,238,.07), transparent 55%),
+    radial-gradient(90% 60% at 100% 110%, rgba(244,114,182,.07), transparent 55%),
+    linear-gradient(180deg,var(--bg),var(--bg-2));
+}
+body::after{
+  content:"";position:fixed;inset:0;z-index:-1;pointer-events:none;opacity:.05;mix-blend-mode:overlay;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+.app{max-width:520px;margin:0 auto;min-height:100%;padding:0 18px calc(96px + env(safe-area-inset-bottom));position:relative}
 
-  <!-- Favicons -->
-  <link rel="icon" type="image/png" sizes="32x32"   href="src/assets/bowline-icon.png" />
-  <link rel="icon" type="image/png" sizes="192x192" href="src/assets/bowline-icon.png" />
-  <link rel="apple-touch-icon" sizes="180x180"      href="src/assets/bowline-icon.png" />
+/* ---------- header ---------- */
+header{padding:calc(env(safe-area-inset-top) + 22px) 2px 8px;display:flex;align-items:center;justify-content:space-between}
+.brand{display:flex;align-items:center;gap:11px}
+.brand .mark{width:34px;height:34px;flex:none}
+.brand h1{font-family:"Fraunces";font-weight:500;font-size:22px;letter-spacing:.22em;padding-left:.22em}
+.brand .sub{font-size:10.5px;letter-spacing:.34em;color:var(--text-3);text-transform:uppercase;margin-top:1px}
+.install-btn{font-family:"Hanken Grotesk";font-size:12px;font-weight:600;color:var(--bronze-hi);background:rgba(167,139,250,.10);border:1px solid rgba(167,139,250,.3);padding:7px 13px;border-radius:100px;display:none}
+.install-btn.show{display:block}
 
-  <!-- Open Graph (social sharing) -->
-  <meta property="og:title"       content="Bowline — A calmer way through your day" />
-  <meta property="og:description" content="Daily support for neurodivergent users. Structure when you need it. Never trapped by it." />
-  <meta property="og:image"       content="src/assets/bowline-lockup.png" />
-  <meta property="og:type"        content="website" />
+/* ---------- view system ---------- */
+.view{display:none;animation:rise .5s var(--ease) both}
+.view.active{display:block}
+@keyframes rise{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
+.stagger>*{animation:rise .55s var(--ease) both}
+.stagger>*:nth-child(1){animation-delay:.03s}
+.stagger>*:nth-child(2){animation-delay:.08s}
+.stagger>*:nth-child(3){animation-delay:.13s}
+.stagger>*:nth-child(4){animation-delay:.18s}
+.stagger>*:nth-child(5){animation-delay:.23s}
+.stagger>*:nth-child(6){animation-delay:.28s}
+.stagger>*:nth-child(7){animation-delay:.33s}
+.stagger>*:nth-child(8){animation-delay:.38s}
 
-  <!-- Fonts + icons -->
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css" />
+/* ---------- cards ---------- */
+.card{background:linear-gradient(180deg,var(--surface),var(--surface-2));border:1px solid var(--line-soft);border-radius:var(--radius);padding:18px;margin-bottom:14px;box-shadow:var(--shadow);position:relative;overflow:hidden}
+.card-h{display:flex;align-items:center;gap:9px;margin-bottom:14px}
+.card-h .ico{width:18px;height:18px;color:var(--bronze);flex:none}
+.card-h h2{font-family:"Hanken Grotesk";font-weight:700;font-size:13px;letter-spacing:.16em;text-transform:uppercase;color:var(--text-2)}
+.eyebrow{font-size:10.5px;letter-spacing:.3em;text-transform:uppercase;color:var(--text-3);margin-bottom:6px}
 
-  <!-- App styles -->
-  <link rel="stylesheet" href="src/styles/main.css" />
+/* ---------- identity hero ---------- */
+.hero{background:
+   radial-gradient(120% 120% at 0% 0%, rgba(167,139,250,.14), transparent 55%),
+   linear-gradient(180deg,var(--surface),var(--surface-2));
+   border:1px solid var(--line);padding:22px 20px}
+.hero .date{font-family:"JetBrains Mono";font-size:11px;letter-spacing:.18em;color:var(--text-3);text-transform:uppercase}
+.hero .identity{font-family:"Fraunces";font-weight:500;font-size:24px;line-height:1.28;margin:10px 0 4px;letter-spacing:-.01em}
+.hero .identity .accent{color:var(--bronze-hi);font-style:italic}
+.hero .why{font-size:13.5px;color:var(--text-2);line-height:1.5;margin-top:6px}
+.hero .edit{position:absolute;top:16px;right:16px;color:var(--text-3);width:17px;height:17px}
+
+/* streak strip */
+.streak-strip{display:flex;gap:10px;margin-bottom:14px}
+.streak-strip .pill{flex:1;background:linear-gradient(180deg,var(--surface),var(--surface-2));border:1px solid var(--line-soft);border-radius:var(--radius-s);padding:13px 12px;text-align:center}
+.streak-strip .num{font-family:"Fraunces";font-weight:600;font-size:27px;line-height:1;color:var(--bronze-hi);display:flex;align-items:baseline;justify-content:center;gap:4px}
+.streak-strip .num.ember{color:var(--ember)}
+.streak-strip .lbl{font-size:10px;letter-spacing:.13em;text-transform:uppercase;color:var(--text-3);margin-top:7px}
+
+/* keystone */
+.keystone{padding:20px 18px;text-align:center;background:
+   radial-gradient(100% 140% at 50% 0%, rgba(244,114,182,.10), transparent 60%),
+   linear-gradient(180deg,var(--surface),var(--surface-2))}
+.keystone .q{font-family:"Fraunces";font-style:italic;font-size:14px;color:var(--text-2);margin-bottom:14px;line-height:1.4}
+.big-btn{width:100%;border:none;border-radius:16px;padding:17px;font-family:"Hanken Grotesk";font-weight:700;font-size:16px;letter-spacing:.02em;color:#160F22;background:linear-gradient(120deg,#C4B5FD,#A78BFA 55%,#F0ABFC);box-shadow:0 12px 28px -8px rgba(167,139,250,.55);transition:transform .15s var(--ease),filter .2s;cursor:pointer}
+.big-btn:active{transform:scale(.97)}
+.big-btn.done{background:linear-gradient(180deg,#102A20,#0E2419);color:var(--sage);box-shadow:none;border:1px solid rgba(52,211,153,.4)}
+.big-btn .check{display:none}
+.big-btn.done .check{display:inline}
+.big-btn.done .label-go{display:none}
+.minlog{display:flex;gap:8px;margin-top:12px;justify-content:center}
+.minlog button{flex:1;background:var(--surface-2);border:1px solid var(--line);color:var(--text-2);border-radius:10px;padding:9px 0;font-size:12.5px;font-weight:600;font-family:inherit}
+.minlog button:active{transform:scale(.96)}
+.week-ring{display:flex;align-items:center;gap:12px;margin-top:14px;padding-top:14px;border-top:1px solid var(--line-soft)}
+.ring{width:46px;height:46px;flex:none}
+.week-ring .wtxt{text-align:left}
+.week-ring .wtxt b{font-family:"JetBrains Mono";font-size:14px;color:var(--text)}
+.week-ring .wtxt span{display:block;font-size:11px;color:var(--text-3);margin-top:2px}
+
+/* 3-3-3 meals */
+.meal{border:1px solid var(--line-soft);border-radius:var(--radius-s);padding:12px 13px;margin-bottom:10px;transition:border-color .3s,background .3s}
+.meal.full{border-color:rgba(52,211,153,.4);background:rgba(52,211,153,.06)}
+.meal-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px}
+.meal-top .name{font-weight:600;font-size:14px;display:flex;align-items:center;gap:8px}
+.meal-top .name .dot{width:7px;height:7px;border-radius:50%;background:var(--text-3);transition:background .3s}
+.meal.full .name .dot{background:var(--sage)}
+.meal-top .kc{font-family:"JetBrains Mono";font-size:11px;color:var(--text-3)}
+.chips{display:flex;gap:7px}
+.chip{flex:1;border:1px solid var(--line);background:var(--surface-2);border-radius:10px;padding:9px 4px;font-size:11.5px;font-weight:600;color:var(--text-3);display:flex;flex-direction:column;align-items:center;gap:4px;transition:all .2s var(--ease);cursor:pointer}
+.chip svg{width:16px;height:16px}
+.chip.on{color:#160F22;background:linear-gradient(180deg,var(--bronze-hi),var(--bronze));border-color:transparent}
+.chip:active{transform:scale(.94)}
+
+/* water */
+.water-grid{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:12px}
+.drop{width:calc((100% - 56px)/8);aspect-ratio:.78;border:1.5px solid var(--line);border-radius:0 50% 50% 50%;transform:rotate(45deg);transition:all .25s var(--ease);cursor:pointer;display:flex}
+.drop.on{background:linear-gradient(180deg,#22D3EE,#06B6D4);border-color:transparent;box-shadow:0 4px 12px -4px rgba(34,211,238,.6)}
+.drop:active{transform:rotate(45deg) scale(.85)}
+.water-meta{display:flex;justify-content:space-between;align-items:center}
+.water-meta .amt{font-family:"JetBrains Mono";font-size:20px;color:var(--text)}
+.water-meta .amt small{font-size:12px;color:var(--text-3)}
+.water-meta .deadline{font-size:11px;color:var(--text-3);text-align:right;line-height:1.4}
+.water-meta .deadline b{color:var(--ember)}
+.bar{height:6px;border-radius:4px;background:var(--surface-2);overflow:hidden;margin-top:10px}
+.bar i{display:block;height:100%;background:linear-gradient(90deg,#06B6D4,#22D3EE);border-radius:4px;transition:width .4s var(--ease)}
+
+/* stoic */
+.stoic{background:
+   radial-gradient(120% 100% at 100% 0%, rgba(167,139,250,.10), transparent 55%),
+   linear-gradient(180deg,var(--surface),var(--surface-2))}
+.stoic .tag{font-size:10px;letter-spacing:.26em;text-transform:uppercase;color:var(--bronze);margin-bottom:10px}
+.stoic .quote{font-family:"Fraunces";font-style:italic;font-size:19px;line-height:1.4;letter-spacing:-.01em}
+.stoic .who{font-size:12px;color:var(--text-3);margin-top:10px;font-family:"JetBrains Mono"}
+.stoic .prompt{font-size:13px;color:var(--text-2);margin-top:14px;padding-top:14px;border-top:1px solid var(--line-soft);line-height:1.5}
+
+/* reminders list (intentions/stacks) */
+.rem{display:flex;gap:11px;align-items:flex-start;padding:11px 0;border-bottom:1px solid var(--line-soft)}
+.rem:last-child{border-bottom:none}
+.rem .bar-i{width:3px;align-self:stretch;border-radius:3px;background:var(--bronze-deep);flex:none}
+.rem .txt{font-size:13.5px;line-height:1.45;color:var(--text)}
+.rem .txt .k{color:var(--bronze-hi);font-weight:600}
+.rem .txt small{display:block;color:var(--text-3);font-size:11px;margin-top:2px;letter-spacing:.02em}
+.empty{font-size:13px;color:var(--text-3);font-style:italic;text-align:center;padding:14px 0;font-family:"Fraunces"}
+
+/* checklist (environment) */
+.chk{display:flex;align-items:center;gap:12px;padding:11px 0;border-bottom:1px solid var(--line-soft);cursor:pointer}
+.chk:last-child{border-bottom:none}
+.box{width:22px;height:22px;border-radius:7px;border:1.5px solid var(--line);flex:none;display:flex;align-items:center;justify-content:center;transition:all .2s}
+.box svg{width:13px;height:13px;color:#160F22;opacity:0;transform:scale(.5);transition:all .2s}
+.chk.on .box{background:linear-gradient(180deg,var(--bronze-hi),var(--bronze));border-color:transparent}
+.chk.on .box svg{opacity:1;transform:scale(1)}
+.chk .l{font-size:14px;transition:color .2s}
+.chk.on .l{color:var(--text-3);text-decoration:line-through}
+
+/* forms / system editor */
+.field{margin-bottom:16px}
+.field label{display:block;font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:var(--text-3);margin-bottom:7px;font-weight:600}
+input[type=text],textarea,select{width:100%;background:var(--bg-2);border:1px solid var(--line);border-radius:12px;padding:13px 14px;color:var(--text);font-family:inherit;font-size:14.5px;resize:none}
+input::placeholder,textarea::placeholder{color:var(--text-3)}
+input:focus,textarea:focus,select:focus{outline:none;border-color:var(--bronze-deep)}
+textarea{line-height:1.5}
+.fill-row{display:flex;gap:8px;align-items:center;font-size:14px;flex-wrap:wrap}
+.fill-row .lead{color:var(--text-3);font-family:"Fraunces";font-style:italic;font-size:15px}
+.fill-row input{flex:1;min-width:120px}
+.ghost-btn{width:100%;background:var(--surface-2);border:1px dashed var(--line);color:var(--text-2);border-radius:12px;padding:12px;font-family:inherit;font-size:13.5px;font-weight:600;margin-top:4px;cursor:pointer}
+.ghost-btn:active{transform:scale(.98)}
+.solid-btn{width:100%;border:none;border-radius:14px;padding:15px;font-family:inherit;font-weight:700;font-size:15px;color:#160F22;background:linear-gradient(120deg,#C4B5FD,#A78BFA 55%,#F0ABFC);margin-top:6px;cursor:pointer}
+.solid-btn:active{transform:scale(.98)}
+.list-item{display:flex;justify-content:space-between;align-items:center;gap:10px;background:var(--bg-2);border:1px solid var(--line-soft);border-radius:12px;padding:12px 13px;margin-bottom:8px;font-size:13.5px;line-height:1.4}
+.list-item .del{color:var(--text-3);font-size:20px;flex:none;width:28px;height:28px;display:flex;align-items:center;justify-content:center}
+.list-item b{color:var(--bronze-hi)}
+
+/* progress / heatmap */
+.heat{display:grid;grid-template-columns:repeat(7,1fr);gap:6px;margin-top:6px}
+.heat .cell{aspect-ratio:1;border-radius:6px;background:var(--surface-2);border:1px solid var(--line-soft)}
+.heat .cell.l1{background:rgba(167,139,250,.22)}
+.heat .cell.l2{background:rgba(167,139,250,.45)}
+.heat .cell.l3{background:linear-gradient(180deg,var(--bronze-hi),var(--bronze))}
+.heat .cell.today{outline:1.5px solid var(--ember);outline-offset:1px}
+.dow{display:grid;grid-template-columns:repeat(7,1fr);gap:6px;margin-bottom:8px}
+.dow span{text-align:center;font-size:10px;color:var(--text-3);font-family:"JetBrains Mono"}
+.legend{display:flex;align-items:center;gap:6px;justify-content:flex-end;margin-top:12px;font-size:10px;color:var(--text-3)}
+.legend .cell{width:13px;height:13px;border-radius:4px;border:1px solid var(--line-soft)}
+.stat-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.stat-grid .s{background:var(--bg-2);border:1px solid var(--line-soft);border-radius:14px;padding:15px}
+.stat-grid .s .v{font-family:"Fraunces";font-weight:600;font-size:26px;color:var(--bronze-hi)}
+.stat-grid .s .k{font-size:11px;color:var(--text-3);text-transform:uppercase;letter-spacing:.1em;margin-top:4px}
+
+/* reflect */
+.refl-q{font-family:"Fraunces";font-style:italic;font-size:16px;color:var(--text);margin-bottom:10px;line-height:1.4}
+.disc-card{background:
+   radial-gradient(120% 100% at 0% 0%, rgba(244,114,182,.12), transparent 55%),
+   linear-gradient(180deg,var(--surface),var(--surface-2))}
+.disc-card .seg{display:inline-block;font-size:10px;letter-spacing:.26em;text-transform:uppercase;color:var(--ember);margin-bottom:8px}
+
+/* bottom nav */
+nav{position:fixed;left:0;right:0;bottom:0;z-index:40;
+  background:linear-gradient(180deg,rgba(13,11,20,.6),rgba(13,11,20,.96));
+  backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);
+  border-top:1px solid var(--line-soft);
+  padding:9px 0 calc(9px + env(safe-area-inset-bottom));}
+.nav-inner{max-width:520px;margin:0 auto;display:flex;justify-content:space-around}
+.tab{flex:1;background:none;border:none;color:var(--text-3);display:flex;flex-direction:column;align-items:center;gap:4px;padding:5px 0;font-family:inherit;font-size:9.5px;letter-spacing:.08em;text-transform:uppercase;font-weight:600;cursor:pointer;transition:color .2s}
+.tab svg{width:21px;height:21px;transition:transform .2s var(--ease)}
+.tab.active{color:var(--bronze-hi)}
+.tab.active svg{transform:translateY(-1px)}
+
+/* modal */
+.modal-wrap{position:fixed;inset:0;z-index:60;display:none;align-items:flex-end;justify-content:center;background:rgba(0,0,0,.6);backdrop-filter:blur(3px)}
+.modal-wrap.open{display:flex;animation:fade .25s}
+@keyframes fade{from{opacity:0}to{opacity:1}}
+.modal{width:100%;max-width:520px;background:var(--surface);border:1px solid var(--line);border-radius:24px 24px 0 0;padding:24px 20px calc(24px + env(safe-area-inset-bottom));animation:slideUp .3s var(--ease)}
+@keyframes slideUp{from{transform:translateY(100%)}to{transform:none}}
+.modal h3{font-family:"Fraunces";font-weight:500;font-size:22px;margin-bottom:6px}
+.modal p{font-size:13px;color:var(--text-2);margin-bottom:18px;line-height:1.5}
+
+/* toast */
+.toast{position:fixed;left:50%;top:calc(env(safe-area-inset-top) + 14px);transform:translateX(-50%) translateY(-120px);z-index:80;background:var(--surface-2);border:1px solid var(--line);box-shadow:var(--shadow);border-radius:100px;padding:11px 20px;font-size:13px;font-weight:600;color:var(--text);display:flex;align-items:center;gap:9px;transition:transform .45s var(--ease);max-width:90%}
+.toast.show{transform:translateX(-50%) translateY(0)}
+.toast svg{width:16px;height:16px;color:var(--bronze-hi);flex:none}
+
+/* confetti */
+.spark{position:fixed;width:8px;height:8px;z-index:90;pointer-events:none;border-radius:2px}
+
+section.divider{display:flex;align-items:center;gap:12px;margin:22px 2px 12px}
+section.divider .ln{height:1px;flex:1;background:var(--line-soft)}
+section.divider span{font-family:"Fraunces";font-style:italic;font-size:13px;color:var(--text-3)}
+
+.note{font-size:11.5px;color:var(--text-3);line-height:1.5;margin-top:8px}
+
+/* show-up timer */
+.timer-wrap{margin-top:14px;padding-top:14px;border-top:1px solid var(--line-soft)}
+.timer-face{display:flex;align-items:center;justify-content:center;gap:14px}
+.timer-ring{width:96px;height:96px;flex:none;position:relative}
+.timer-ring .tt{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center}
+.timer-ring .tt b{font-family:"JetBrains Mono";font-size:21px;color:var(--text);letter-spacing:.02em}
+.timer-ring .tt span{font-size:9px;letter-spacing:.16em;text-transform:uppercase;color:var(--text-3);margin-top:1px}
+.timer-ctrls{display:flex;flex-direction:column;gap:8px;flex:1}
+.timer-ctrls button{background:var(--surface-2);border:1px solid var(--line);color:var(--text);border-radius:11px;padding:11px;font-family:inherit;font-weight:600;font-size:13.5px}
+.timer-ctrls button.primary{background:linear-gradient(120deg,#C4B5FD,#A78BFA 55%,#F0ABFC);color:#160F22;border:none}
+.timer-ctrls button:active{transform:scale(.97)}
+.dur-pick{display:flex;gap:6px;margin-top:10px;justify-content:center}
+.dur-pick button{flex:1;background:none;border:1px solid var(--line);color:var(--text-3);border-radius:8px;padding:6px 0;font-family:"JetBrains Mono";font-size:11px}
+.dur-pick button.sel{border-color:var(--bronze);color:var(--bronze-hi)}
+
+/* secondary inline button */
+.lil-btn{width:100%;margin-top:10px;background:none;border:1px solid var(--line);color:var(--text-2);border-radius:12px;padding:11px;font-family:inherit;font-size:13px;font-weight:600;display:flex;align-items:center;justify-content:center;gap:8px}
+.lil-btn:active{transform:scale(.98)}
+.lil-btn svg{width:15px;height:15px;color:var(--bronze)}
+
+/* toggle switch */
+.tog{position:relative;width:46px;height:27px;flex:none;border-radius:100px;background:var(--surface-2);border:1px solid var(--line);transition:.25s var(--ease);cursor:pointer}
+.tog::after{content:"";position:absolute;top:2px;left:2px;width:21px;height:21px;border-radius:50%;background:var(--text-3);transition:.25s var(--ease)}
+.tog.on{background:linear-gradient(180deg,var(--bronze-hi),var(--bronze));border-color:transparent}
+.tog.on::after{transform:translateX(19px);background:#160F22}
+
+/* reminder rows */
+.rmd{display:flex;align-items:center;gap:12px;padding:13px 0;border-bottom:1px solid var(--line-soft)}
+.rmd:last-of-type{border-bottom:none}
+.rmd .info{flex:1;min-width:0}
+.rmd .info b{font-size:14px;font-weight:600;display:block}
+.rmd .info .meta{display:flex;align-items:center;gap:8px;margin-top:4px}
+.rmd .info input[type=time]{background:var(--bg-2);border:1px solid var(--line);border-radius:8px;color:var(--bronze-hi);font-family:"JetBrains Mono";font-size:13px;padding:4px 8px}
+.rmd .info .cal{font-size:11px;color:var(--text-3);display:inline-flex;align-items:center;gap:4px}
+.rmd .info .cal svg{width:12px;height:12px}
+.perm-banner{background:rgba(244,114,182,.08);border:1px solid rgba(244,114,182,.3);border-radius:12px;padding:13px;font-size:12.5px;color:var(--text-2);line-height:1.5;margin-bottom:14px}
+.perm-banner button{margin-top:10px}
+
+/* journal history */
+.jrn{background:var(--bg-2);border:1px solid var(--line-soft);border-radius:13px;padding:13px;margin-bottom:9px}
+.jrn .jd{font-family:"JetBrains Mono";font-size:10.5px;letter-spacing:.1em;color:var(--bronze);text-transform:uppercase;margin-bottom:7px;display:flex;justify-content:space-between;align-items:center}
+.jrn .jd .badges{display:flex;gap:4px}
+.jrn .jd .bg{font-size:13px}
+.jrn .seg2{font-size:13px;line-height:1.5;color:var(--text);margin-top:5px}
+.jrn .seg2 i{color:var(--text-3);font-style:normal;font-size:11px;text-transform:uppercase;letter-spacing:.08em;display:block;margin-bottom:2px}
+.jrn-empty{font-family:"Fraunces";font-style:italic;color:var(--text-3);text-align:center;padding:18px 0;font-size:14px}
+
+/* motivation modal big read */
+.mvt .quote{font-family:"Fraunces";font-style:italic;font-size:21px;line-height:1.38;color:var(--text);margin:4px 0 14px}
+.mvt .yo{background:var(--bg-2);border:1px solid var(--line-soft);border-radius:13px;padding:14px;margin-bottom:12px}
+.mvt .yo .lab{font-size:10px;letter-spacing:.24em;text-transform:uppercase;color:var(--bronze);margin-bottom:5px}
+.mvt .yo .v{font-family:"Fraunces";font-size:16px;line-height:1.4}
+.mvt .reframe{font-size:13.5px;color:var(--text-2);line-height:1.55;margin-bottom:16px}
+
+/* daily maxim showpiece */
+.maxim{background:
+   radial-gradient(120% 130% at 50% -20%, rgba(167,139,250,.16), transparent 58%),
+   radial-gradient(80% 60% at 50% 120%, rgba(244,114,182,.08), transparent 60%),
+   linear-gradient(180deg,#1A1430,#211934);
+   border:1px solid var(--line);text-align:center;padding:24px 20px 20px;position:relative;overflow:hidden}
+.maxim::before{content:"";position:absolute;left:24px;right:24px;top:0;height:1px;background:linear-gradient(90deg,transparent,var(--bronze),transparent)}
+.maxim .orn{font-family:"Fraunces";color:var(--bronze);font-size:15px;letter-spacing:.5em;padding-left:.5em;opacity:.8;margin-bottom:6px}
+.maxim .day{font-family:"JetBrains Mono";font-size:9.5px;letter-spacing:.32em;text-transform:uppercase;color:var(--text-3);margin-bottom:16px}
+.maxim .latin{font-family:"Fraunces";font-style:italic;font-weight:500;font-size:25px;line-height:1.3;letter-spacing:-.01em;color:var(--bronze-hi);
+  background:linear-gradient(115deg,#C4B5FD,#F0ABFC 48%,#F472B6);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;
+  padding:0 4px}
+.maxim .trans{font-family:"Fraunces";font-size:15.5px;color:var(--text);line-height:1.4;margin-top:12px}
+.maxim .who{font-family:"JetBrains Mono";font-size:11px;color:var(--text-3);margin-top:9px}
+.maxim .gloss{margin-top:16px;padding-top:15px;border-top:1px solid var(--line-soft);text-align:left}
+.maxim .gl-tag{display:inline-block;font-size:9.5px;letter-spacing:.22em;text-transform:uppercase;color:var(--ember);margin-bottom:7px;font-weight:700}
+.maxim .note{font-size:13px;color:var(--text-2);line-height:1.55;margin:0}
+.maxim .another{margin-top:16px;background:none;border:1px solid var(--line);color:var(--text-3);border-radius:100px;padding:8px 18px;font-family:inherit;font-size:12px;font-weight:600;letter-spacing:.04em;display:inline-flex;align-items:center;gap:7px;cursor:pointer;transition:.2s}
+.maxim .another:active{transform:scale(.95);border-color:var(--bronze-deep);color:var(--bronze-hi)}
+.maxim.flip .latin,.maxim.flip .trans,.maxim.flip .who,.maxim.flip .gloss{animation:maximIn .55s var(--ease) both}
+@keyframes maximIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+
+/* maxim favourite star */
+.maxim .star{position:absolute;top:16px;right:16px;width:30px;height:30px;border:none;background:rgba(0,0,0,.2);border-radius:50%;display:flex;align-items:center;justify-content:center;cursor:pointer;z-index:2}
+.maxim .star svg{width:17px;height:17px;color:var(--text-3);transition:.2s var(--ease);fill:none;stroke:currentColor;stroke-width:1.7}
+.maxim .star.on svg{color:var(--bronze-hi);fill:var(--bronze-hi)}
+.maxim .star:active{transform:scale(.88)}
+
+/* recovery banner (never miss twice) */
+.recover{display:none;border-radius:var(--radius);padding:16px 18px;margin-bottom:14px;border:1px solid;position:relative;overflow:hidden}
+.recover.show{display:block;animation:rise .5s var(--ease) both}
+.recover.soft{background:rgba(167,139,250,.08);border-color:rgba(167,139,250,.32)}
+.recover.hard{background:rgba(244,114,182,.1);border-color:rgba(244,114,182,.42)}
+.recover .rt{font-family:"Fraunces";font-style:italic;font-size:17px;line-height:1.32;margin-bottom:5px}
+.recover.soft .rt{color:var(--bronze-hi)}.recover.hard .rt{color:var(--ember)}
+.recover .rb{font-size:13px;color:var(--text-2);line-height:1.5}
+
+/* rank bar */
+.rankbar{display:flex;align-items:center;gap:13px;padding:14px 16px;margin-bottom:14px;background:linear-gradient(180deg,var(--surface),var(--surface-2));border:1px solid var(--line-soft);border-radius:var(--radius-s)}
+.rankbar .crest{width:40px;height:40px;flex:none}
+.rankbar .ri{flex:1;min-width:0}
+.rankbar .ri .rn{font-family:"Fraunces";font-weight:600;font-size:17px;color:var(--bronze-hi);line-height:1}
+.rankbar .ri .rn small{font-family:"Hanken Grotesk";font-weight:500;color:var(--text-3);font-size:11.5px;font-style:normal}
+.rankbar .rp{height:5px;border-radius:3px;background:var(--bg-2);margin-top:9px;overflow:hidden}
+.rankbar .rp i{display:block;height:100%;background:linear-gradient(90deg,var(--bronze-deep),var(--bronze-hi));border-radius:3px;transition:width .5s var(--ease)}
+.rankbar .nxt{font-size:10.5px;color:var(--text-3);margin-top:6px;letter-spacing:.02em}
+
+/* ladder */
+.ladder .lr{display:flex;align-items:center;gap:12px;padding:9px 0;border-bottom:1px solid var(--line-soft)}
+.ladder .lr:last-child{border-bottom:none}
+.ladder .lr .lc{width:22px;height:22px;flex:none;opacity:.4}
+.ladder .lr.done .lc{opacity:1}
+.ladder .lr.cur{background:rgba(167,139,250,.06);margin:0 -10px;padding-left:10px;padding-right:10px;border-radius:8px}
+.ladder .lr .ln2{flex:1}
+.ladder .lr .ln2 b{font-family:"Fraunces";font-weight:500;font-size:15px}
+.ladder .lr.done .ln2 b{color:var(--bronze-hi)}
+.ladder .lr .ln2 span{display:block;font-size:11px;color:var(--text-3)}
+.ladder .lr .lt{font-family:"JetBrains Mono";font-size:11px;color:var(--text-3)}
+.ladder .lr.cur .lt{color:var(--ember)}
+
+/* charts */
+.chart{margin-top:6px}
+.chart + .chart{margin-top:20px}
+.chart .ct{font-size:11.5px;font-weight:600;color:var(--text-2);letter-spacing:.04em;margin-bottom:12px;display:flex;justify-content:space-between}
+.chart .ct .cv{color:var(--text-3);font-family:"JetBrains Mono";font-weight:400}
+.bars{display:flex;align-items:flex-end;gap:6px;height:104px;position:relative}
+.bars .col{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;gap:5px;height:100%}
+.bars .col .bk{width:100%;max-width:26px;flex:1;align-self:center;background:var(--surface-2);border-radius:5px 5px 0 0;position:relative;overflow:hidden;min-height:2px}
+.bars .col .bk i{position:absolute;left:0;right:0;bottom:0;background:linear-gradient(180deg,var(--bronze-hi),var(--bronze-deep));border-radius:5px 5px 0 0}
+.bars .col.hit .bk i{background:linear-gradient(180deg,var(--sage),#059669)}
+.bars .col .lx{font-size:8.5px;color:var(--text-3);font-family:"JetBrains Mono"}
+.target-line{position:absolute;left:0;right:0;border-top:1px dashed rgba(167,139,250,.5);pointer-events:none}
+.target-line span{position:absolute;right:0;top:-14px;font-size:8.5px;color:var(--bronze);font-family:"JetBrains Mono"}
+.hbar{display:flex;align-items:center;gap:10px;margin-bottom:11px}
+.hbar .hl{width:74px;font-size:12px;color:var(--text-2);flex:none}
+.hbar .ht{flex:1;height:9px;border-radius:5px;background:var(--bg-2);overflow:hidden}
+.hbar .ht i{display:block;height:100%;border-radius:5px;background:linear-gradient(90deg,var(--bronze-deep),var(--bronze-hi))}
+.hbar .hp{width:38px;text-align:right;font-family:"JetBrains Mono";font-size:12px;color:var(--bronze-hi);flex:none}
+.insight{margin-top:14px;padding:13px;background:var(--bg-2);border:1px solid var(--line-soft);border-radius:12px;font-size:12.5px;line-height:1.55;color:var(--text-2)}
+.insight b{color:var(--bronze-hi)}
+
+/* saved maxims */
+.saved{background:var(--bg-2);border:1px solid var(--line-soft);border-radius:13px;padding:13px 14px;margin-bottom:9px;position:relative}
+.saved .sl{font-family:"Fraunces";font-style:italic;font-size:15.5px;color:var(--bronze-hi);line-height:1.32;padding-right:24px}
+.saved .se{font-size:12.5px;color:var(--text);margin-top:5px;line-height:1.4}
+.saved .sw{font-family:"JetBrains Mono";font-size:10px;color:var(--text-3);margin-top:6px}
+.saved .unstar{position:absolute;top:11px;right:11px;color:var(--text-3);width:24px;height:24px;display:flex;align-items:center;justify-content:center;font-size:16px}
+
+/* ---- anchor / steady section ---- */
+.breathe-card{text-align:center}
+.breath-stage{height:196px;display:flex;align-items:center;justify-content:center;position:relative;margin:4px 0 14px}
+.breath-orb{width:118px;height:118px;border-radius:50%;background:radial-gradient(circle at 36% 30%, rgba(52,211,153,.75), rgba(52,211,153,.12));border:1px solid rgba(52,211,153,.45);transform:scale(.55);transition:transform 4s cubic-bezier(.4,0,.4,1);box-shadow:0 0 70px -12px rgba(52,211,153,.55)}
+.breath-word{position:absolute;font-family:'Fraunces';font-style:italic;font-size:18px;color:var(--text);letter-spacing:.01em}
+.worth-item{display:flex;gap:10px;align-items:flex-start;background:var(--bg-2);border:1px solid var(--line-soft);border-radius:12px;padding:11px 12px;margin-bottom:8px}
+.worth-item .bd{flex:1}
+.worth-item .wd{font-family:'JetBrains Mono';font-size:9px;color:var(--bronze);letter-spacing:.1em;margin-bottom:3px;text-transform:uppercase}
+.worth-item .wt{font-size:13.5px;line-height:1.45;color:var(--text)}
+.worth-item .wx{color:var(--text-3);font-size:17px;flex:none;width:24px;text-align:center}
+.resources{margin-top:16px;padding:14px;border-radius:12px;background:rgba(244,114,182,.07);border:1px solid rgba(244,114,182,.28);font-size:12.5px;line-height:1.6;color:var(--text-2)}
+.resources b{color:var(--ember)}
+.trust-show{margin-top:12px;padding:13px;border-radius:12px;background:var(--bg-2);border:1px solid var(--line-soft);font-size:14px;line-height:1.5}
+.trust-show b{color:var(--bronze-hi)}.trust-show a{color:var(--bronze-hi);text-decoration:none}
+
+/* ---- codex reader ---- */
+.header-actions{display:flex;align-items:center;gap:8px}
+.codex-btn{width:34px;height:34px;border-radius:50%;border:1px solid var(--line);background:var(--surface-2);display:flex;align-items:center;justify-content:center}
+.codex-btn svg{width:17px;height:17px;color:var(--bronze-hi)}
+.codex-wrap{position:fixed;inset:0;z-index:70;background:var(--bg);display:none;overflow-y:auto}
+.codex-wrap.open{display:block;animation:fade .25s}
+.codex{max-width:520px;margin:0 auto;min-height:100%;padding:0 18px calc(40px + env(safe-area-inset-bottom))}
+.codex-bar{position:sticky;top:0;background:linear-gradient(180deg,var(--bg),rgba(13,11,20,.88));backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);display:flex;align-items:center;justify-content:space-between;padding:calc(env(safe-area-inset-top) + 16px) 2px 12px;z-index:2;border-bottom:1px solid var(--line-soft);margin-bottom:18px}
+.codex-bar .ttl{font-family:'Fraunces';font-size:16px;letter-spacing:.06em}
+.codex-bar button{background:none;border:none;color:var(--text-2);font-family:inherit;font-size:14.5px;font-weight:600;display:flex;align-items:center;gap:4px;cursor:pointer}
+.codex-bar .x{font-size:25px;color:var(--text-3);line-height:1}
+.reading-item{background:linear-gradient(180deg,var(--surface),var(--surface-2));border:1px solid var(--line-soft);border-radius:var(--radius);padding:18px;margin-bottom:12px;cursor:pointer;transition:border-color .2s}
+.reading-item:active{border-color:var(--bronze-deep)}
+.reading-item .yr{font-family:'JetBrains Mono';font-size:10px;color:var(--bronze);letter-spacing:.12em;margin-bottom:8px}
+.reading-item h3{font-family:'Fraunces';font-weight:500;font-size:20px;margin-bottom:4px}
+.reading-item p{font-size:13px;color:var(--text-3);line-height:1.45}
+.article{animation:rise .4s var(--ease) both}
+.article .at{font-family:'Fraunces';font-weight:500;font-size:26px;line-height:1.2;margin-bottom:6px;letter-spacing:-.01em}
+.article .asub{font-family:'JetBrains Mono';font-size:10.5px;color:var(--bronze);letter-spacing:.1em;margin-bottom:20px;text-transform:uppercase}
+.article h3{font-family:'Fraunces';font-weight:600;font-size:17px;color:var(--bronze-hi);margin:24px 0 8px}
+.article p{font-size:14.5px;line-height:1.64;color:var(--text-2);margin-bottom:12px}
+.article p b,.article li b{color:var(--text)}
+.article ul{margin:0 0 12px;padding:0;list-style:none}
+.article li{font-size:14px;line-height:1.56;color:var(--text-2);margin-bottom:10px;padding-left:18px;position:relative}
+.article li::before{content:"";position:absolute;left:2px;top:9px;width:5px;height:5px;border-radius:50%;background:var(--bronze)}
+.article .pull{font-family:'Fraunces';font-style:italic;font-size:18px;color:var(--text);border-left:2px solid var(--bronze-deep);padding-left:14px;margin:18px 0;line-height:1.42}
+</style>
 </head>
 <body>
-
-  <div class="app" id="app">
-    <div class="topbar">
-      <div id="topbar-content"></div>
+<div class="app">
+  <header>
+    <div class="brand">
+      <svg class="mark" viewBox="0 0 40 40" fill="none">
+        <circle cx="20" cy="20" r="18.5" stroke="#7C3AED" stroke-width="1.2"/>
+        <circle cx="20" cy="20" r="14.5" stroke="#2C2440" stroke-width="1"/>
+        <rect x="12" y="13" width="3.2" height="15" rx="1.2" fill="#A78BFA"/>
+        <rect x="18.4" y="10" width="3.2" height="18" rx="1.2" fill="#C4B5FD"/>
+        <rect x="24.8" y="13" width="3.2" height="15" rx="1.2" fill="#A78BFA"/>
+        <rect x="10" y="29.5" width="20" height="2.6" rx="1.3" fill="#7C3AED"/>
+      </svg>
+      <div>
+        <h1>FORGE</h1>
+        <div class="sub">Forge the self</div>
+      </div>
     </div>
-    <div class="content" id="content"></div>
-    <nav class="nav">
-      <button onclick="go('today')"     id="nb-today">    <i class="ti ti-sun"            aria-hidden="true"></i>Today</button>
-      <button onclick="go('now')"       id="nb-now">      <i class="ti ti-player-play"    aria-hidden="true"></i>Now</button>
-      <button onclick="go('plan')"      id="nb-plan">     <i class="ti ti-checklist"      aria-hidden="true"></i>Plan</button>
-      <button onclick="go('tldr')"      id="nb-tldr">     <i class="ti ti-message-2"      aria-hidden="true"></i>TL;DR</button>
-      <button onclick="go('reset')"     id="nb-reset">    <i class="ti ti-refresh"        aria-hidden="true"></i>Reset</button>
-      <button onclick="go('diagnosis')" id="nb-diagnosis"><i class="ti ti-map"            aria-hidden="true"></i>Journey</button>
-      <button onclick="go('me')"        id="nb-me">       <i class="ti ti-user"           aria-hidden="true"></i>Me</button>
-    </nav>
+    <div class="header-actions">
+      <button class="codex-btn" id="codexBtn" aria-label="Codex"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M4 5a2 2 0 0 1 2-2h13v17H6a2 2 0 0 0-2 2z"/><path d="M19 17H6a2 2 0 0 0-2 2"/></svg></button>
+      <button class="install-btn" id="installBtn">⤓ Install</button>
+    </div>
+  </header>
+
+  <!-- ============ TODAY ============ -->
+  <div class="view active" id="view-today">
+    <div class="stagger">
+      <div class="recover" id="recover"><div class="rt" id="recoverT"></div><div class="rb" id="recoverB"></div></div>
+
+      <div class="card hero">
+        <svg class="edit" id="editIdentity" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M12 20h9M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg>
+        <div class="date" id="todayDate">—</div>
+        <div class="identity" id="identityText">—</div>
+        <div class="why" id="whyText"></div>
+      </div>
+
+      <div class="card maxim" id="maximCard">
+        <button class="star" id="maximStar" aria-label="Favourite"><svg viewBox="0 0 24 24"><path d="M12 3.5l2.6 5.3 5.9.9-4.3 4.1 1 5.8L12 17l-5.2 2.6 1-5.8-4.3-4.1 5.9-.9z"/></svg></button>
+        <div class="orn">✦</div>
+        <div class="day" id="maximDay">Maxim of the day</div>
+        <div class="latin" id="maximLatin">—</div>
+        <div class="trans" id="maximTrans"></div>
+        <div class="who" id="maximWho"></div>
+        <div class="gloss"><div class="gl-tag" id="maximTag">Psychology</div><p class="note" id="maximNote"></p></div>
+        <button class="another" id="maximAnother"><svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12a9 9 0 0 1 15-6.7L21 8M21 3v5h-5M21 12a9 9 0 0 1-15 6.7L3 16M3 21v-5h5"/></svg>Another</button>
+      </div>
+
+      <div class="streak-strip">
+        <div class="pill"><div class="num ember" id="streakNum">0<span>🔥</span></div><div class="lbl">Day streak</div></div>
+        <div class="pill"><div class="num" id="votesNum">0</div><div class="lbl">Identity votes</div></div>
+        <div class="pill"><div class="num" id="bestNum">0</div><div class="lbl">Best run</div></div>
+      </div>
+
+      <div class="rankbar" id="rankBar">
+        <svg class="crest" id="rankCrest" viewBox="0 0 40 40"></svg>
+        <div class="ri">
+          <div class="rn" id="rankName">Tiro <small id="rankSub">· Recruit</small></div>
+          <div class="rp"><i id="rankFill"></i></div>
+          <div class="nxt" id="rankNext"></div>
+        </div>
+      </div>
+
+      <div class="card keystone">
+        <div class="eyebrow">The keystone — just show up</div>
+        <div class="q" id="keystoneQ">"You have power over your mind — not outside events. Realise this, and you will find strength."</div>
+        <button class="big-btn" id="gymBtn">
+          <span class="label-go">⛏  I showed up · 10 min</span>
+          <span class="check">✓  Showed up today</span>
+        </button>
+        <div class="minlog">
+          <button data-min="20">+20 min</button>
+          <button data-min="30">+30 min</button>
+          <button data-min="45">+45 min</button>
+        </div>
+        <div class="week-ring">
+          <svg class="ring" id="weekRing" viewBox="0 0 36 36"></svg>
+          <div class="wtxt"><b id="weekMin">0 / 180 min</b><span>3 hours of movement this week</span></div>
+        </div>
+
+        <div class="timer-wrap">
+          <div class="eyebrow" style="text-align:left;margin-bottom:12px">Show-up timer · master the art of beginning</div>
+          <div class="timer-face">
+            <div class="timer-ring">
+              <svg viewBox="0 0 36 36" style="width:100%;height:100%"><circle cx="18" cy="18" r="15.5" fill="none" stroke="#2C2440" stroke-width="3"/><circle id="tProg" cx="18" cy="18" r="15.5" fill="none" stroke="#F472B6" stroke-width="3" stroke-linecap="round" stroke-dasharray="97.4" stroke-dashoffset="0" transform="rotate(-90 18 18)"/></svg>
+              <div class="tt"><b id="tDisplay">10:00</b><span id="tState">ready</span></div>
+            </div>
+            <div class="timer-ctrls">
+              <button class="primary" id="tStart">Begin</button>
+              <button id="tReset">Reset</button>
+            </div>
+          </div>
+          <div class="dur-pick" id="durPick">
+            <button data-d="2" >2m</button>
+            <button data-d="10" class="sel">10m</button>
+            <button data-d="20">20m</button>
+            <button data-d="30">30m</button>
+          </div>
+        </div>
+
+        <button class="lil-btn" id="motivateBtn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 2a7 7 0 0 0-4 12.7V17h8v-2.3A7 7 0 0 0 12 2Z"/><path d="M9 21h6M10 17v4M14 17v4"/></svg>I don't feel like it</button>
+      </div>
+
+      <div class="card stoic" id="stoicCard">
+        <div class="tag" id="stoicTag">Dichotomy of control</div>
+        <div class="quote" id="stoicQuote"></div>
+        <div class="who" id="stoicWho"></div>
+        <div class="prompt" id="stoicPrompt"></div>
+      </div>
+
+      <div class="card">
+        <div class="card-h"><svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M3 12h4l2 6 4-14 2 8h6"/></svg><h2>The 3·3·3 Plate</h2></div>
+        <div id="meals"></div>
+        <div class="note">Each meal = protein · healthy fat · fibre/complex carb. Stabilises blood sugar, kills the afternoon crash.</div>
+      </div>
+
+      <div class="card">
+        <div class="card-h"><svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M12 2.7s6 6.5 6 11a6 6 0 0 1-12 0c0-4.5 6-11 6-11Z"/></svg><h2>3 Litres by 3 PM</h2></div>
+        <div class="water-grid" id="waterGrid"></div>
+        <div class="bar"><i id="waterBar"></i></div>
+        <div class="water-meta" style="margin-top:12px">
+          <div class="amt" id="waterAmt">0<small> / 3000 ml</small></div>
+          <div class="deadline">Beat the <b>3 PM</b> line<br>so you don't play catch-up tonight</div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-h"><svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg><h2>Today's Cues</h2></div>
+        <div id="cuesList"></div>
+        <div class="note" id="cuesNote" style="display:none">Set up your implementation intentions & habit stacks in <b>System</b> →</div>
+      </div>
+
+      <div class="card">
+        <div class="card-h"><svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M4 4h16v6H4zM4 14h10v6H4z"/></svg><h2>Tonight's Prep · Design the Day</h2></div>
+        <div id="envList"></div>
+      </div>
+    </div>
   </div>
 
-  <script type="module">
-    import { go } from './src/app/router.js';
-    import './src/features/splash/splash.js';
-    import './src/features/today/today.js';
-    import './src/features/now/now.js';
-    import './src/features/plan/plan.js';
-    import './src/features/tldr/tldr.js';
-    import './src/features/reset/reset.js';
-    import './src/features/diagnosis/diagnosis.js';
-    import './src/features/me/me.js';
+  <!-- ============ SYSTEM ============ -->
+  <div class="view" id="view-system">
+    <div class="stagger">
+      <div class="card hero" style="padding:20px">
+        <div class="eyebrow">Build the system, not the wish</div>
+        <div class="identity" style="font-size:20px">You do not rise to your goals.<br>You fall to your <span class="accent">systems.</span></div>
+      </div>
 
-    window.go = go;
-    go('splash');
-  </script>
+      <div class="card">
+        <div class="card-h"><svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 4-6 8-6s8 2 8 6"/></svg><h2>Identity</h2></div>
+        <div class="field">
+          <label>I am someone who…</label>
+          <input type="text" id="inIdentity" placeholder="trains daily and eats with intention — no excuses" />
+        </div>
+        <div class="field" style="margin-bottom:6px">
+          <label>My why</label>
+          <textarea id="inWhy" rows="2" placeholder="So I can be strong for my family and sharp at work."></textarea>
+        </div>
+        <button class="solid-btn" id="saveIdentity">Set my identity</button>
+        <div class="note">Every action is a vote for the type of person you wish to become. The goal isn't to read a book — it's to become a reader.</div>
+      </div>
+
+      <div class="card">
+        <div class="card-h"><svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M9 11l3 3 8-8"/><path d="M21 12a9 9 0 1 1-6-8.5"/></svg><h2>Implementation Intentions</h2></div>
+        <div class="note" style="margin-top:0;margin-bottom:14px">“I will <b>[behaviour]</b> at <b>[time]</b> in <b>[place]</b>.” Decide it now so you don't have to decide it later.</div>
+        <div id="intList"></div>
+        <div class="fill-row" style="margin-top:6px">
+          <span class="lead">I will</span><input type="text" id="iiBeh" placeholder="train" />
+        </div>
+        <div class="fill-row" style="margin-top:8px">
+          <span class="lead">at</span><input type="text" id="iiTime" placeholder="6:30 AM" />
+          <span class="lead">in</span><input type="text" id="iiLoc" placeholder="the home gym" />
+        </div>
+        <button class="ghost-btn" id="addII">+ Add intention</button>
+      </div>
+
+      <div class="card">
+        <div class="card-h"><svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M4 7h7M4 12h16M4 17h11"/></svg><h2>Habit Stacks</h2></div>
+        <div class="note" style="margin-top:0;margin-bottom:14px">Anchor the new habit to something you already do automatically.</div>
+        <div id="stackList"></div>
+        <div class="fill-row" style="margin-top:6px">
+          <span class="lead">After I</span><input type="text" id="hsAnchor" placeholder="pour my morning coffee" />
+        </div>
+        <div class="fill-row" style="margin-top:8px">
+          <span class="lead">I will</span><input type="text" id="hsHabit" placeholder="put on my gym clothes" />
+        </div>
+        <button class="ghost-btn" id="addHS">+ Add stack</button>
+      </div>
+
+      <div class="card">
+        <div class="card-h"><svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M12 3v18M5 8l7-5 7 5M5 16l7 5 7-5"/></svg><h2>Temptation Bundling</h2></div>
+        <div class="note" style="margin-top:0;margin-bottom:14px">Pair what you <i>should</i> do with what you <i>want</i> to do.</div>
+        <div id="bundleList"></div>
+        <div class="fill-row" style="margin-top:6px">
+          <span class="lead">Only when I</span><input type="text" id="tbShould" placeholder="do cardio" />
+        </div>
+        <div class="fill-row" style="margin-top:8px">
+          <span class="lead">do I let myself</span><input type="text" id="tbWant" placeholder="watch my show" />
+        </div>
+        <button class="ghost-btn" id="addTB">+ Add bundle</button>
+      </div>
+
+      <div class="card">
+        <div class="card-h"><svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M3 9h18M9 21V9M5 5h14v16H5z"/></svg><h2>Environment · Nightly Prep</h2></div>
+        <div class="note" style="margin-top:0;margin-bottom:14px">Make good choices easy and bad choices hard. These reset every day on your Today screen.</div>
+        <div id="envEditList"></div>
+        <div class="fill-row" style="margin-top:6px">
+          <input type="text" id="envNew" placeholder="Lay gym clothes by the bed" />
+        </div>
+        <button class="ghost-btn" id="addEnv">+ Add prep step</button>
+      </div>
+
+      <div class="card">
+        <div class="card-h"><svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10 21a2 2 0 0 0 4 0"/></svg><h2>Reminders & Alarms</h2></div>
+        <div class="perm-banner" id="permBanner" style="display:none">
+          Turn on notifications so FORGE can nudge you at your chosen times while it's open.
+          <button class="solid-btn" id="enableNotif" style="margin-top:10px">Enable notifications</button>
+        </div>
+        <div id="reminderList"></div>
+        <div class="note" id="alarmNote">
+          <b>About reliable alarms:</b> phone browsers can't always wake a closed web app on time (especially iPhone). In-app nudges fire while FORGE is open. For an alarm that rings even when the app is closed, tap the <b>＋cal</b> on any reminder to drop a repeating alarm into your phone's Calendar/Clock.
+        </div>
+      </div>
+
+      <div class="card disc-card">
+        <div class="card-h"><svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M9 12l2 2 4-4"/><rect x="4" y="3" width="16" height="18" rx="2"/></svg><h2>Commitment Contract</h2></div>
+        <div class="note" style="margin-top:0;margin-bottom:12px">A promise you make to your future self. Reading it back is a discipline tool of its own.</div>
+        <div class="field"><label>I commit to…</label><textarea id="inContract" rows="3" placeholder="show up daily, even for 10 minutes, and eat the 3·3·3 plate — because the person I'm becoming doesn't negotiate with the version of me that wants to quit."></textarea></div>
+        <div class="field" style="margin-bottom:8px"><label>Signed</label><input type="text" id="inSign" placeholder="Your name / today's date"/></div>
+        <button class="solid-btn" id="saveContract">Sign it</button>
+      </div>
+
+      <div class="card">
+        <div class="card-h"><svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M12 2v6M12 16v6M2 12h6M16 12h6"/></svg><h2>Data & Memory</h2></div>
+        <div class="note" style="margin-top:0;margin-bottom:12px">All your history is stored privately on this device. Back it up, or restore it onto a new phone.</div>
+        <button class="ghost-btn" id="exportBtn" style="margin-top:0">⤓ Export my data (backup)</button>
+        <button class="ghost-btn" id="importBtn">⤒ Restore from backup</button>
+        <input type="file" id="importFile" accept="application/json" style="display:none"/>
+        <button class="ghost-btn" id="resetBtn" style="color:#FB7185;border-color:#4A2A3A">Reset everything</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============ REFLECT ============ -->
+  <div class="view" id="view-reflect">
+    <div class="stagger">
+      <div class="card hero" style="padding:20px">
+        <div class="date" id="reflectDate">—</div>
+        <div class="identity" style="font-size:21px">The obstacle <span class="accent">is</span> the way.</div>
+        <div class="why">Two minutes of honesty turns a day into a lesson.</div>
+      </div>
+
+      <div class="card">
+        <div class="card-h"><svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg><h2>Morning Premeditation</h2></div>
+        <div class="refl-q">What is in my control today, and what must I accept?</div>
+        <textarea id="morningIntention" rows="3" placeholder="In my control: my effort, my meals, showing up. Out of my control: the scale, soreness, others' opinions."></textarea>
+      </div>
+
+      <div class="card disc-card">
+        <span class="seg">Voluntary hardship</span>
+        <div class="card-h" style="margin-bottom:8px"><h2 style="color:var(--text)">Discomfort Training</h2></div>
+        <div class="refl-q" id="discChallenge" style="font-style:normal;font-family:'Hanken Grotesk';font-weight:500;font-size:15px">—</div>
+        <button class="big-btn" id="discBtn" style="margin-top:12px">
+          <span class="label-go">Accept today's discomfort</span>
+          <span class="check">✓ Embraced — Amor Fati</span>
+        </button>
+        <div class="note">Train the mind to overcome hesitation by choosing the hard thing on purpose.</div>
+      </div>
+
+      <div class="card">
+        <div class="card-h"><svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M21 12.8A8.5 8.5 0 1 1 11.2 3a6.6 6.6 0 0 0 9.8 9.8Z"/></svg><h2>Evening Reflection</h2></div>
+        <div class="refl-q">Where did I act on my values — and where did I fall short?</div>
+        <textarea id="eveningReflection" rows="3" placeholder="A setback is a lesson, not a verdict. What will tomorrow's self do differently?"></textarea>
+        <div class="note">Saved automatically. Tomorrow is a fresh page.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============ PROGRESS ============ -->
+  <div class="view" id="view-progress">
+    <div class="stagger">
+      <div class="card hero" style="padding:20px">
+        <div class="eyebrow">Proof, not pressure</div>
+        <div class="identity" style="font-size:21px">Each mark is a <span class="accent">vote</span> cast<br>for who you are becoming.</div>
+      </div>
+
+      <div class="card">
+        <div class="card-h"><svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M3 9h18M8 2v4M16 2v4"/></svg><h2>Don't Break The Chain</h2></div>
+        <div class="dow"><span>M</span><span>T</span><span>W</span><span>T</span><span>F</span><span>S</span><span>S</span></div>
+        <div class="heat" id="heatmap"></div>
+        <div class="legend">Less <span class="cell"></span><span class="cell l1"></span><span class="cell l2"></span><span class="cell l3"></span> More</div>
+        <div class="note">Colour = how many pillars you hit that day (show up · plate · water).</div>
+      </div>
+
+      <div class="card">
+        <div class="card-h"><svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M3 3v18h18"/><path d="M7 14l4-4 3 3 5-6"/></svg><h2>The Ledger</h2></div>
+        <div class="stat-grid">
+          <div class="s"><div class="v" id="stTotal">0</div><div class="k">Days shown up</div></div>
+          <div class="s"><div class="v" id="stStreak">0</div><div class="k">Current streak</div></div>
+          <div class="s"><div class="v" id="stPlate">0</div><div class="k">Full plate days</div></div>
+          <div class="s"><div class="v" id="stWater">0</div><div class="k">Hydrated days</div></div>
+          <div class="s"><div class="v" id="stMin">0</div><div class="k">Total minutes</div></div>
+          <div class="s"><div class="v" id="stDisc">0</div><div class="k">Hard things done</div></div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-h"><svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M4 4h13l3 3v13H4z"/><path d="M8 9h8M8 13h8M8 17h5"/></svg><h2>The Memory · Your Journal</h2></div>
+        <div class="note" style="margin-top:0;margin-bottom:12px">Every reflection and win, kept. Scroll your own record of showing up.</div>
+        <div id="journal"></div>
+      </div>
+
+      <div class="card">
+        <div class="card-h"><svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M12 2l3 6 6 .5-4.5 4 1.5 6-6-3.5L6 18.5 7.5 12.5 3 8.5 9 8z"/></svg><h2>The Cursus · Ranks</h2></div>
+        <div class="note" style="margin-top:0;margin-bottom:14px">Your rank rises with every day you show up — cumulative votes for your identity. It never falls.</div>
+        <div class="ladder" id="ladder"></div>
+      </div>
+
+      <div class="card">
+        <div class="card-h"><svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M3 3v18h18"/><path d="M7 15l3-4 3 2 4-6"/></svg><h2>Trends</h2></div>
+        <div class="chart">
+          <div class="ct"><span>Minutes per week</span><span class="cv" id="trAvgMin">—</span></div>
+          <div class="bars" id="weekBars"></div>
+        </div>
+        <div class="chart">
+          <div class="ct"><span>Pillars hit · last 14 days</span><span class="cv">show up · plate · water</span></div>
+          <div class="bars" id="pillarBars"></div>
+        </div>
+        <div class="chart">
+          <div class="ct"><span>Consistency · last 30 days</span><span class="cv" id="trDays">—</span></div>
+          <div id="consist"></div>
+        </div>
+        <div class="insight" id="insight" style="display:none"></div>
+      </div>
+
+      <div class="card">
+        <div class="card-h"><svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M12 3.5l2.6 5.3 5.9.9-4.3 4.1 1 5.8L12 17l-5.2 2.6 1-5.8-4.3-4.1 5.9-.9z"/></svg><h2>Saved Maxims</h2></div>
+        <div id="savedList"></div>
+      </div>
+
+      <div class="card stoic">
+        <div class="tag">Marcus Aurelius</div>
+        <div class="quote">Waste no more time arguing about what a good person should be. Be one.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============ ANCHOR ============ -->
+  <div class="view" id="view-anchor">
+    <div class="stagger">
+      <div class="card hero" style="padding:22px">
+        <div class="eyebrow">When the ground feels uneven</div>
+        <div class="identity" style="font-size:22px">This is a hard <span class="accent">moment</span> —<br>not the truth about you.</div>
+        <div class="why">Low mood is an unreliable narrator: it hides the evidence and magnifies the gaps. Let's steady you, gently, one step at a time. Nothing here has to be earned.</div>
+      </div>
+
+      <div class="card breathe-card">
+        <div class="card-h" style="justify-content:center"><svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M12 3a4 4 0 0 0-4 4c0 3-5 3-5 7a5 5 0 0 0 9 3 5 5 0 0 0 9-3c0-4-5-4-5-7a4 4 0 0 0-4-4Z"/></svg><h2>Steady the breath</h2></div>
+        <div class="breath-stage"><div class="breath-orb" id="breathOrb"></div><div class="breath-word" id="breathWord">Ready</div></div>
+        <button class="solid-btn" id="breathBtn">Begin · 4 rounds</button>
+        <div class="note">Box breathing — in for 4, hold 4, out 4, hold 4. It signals your nervous system that you're safe, and slows the spin.</div>
+      </div>
+
+      <div class="card">
+        <div class="card-h"><svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M12 21s-7-4.5-7-10a4 4 0 0 1 7-2.6A4 4 0 0 1 19 11c0 5.5-7 10-7 10Z"/></svg><h2>The kinder, truer voice</h2></div>
+        <div class="refl-q">What's the harsh thing the low voice is saying right now?</div>
+        <textarea id="harshThought" rows="2" placeholder="e.g. &quot;I don't add any value to anyone.&quot;"></textarea>
+        <div class="refl-q" style="margin-top:14px">Now — what would you say to a friend you love who believed that about themselves?</div>
+        <textarea id="kindThought" rows="3" placeholder="You'd never agree they were worthless. Say to yourself what you'd say to them."></textarea>
+        <div class="insight" style="display:block">Your worth isn't a performance review. It isn't earned by output, usefulness, or productivity. You had it this morning before you did a single thing, and you'll have it tomorrow no matter what today looks like.</div>
+      </div>
+
+      <div class="card">
+        <div class="card-h"><svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M4 4h13l3 3v13H4z"/><path d="M8 10h8M8 14h5"/></svg><h2>Evidence · The Worth Ledger</h2></div>
+        <div class="note" style="margin-top:0;margin-bottom:12px">When the low voice says you add nothing, it's lying by leaving things out. Log the small, real things — a kindness, a moment you showed up, something someone valued in you. Read them back when you can't see your own worth.</div>
+        <div id="worthList"></div>
+        <textarea id="worthNew" rows="2" placeholder="Something true, however small — &quot;I listened to a friend&quot;, &quot;I made my kid laugh&quot;, &quot;I kept a promise to myself.&quot;"></textarea>
+        <button class="ghost-btn" id="addWorth">+ Add to the ledger</button>
+      </div>
+
+      <div class="card">
+        <div class="card-h"><svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M5 12h14M12 5l7 7-7 7"/></svg><h2>One small, kind thing</h2></div>
+        <div class="note" style="margin-top:0;margin-bottom:12px">You don't have to fix the whole day. Pick one tiny action — for you or someone else — and just do that. Momentum, not transformation.</div>
+        <div id="anchorPrompt" class="refl-q" style="font-style:normal;font-size:15px;color:var(--text)">—</div>
+        <button class="lil-btn" id="anchorAnother"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12a9 9 0 0 1 15-6.7L21 8M21 3v5h-5M21 12a9 9 0 0 1-15 6.7L3 16M3 21v-5h5"/></svg>Another idea</button>
+      </div>
+
+      <div class="card disc-card">
+        <div class="card-h"><svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M17 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2M9 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8ZM21 21v-2a4 4 0 0 0-3-3.9M16 3.1a4 4 0 0 1 0 7.8"/></svg><h2>You're not meant to carry this alone</h2></div>
+        <div class="note" style="margin-top:0">Reaching out isn't weakness — it's one of the strongest, most human things you can do. Save someone you trust here, so they're one tap away on a hard day.</div>
+        <div class="field" style="margin-top:14px"><label>Someone I trust</label><input type="text" id="trustName" placeholder="Their name"/></div>
+        <div class="field"><label>How I'll reach them</label><input type="text" id="trustContact" placeholder="Phone number, or how you'll contact them"/></div>
+        <button class="solid-btn" id="saveTrust">Save my person</button>
+        <div id="trustShow"></div>
+        <div class="resources">
+          If this feels heavier than low — if you're having thoughts of harming yourself, or that you can't go on — please reach out to someone right now. In the UK &amp; Ireland you can call <b>Samaritans on 116 123</b>, free, any time of day or night. In an emergency, call <b>999</b>. You deserve support, and there are people who want to give it.
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- codex reader overlay -->
+<div class="codex-wrap" id="codexWrap">
+  <div class="codex">
+    <div class="codex-bar">
+      <button id="codexBack" style="visibility:hidden">‹ Codex</button>
+      <span class="ttl" id="codexTitle">The Codex</span>
+      <button class="x" id="codexClose">×</button>
+    </div>
+    <div id="codexBody"></div>
+  </div>
+</div>
+
+<!-- nav -->
+<nav><div class="nav-inner">
+  <button class="tab active" data-view="today"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M3 11l9-8 9 8M5 10v10h14V10"/></svg>Today</button>
+  <button class="tab" data-view="system"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M12 15a3 3 0 1 0 0-6 3 3 0 0 0 0 6Z"/><path d="M19.4 13a7.8 7.8 0 0 0 0-2l2-1.5-2-3.5-2.3 1a7.5 7.5 0 0 0-1.7-1l-.3-2.5h-4l-.3 2.5a7.5 7.5 0 0 0-1.7 1l-2.3-1-2 3.5L4.6 11a7.8 7.8 0 0 0 0 2l-2 1.5 2 3.5 2.3-1a7.5 7.5 0 0 0 1.7 1l.3 2.5h4l.3-2.5a7.5 7.5 0 0 0 1.7-1l2.3 1 2-3.5Z"/></svg>System</button>
+  <button class="tab" data-view="reflect"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M12 3a9 9 0 1 0 9 9c0-.5 0-1-.1-1.5A6 6 0 0 1 12 3Z"/></svg>Reflect</button>
+  <button class="tab" data-view="progress"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/></svg>Progress</button>
+  <button class="tab" data-view="anchor"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M12 8a2.5 2.5 0 1 0 0-5 2.5 2.5 0 0 0 0 5ZM12 8v13M5 12a7 7 0 0 0 14 0M5 12H3m16 0h2"/></svg>Anchor</button>
+</div></nav>
+
+<!-- identity modal -->
+<div class="modal-wrap" id="identityModal">
+  <div class="modal">
+    <h3>Who are you becoming?</h3>
+    <p>Name the identity first. The habits are just the evidence.</p>
+    <div class="field"><label>I am someone who…</label><input type="text" id="mIdentity" placeholder="trains daily and eats with intention — no excuses"/></div>
+    <div class="field"><label>My why</label><textarea id="mWhy" rows="2" placeholder="So I can be strong, sharp and present."></textarea></div>
+    <button class="solid-btn" id="mSave">Forge it</button>
+  </div>
+</div>
+
+<!-- motivation modal -->
+<div class="modal-wrap" id="motivateModal">
+  <div class="modal mvt">
+    <h3>Read this. Then begin.</h3>
+    <div class="quote" id="mvtQuote"></div>
+    <div class="yo"><div class="lab">You are</div><div class="v" id="mvtIdentity">—</div></div>
+    <div class="yo" id="mvtWhyWrap"><div class="lab">Your why</div><div class="v" id="mvtWhy"></div></div>
+    <div class="reframe" id="mvtReframe"></div>
+    <button class="solid-btn" id="mvtGo">Start the 2-minute timer</button>
+    <button class="lil-btn" id="mvtClose" style="margin-top:8px;border:none">Close</button>
+  </div>
+</div>
+
+<div class="toast" id="toast"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12l5 5 9-11"/></svg><span id="toastMsg">Saved</span></div>
+
+<script>
+/* ============================================================
+   FORGE — storage layer (localStorage + in-memory fallback)
+   ============================================================ */
+const Store = (()=>{
+  let mem = {};
+  let ok = true;
+  try{ const k="__forge_t"; localStorage.setItem(k,"1"); localStorage.removeItem(k);}catch(e){ ok=false; }
+  return {
+    get(k,d){ try{ if(ok){const v=localStorage.getItem(k); return v===null?d:JSON.parse(v);} return k in mem?mem[k]:d;}catch(e){return d;} },
+    set(k,v){ try{ if(ok) localStorage.setItem(k,JSON.stringify(v)); else mem[k]=v;}catch(e){ mem[k]=v; } }
+  };
+})();
+
+const KEY="forge_state_v1";
+let S = Store.get(KEY, null) || {
+  identity:"", why:"",
+  intentions:[], stacks:[], bundles:[],
+  envSteps:["Lay gym clothes out","Fill water bottle","Hide the junk food","Pick tomorrow's first meal"],
+  days:{}, best:0,
+  contract:"", sign:"",
+  notif:false, timerDur:10,
+  reminders:[
+    {id:"morn", label:"Morning premeditation", time:"06:30", on:true, body:"What's in your control today? Set the intention."},
+    {id:"water1", label:"Hydration check", time:"12:00", on:true, body:"Halfway to 3 litres? Drink up — beat the 3 PM line."},
+    {id:"train", label:"Train — just show up", time:"17:30", on:true, body:"10 minutes is a full victory. Put the shoes on."},
+    {id:"water2", label:"3 PM water line", time:"15:00", on:false, body:"3 litres by now. How close are you?"},
+    {id:"eve", label:"Evening reflection", time:"21:00", on:true, body:"Where did you act on your values today?"}
+  ]
+};
+function save(){ Store.set(KEY,S); }
+
+/* migrate older saves */
+(function migrate(){
+  if(!S.reminders) S.reminders=[
+    {id:"morn",label:"Morning premeditation",time:"06:30",on:true,body:"What's in your control today? Set the intention."},
+    {id:"train",label:"Train — just show up",time:"17:30",on:true,body:"10 minutes is a full victory. Put the shoes on."},
+    {id:"water1",label:"Hydration check",time:"12:00",on:true,body:"Beat the 3 PM line — drink up."},
+    {id:"eve",label:"Evening reflection",time:"21:00",on:true,body:"Where did you act on your values today?"}
+  ];
+  if(S.contract===undefined)S.contract="";
+  if(S.sign===undefined)S.sign="";
+  if(S.notif===undefined)S.notif=false;
+  if(!S.timerDur)S.timerDur=10;
+  if(!S.favMaxims)S.favMaxims=[];
+  if(S.rankSeen===undefined)S.rankSeen=0;
+  if(!S.worthLog)S.worthLog=[];
+  if(S.trustName===undefined)S.trustName="";
+  if(S.trustContact===undefined)S.trustContact="";
+  save();
+})();
+
+/* ---------- date helpers ---------- */
+const pad=n=>String(n).padStart(2,'0');
+function key(d){ return d.getFullYear()+'-'+pad(d.getMonth()+1)+'-'+pad(d.getDate()); }
+const TODAY = key(new Date());
+function blankDay(){ return {meals:[{p:0,f:0,c:0},{p:0,f:0,c:0},{p:0,f:0,c:0}], water:0, gym:false, min:0, env:[], morning:"", evening:"", disc:false}; }
+function day(k){ if(!S.days[k]) S.days[k]=blankDay(); const d=S.days[k];
+  // migrate/ensure shape
+  if(!d.meals) d.meals=[{p:0,f:0,c:0},{p:0,f:0,c:0},{p:0,f:0,c:0}];
+  if(!d.env) d.env=[];
+  return d;
+}
+const D = ()=> day(TODAY);
+
+/* ---------- stoic content ---------- */
+const STOIC=[
+ {tag:"Dichotomy of control",q:"You have power over your mind — not outside events. Realise this, and you will find strength.",who:"Marcus Aurelius",p:"In your control: showing up, your effort, your meals. Out of it: the scale, soreness, results. Pour everything into the first."},
+ {tag:"Amor Fati",q:"Do not seek for things to happen as you wish, but wish for them to happen as they do.",who:"Epictetus",p:"The heavy set, the cold morning — don't resist the discomfort. It is the exact fuel you came for."},
+ {tag:"Voluntary hardship",q:"Set aside days in which you embrace the hardest course, and ask: is this the condition I feared?",who:"Seneca",p:"Choose the harder option on purpose today. Discomfort, met willingly, loses its grip on you."},
+ {tag:"The obstacle is the way",q:"The impediment to action advances action. What stands in the way becomes the way.",who:"Marcus Aurelius",p:"Whatever you don't feel like doing today — that resistance is the rep. Move toward it."},
+ {tag:"Discipline over motivation",q:"No man is free who is not master of himself.",who:"Epictetus",p:"You won't always feel like it. You don't need to. Systems carry you where motivation cannot."},
+ {tag:"Begin now",q:"Were you to live three thousand years, remember: no one loses any life other than the one they live now.",who:"Marcus Aurelius",p:"Don't wait for the perfect plan. Master showing up — ten minutes is a complete victory."},
+ {tag:"Memento Mori",q:"You could leave life right now. Let that determine what you do and say and think.",who:"Marcus Aurelius",p:"This body, this day — finite. Treat the small healthy act as the privilege it is."}
+];
+const DISC=[
+ "Take a 30-second cold finish to your shower.",
+ "Do the workout before you check your phone.",
+ "Train at the hour you least want to.",
+ "One extra rep past the point you'd normally stop.",
+ "Skip the comfort snack you reach for on autopilot.",
+ "Walk outside in the weather you'd rather avoid.",
+ "Eat the meal that serves you, not the one that soothes you."
+];
+function pick(arr){ let n=0,d=new Date(); n=d.getFullYear()*1000+ (Math.floor((d-new Date(d.getFullYear(),0,0))/86400000)); return arr[n%arr.length]; }
+
+/* ---------- daily Latin maxims ---------- */
+const MAXIMS=[
+ {la:"Vincit qui se vincit.",en:"He conquers who conquers himself.",who:"Latin proverb",k:"Psychology",n:"The hardest opponent isn't the weight or the clock — it's your own fear, laziness and ego. Win there first and the rest follows."},
+ {la:"Aut viam inveniam aut faciam.",en:"I will either find a way or make one.",who:"attr. Hannibal",k:"Philosophy",n:"Zero excuses. If no path to the gym, the meal, the habit exists today — you have the power to carve one."},
+ {la:"Faber est quisque fortunae suae.",en:"Each man is the maker of his own fortune.",who:"Appius Claudius Caecus",k:"Psychology",n:"Radical accountability. No external force sets your ceiling. Your choices today are the raw iron of who you become."},
+ {la:"Mens sana in corpore sano.",en:"A sound mind in a sound body.",who:"Juvenal",k:"Philosophy",n:"Training the body is training the mind. You're not just building muscle — you're forging the discipline that bleeds into everything."},
+ {la:"Possunt quia posse videntur.",en:"They can because they think they can.",who:"Virgil",k:"Psychology",n:"Belief is the prerequisite of action. Decide you are capable, and the body follows the verdict of the mind."},
+ {la:"Flectere si nequeo superos, Acheronta movebo.",en:"If I cannot bend the will of Heaven, I shall move Hell.",who:"Virgil, Aeneid",k:"Psychology",n:"Sheer, unbending will. When the easy route is closed, refuse the status quo and find the outcome by any honest means."},
+ {la:"Aequam memento rebus in arduis servare mentem.",en:"Remember to keep a calm mind in hard times.",who:"Horace",k:"Psychology",n:"The blueprint for emotional regulation. When the pressure spikes, detach from the chaos and hold a level head."},
+ {la:"Disce quasi semper victurus; vive quasi cras moriturus.",en:"Learn as if to live forever; live as if to die tomorrow.",who:"attr. Isidore",k:"Philosophy",n:"Patience and urgency in balance. Stay endlessly curious — and act today with a sharpened sense of presence."},
+ {la:"Non ducor, duco.",en:"I am not led; I lead.",who:"Latin motto",k:"Psychology",n:"Total autonomy. You set the standard, not the urges, not the algorithm, not the crowd. You lead — starting with yourself."},
+ {la:"Fortes fortuna adiuvat.",en:"Fortune favours the brave.",who:"Terence",k:"Philosophy",n:"Luck rewards motion. Show up, attempt the hard set, take the action — and chance bends toward the bold."},
+ {la:"Per aspera ad astra.",en:"Through hardships to the stars.",who:"Latin proverb",k:"Philosophy",n:"The discomfort is the road, not the roadblock. Every hard rep is altitude gained."},
+ {la:"Labor omnia vincit.",en:"Work conquers all.",who:"Virgil",k:"Psychology",n:"Not talent. Not mood. Consistent labour is the universal solvent — it dissolves every obstacle given enough days."},
+ {la:"Acta non verba.",en:"Deeds, not words.",who:"Latin motto",k:"Psychology",n:"Identity is built from evidence, not intentions. Don't announce it — do it. Let the action cast the vote."},
+ {la:"Ducunt volentem fata, nolentem trahunt.",en:"The fates lead the willing and drag the unwilling.",who:"Seneca",k:"Philosophy",n:"You're moving either way. Go willingly and it's training; resist and it's suffering. Choose to lean in — amor fati."},
+ {la:"Sapere aude.",en:"Dare to be wise.",who:"Horace",k:"Philosophy",n:"Courage to think and choose for yourself. The wise act is rarely the comfortable one — dare it anyway."},
+ {la:"Vires acquirit eundo.",en:"It gathers strength as it goes.",who:"Virgil",k:"Psychology",n:"Momentum is real. The hardest part is the first move; once rolling, you compound. Just begin."},
+ {la:"Dum spiro, spero.",en:"While I breathe, I hope.",who:"Latin proverb",k:"Psychology",n:"No day is a write-off while you're still here. One healthy act resets the trajectory. Begin again, now."},
+ {la:"Audentes fortuna iuvat.",en:"Fortune favours the bold.",who:"Virgil, Aeneid",k:"Philosophy",n:"Hesitation forfeits the prize. Commit fully to the attempt and the odds reorganise around your nerve."},
+ {la:"Festina lente.",en:"Make haste slowly.",who:"Emperor Augustus",k:"Philosophy",n:"Urgency without recklessness. Move with intent, but build the habit at a pace you can sustain for years."},
+ {la:"Nil desperandum.",en:"Never despair.",who:"Horace",k:"Psychology",n:"A setback is data, not a verdict. Refuse the spiral. Tomorrow's rep is still yours to take."},
+ {la:"Qui audet adipiscitur.",en:"Who dares, wins.",who:"Latin motto",k:"Psychology",n:"The willingness to attempt the uncomfortable is itself the edge. Dare the harder choice today."},
+ {la:"Sic parvis magna.",en:"Greatness from small beginnings.",who:"motto of Francis Drake",k:"Philosophy",n:"Start ridiculously small. Ten honest minutes, one balanced plate — the empire of your discipline begins there."},
+ {la:"Fac fortia et patere.",en:"Do brave deeds and endure.",who:"Latin maxim",k:"Psychology",n:"Two halves of grit: act with courage, then bear the discomfort that follows. Both are trainable."},
+ {la:"Carpe diem.",en:"Seize the day.",who:"Horace",k:"Philosophy",n:"Tomorrow is a story you tell yourself. The only workout that counts is the one you claim today."},
+ {la:"Excelsior.",en:"Ever upward.",who:"Latin motto",k:"Psychology",n:"One direction only: a little better than yesterday. Not perfect — upward."},
+ {la:"Memento mori.",en:"Remember that you must die.",who:"Stoic maxim",k:"Philosophy",n:"Finitude sharpens everything. This body, this day, is borrowed. Treat caring for it as the privilege it is."},
+ {la:"Amor fati.",en:"Love your fate.",who:"Stoic / Nietzsche",k:"Philosophy",n:"Don't merely accept the heavy set or the cold morning — love it. The resistance is the exact fuel you came for."},
+ {la:"Veni, vidi, vici.",en:"I came, I saw, I conquered.",who:"Julius Caesar",k:"Psychology",n:"Decisiveness as identity. Show up, assess, execute. No drawn-out negotiation with yourself."},
+ {la:"Tu ne cede malis, sed contra audentior ito.",en:"Yield not to misfortunes, but advance all the bolder.",who:"Virgil, Aeneid",k:"Psychology",n:"When it gets hard, the instruction is counterintuitive: press forward harder. Adversity is the cue to advance."},
+ {la:"Virtus tentamine gaudet.",en:"Strength rejoices in the trial.",who:"Latin maxim",k:"Philosophy",n:"Reframe the challenge as the reward. The difficulty isn't in the way of growth — it is the growth."},
+ {la:"Non quia difficilia sunt non audemus, sed quia non audemus difficilia sunt.",en:"It is not because things are hard that we do not dare; it is because we do not dare that they are hard.",who:"Seneca",k:"Psychology",n:"Difficulty is often manufactured by hesitation. Dare first, and the task shrinks."},
+ {la:"Ignis aurum probat, miseria fortes viros.",en:"Fire tests gold; adversity tests brave men.",who:"Seneca",k:"Psychology",n:"Hardship isn't punishment — it's the assay that proves what you're made of."},
+ {la:"Audendo virtus crescit, tardando timor.",en:"By daring, courage grows; by delaying, fear.",who:"Publilius Syrus",k:"Psychology",n:"Action feeds courage; hesitation feeds dread. Move before you overthink."},
+ {la:"Vincit qui patitur.",en:"He who endures, conquers.",who:"Latin proverb",k:"Psychology",n:"Persistence is its own victory. Outlast the urge to quit and you win."},
+ {la:"Nemo timendo ad summum pervenit locum.",en:"No one reaches the summit by being afraid.",who:"Publilius Syrus",k:"Psychology",n:"Fear and the peak don't share a path. Choose the bold step."},
+ {la:"Gutta cavat lapidem non vi, sed saepe cadendo.",en:"The drop carves the stone not by force, but by falling often.",who:"Ovid",k:"Philosophy",n:"Consistency beats intensity. Small daily reps hollow out any obstacle."},
+ {la:"Perfer et obdura; dolor hic tibi proderit olim.",en:"Endure and be tough; this pain will serve you one day.",who:"Ovid",k:"Psychology",n:"Today's discomfort is tomorrow's strength in disguise."},
+ {la:"Qui non est hodie, cras minus aptus erit.",en:"He who is not ready today will be even less so tomorrow.",who:"Ovid",k:"Psychology",n:"Procrastination compounds. The best moment to start is the one you have."},
+ {la:"Dimidium facti qui coepit habet.",en:"He who has begun has half done.",who:"Horace",k:"Psychology",n:"Beginning is the heavy lift. Start small and momentum carries the rest."},
+ {la:"Nil sine magno vita labore dedit mortalibus.",en:"Life grants nothing to mortals without great labour.",who:"Horace",k:"Philosophy",n:"There is no shortcut worth keeping. The work is both the price and the reward."},
+ {la:"Caelum non animum mutant qui trans mare currunt.",en:"Those who cross the sea change their sky, not their soul.",who:"Horace",k:"Psychology",n:"A new program won't fix you; the change is internal. Build the inner habit."},
+ {la:"Levius fit patientia quidquid corrigere est nefas.",en:"Patience makes lighter whatever it is forbidden to change.",who:"Horace",k:"Philosophy",n:"Accept what you can't control and its weight halves at once."},
+ {la:"Ira furor brevis est.",en:"Anger is a brief madness.",who:"Horace",k:"Psychology",n:"Don't legislate from a spike of emotion. Let the storm pass, then act."},
+ {la:"Nulla dies sine linea.",en:"Not a day without a line.",who:"Pliny the Elder",k:"Psychology",n:"Show up daily, even minimally. The unbroken streak is the masterpiece."},
+ {la:"Vivere militare est.",en:"To live is to wage war.",who:"Seneca",k:"Philosophy",n:"Each day asks for discipline against comfort. Suit up."},
+ {la:"Calamitas virtutis occasio est.",en:"Calamity is virtue's opportunity.",who:"Seneca",k:"Philosophy",n:"The setback is the stage on which character is built."},
+ {la:"Non est ad astra mollis e terris via.",en:"There is no soft road from the earth to the stars.",who:"Seneca",k:"Philosophy",n:"Greatness and ease never share a road. Choose the steep one."},
+ {la:"Otium sine litteris mors est.",en:"Leisure without learning is death.",who:"Seneca",k:"Philosophy",n:"Rest, but keep feeding the mind. Stagnation is a slow end."},
+ {la:"Quae nocent, saepe docent.",en:"The things that harm often teach.",who:"Latin proverb",k:"Psychology",n:"Mine every failure for its lesson; that's how loss becomes gain."},
+ {la:"Nec spe nec metu.",en:"Neither by hope nor by fear.",who:"Latin motto",k:"Psychology",n:"Act from principle, not from the swing between craving and dread."},
+ {la:"Patientia vincit omnia.",en:"Patience conquers all.",who:"Latin proverb",k:"Psychology",n:"The long game is undefeated. Keep showing up."},
+ {la:"Repetitio est mater studiorum.",en:"Repetition is the mother of learning.",who:"Latin proverb",k:"Psychology",n:"Mastery is just a habit repeated past the point of boredom."},
+ {la:"Citius, altius, fortius.",en:"Faster, higher, stronger.",who:"Olympic motto",k:"Psychology",n:"One standard: a little better than yesterday's self."},
+ {la:"Mens agitat molem.",en:"Mind moves the mass.",who:"Virgil",k:"Philosophy",n:"The body obeys a decided mind. Set the intention; the matter follows."},
+ {la:"Nosce te ipsum.",en:"Know thyself.",who:"Ancient maxim",k:"Philosophy",n:"Discipline starts with honest self-knowledge: your triggers, excuses, and your why."},
+ {la:"Esse quam videri.",en:"To be, rather than to seem.",who:"Cicero",k:"Psychology",n:"Don't perform the identity; embody it when no one is watching."},
+ {la:"Finis coronat opus.",en:"The end crowns the work.",who:"Latin proverb",k:"Psychology",n:"Finish what you start; completion converts effort into pride."},
+ {la:"Labor ipse voluptas.",en:"The work itself is a pleasure.",who:"Latin maxim",k:"Psychology",n:"Learn to love the doing, not just the done. That's where consistency lives."},
+ {la:"Per angusta ad augusta.",en:"Through narrow places to lofty ones.",who:"Latin motto",k:"Philosophy",n:"The tight, uncomfortable passages lead to the heights. Squeeze through."},
+ {la:"Age quod agis.",en:"Do what you are doing.",who:"Latin maxim",k:"Psychology",n:"Total presence. Whatever the task, pour yourself into this single rep."},
+ {la:"Spectemur agendo.",en:"Let us be judged by our deeds.",who:"Ovid",k:"Psychology",n:"Your standing with yourself is built from action, not announcement."},
+ {la:"Iustum et tenacem propositi virum.",en:"The man just and steadfast of purpose.",who:"Horace",k:"Psychology",n:"Be the one nothing knocks off course. Fix the aim and hold it."},
+ {la:"Vis unita fortior.",en:"Strength united is stronger.",who:"Latin motto",k:"Philosophy",n:"Stack your habits, cues, and environment; aligned forces compound."},
+ {la:"Omnia mea mecum porto.",en:"All that is mine I carry with me.",who:"Cicero",k:"Philosophy",n:"Your real assets are internal: discipline, character, will. They can't be taken."},
+ {la:"Vitanda est improba siren desidia.",en:"The wicked siren, idleness, must be shunned.",who:"Horace",k:"Psychology",n:"Comfort sings sweetly. Tie yourself to the mast and row."},
+ {la:"Numquam periclum sine periclo vincitur.",en:"Danger is never conquered without danger.",who:"Publilius Syrus",k:"Psychology",n:"Growth requires risk. Comfort and progress are mutually exclusive."},
+ {la:"Improbe Neptunum accusat qui iterum naufragium facit.",en:"He wrongly blames the sea who is shipwrecked twice.",who:"Publilius Syrus",k:"Psychology",n:"Own the repeated mistake. The pattern is the lesson you keep skipping."},
+ {la:"Malum est consilium quod mutari non potest.",en:"It is a bad plan that cannot be changed.",who:"Publilius Syrus",k:"Philosophy",n:"Hold the goal firmly and the method loosely. Adapt, don't break."},
+ {la:"Semper plus metuit animus ignotum malum.",en:"The mind always fears the unknown evil more.",who:"Publilius Syrus",k:"Psychology",n:"Half your dread is fog. Take the step and watch the monster shrink."},
+ {la:"Animo imperabit sapiens, stultus serviet.",en:"The wise will rule their passions; the fool will serve them.",who:"Publilius Syrus",k:"Psychology",n:"Be the master of the urge, not its errand-boy."},
+ {la:"Patiens et fortis se ipsum felicem facit.",en:"The patient and brave man makes himself happy.",who:"Publilius Syrus",k:"Psychology",n:"Contentment is self-manufactured through grit, not granted by circumstance."},
+ {la:"Voluptas e difficili data dulcissima est.",en:"Pleasure won from difficulty is the sweetest.",who:"Publilius Syrus",k:"Psychology",n:"Earned satisfaction outlasts every cheap comfort. Choose the hard joy."},
+ {la:"Feras, non culpes, quod mutari non potest.",en:"Bear, do not blame, what cannot be changed.",who:"Publilius Syrus",k:"Philosophy",n:"The dichotomy of control in five words. Carry it; don't curse it."},
+ {la:"Solet sequi laus, cum viam fecit labor.",en:"Praise tends to follow once labour has cleared the way.",who:"Publilius Syrus",k:"Psychology",n:"Do the unglamorous work first; recognition is a lagging indicator."},
+ {la:"Bis vincit qui se vincit in victoria.",en:"He conquers twice who conquers himself in the hour of victory.",who:"Publilius Syrus",k:"Psychology",n:"Don't let success make you soft. Discipline in the win is the real test."},
+ {la:"Fortuna vitrea est; tum cum splendet frangitur.",en:"Fortune is glass: just when it shines, it shatters.",who:"Publilius Syrus",k:"Philosophy",n:"Don't anchor to luck. Anchor to the systems that outlast it."},
+ {la:"Inopiae desunt multa, avaritiae omnia.",en:"Poverty lacks many things; greed lacks everything.",who:"Publilius Syrus",k:"Psychology",n:"Chasing 'more' forever is its own poverty. Train contentment."},
+ {la:"Difficilia quae pulchra.",en:"What is beautiful is difficult.",who:"Latin proverb",k:"Philosophy",n:"The worthwhile thing resists you. That resistance is the proof, not the deterrent."},
+ {la:"Alea iacta est.",en:"The die is cast.",who:"Julius Caesar",k:"Psychology",n:"Cross the line and commit. No more half-decisions, no retreat."},
+ {la:"Fluctuat nec mergitur.",en:"She is tossed by the waves but does not sink.",who:"motto of Paris",k:"Psychology",n:"Storms are guaranteed; sinking is optional. Stay afloat, keep rowing."},
+ {la:"Cras vives? Hodie iam vivere serum est.",en:"Will you live tomorrow? Even today is already late to begin.",who:"Martial",k:"Psychology",n:"The perfect start never comes. Begin now, imperfectly."},
+ {la:"Pulvis et umbra sumus.",en:"We are dust and shadow.",who:"Horace",k:"Philosophy",n:"Finitude is fuel. Don't waste a borrowed day on comfort you won't remember."},
+ {la:"Naturam expellas furca, tamen usque recurret.",en:"Drive nature out with a pitchfork, still she returns.",who:"Horace",k:"Psychology",n:"Don't rely on willpower to suppress urges; redesign the environment instead."},
+ {la:"Est modus in rebus.",en:"There is a measure in all things.",who:"Horace",k:"Philosophy",n:"Discipline includes restraint. Sustainable beats heroic-then-broken."},
+ {la:"Fortes creantur fortibus.",en:"The brave are bred from the brave.",who:"Horace",k:"Psychology",n:"You become the standard you keep. Surround yourself with strength."},
+ {la:"Errare humanum est, perseverare diabolicum.",en:"To err is human; to persist in error is devilish.",who:"Latin proverb",k:"Psychology",n:"Slipping is allowed; refusing to course-correct is the real failure."},
+ {la:"Vivere est cogitare.",en:"To live is to think.",who:"Cicero",k:"Philosophy",n:"A considered life is a disciplined one. Decide on purpose, not by default."},
+ {la:"Non nobis solum nati sumus.",en:"We are not born for ourselves alone.",who:"Cicero",k:"Philosophy",n:"Your discipline serves the people who rely on you. Train for them too."},
+ {la:"Gloria virtutem tamquam umbra sequitur.",en:"Glory follows virtue like a shadow.",who:"Cicero",k:"Psychology",n:"Chase the character, not the applause. Results trail substance."},
+ {la:"Fortiter in re, suaviter in modo.",en:"Resolute in deed, gentle in manner.",who:"Latin maxim",k:"Psychology",n:"Be uncompromising with the goal and kind with yourself in the process."},
+ {la:"Virtute et labore.",en:"By courage and by toil.",who:"Latin motto",k:"Philosophy",n:"Two ingredients, no substitutes: nerve to start, effort to continue."},
+ {la:"Ad meliora.",en:"Toward better things.",who:"Latin motto",k:"Psychology",n:"Set the compass forward. Each choice either climbs or slides."},
+ {la:"Maxima omnium virtus est patientia.",en:"Patience is the greatest virtue of all.",who:"Latin maxim",k:"Psychology",n:"The capacity to wait and keep working is the rarest edge."},
+ {la:"Mora omnis odio est, sed facit sapientiam.",en:"All delay is hateful, yet it breeds wisdom.",who:"Publilius Syrus",k:"Philosophy",n:"Pause before reacting; the gap is where good judgment lives."},
+ {la:"Crescit sub pondere virtus.",en:"Virtue grows under a weight.",who:"Latin maxim",k:"Psychology",n:"Load builds strength. The burden is the barbell."},
+ {la:"Forsan et haec olim meminisse iuvabit.",en:"Perhaps one day it will be a joy to remember even these things.",who:"Virgil",k:"Psychology",n:"Today's struggle becomes tomorrow's proud story. Endure for the telling."},
+ {la:"Macte animo!",en:"Take heart, and be strong!",who:"Latin exclamation",k:"Psychology",n:"A shout of courage to your own spirit: rise — you've got this."},
+ {la:"Surgam.",en:"I shall rise.",who:"Latin motto",k:"Philosophy",n:"Whatever knocks you down today, the only required response is: I shall rise."},
+ {la:"Dux vitae ratio.",en:"Reason is the guide of life.",who:"Cicero",k:"Philosophy",n:"Let reason, not appetite, hold the reins of the day."},
+ {la:"Sustine et abstine.",en:"Bear and forbear.",who:"Epictetus",k:"Philosophy",n:"Endure what is hard; abstain from what is easy-but-harmful. The whole game."},
+ {la:"Memento audere semper.",en:"Remember always to dare.",who:"Latin motto",k:"Psychology",n:"Make daring a default setting, not an occasional mood."},
+ {la:"Fac et spera.",en:"Do and hope.",who:"Latin motto",k:"Psychology",n:"Action first, optimism second. Hope earns its keep through effort."},
+ {la:"Dum vivimus, vivamus.",en:"While we live, let us live.",who:"Latin maxim",k:"Philosophy",n:"Don't sleepwalk. Train, eat, and move like someone fully alive."},
+ {la:"Frangar non flectar.",en:"I may be broken but not bent.",who:"Latin motto",k:"Psychology",n:"Hold your principles unbendingly; you can be hurt but not turned."},
+ {la:"Luctor et emergo.",en:"I struggle and emerge.",who:"motto of Zeeland",k:"Psychology",n:"The struggle isn't the end of the story; surfacing is."},
+ {la:"Fortis cadere, cedere non potest.",en:"The brave may fall, but cannot yield.",who:"Latin motto",k:"Psychology",n:"Falling is permitted; surrender is not. Get up."},
+ {la:"Nunc aut numquam.",en:"Now or never.",who:"Latin phrase",k:"Psychology",n:"The window is this moment. Don't outsource today to a someday that won't come."},
+ {la:"Tempus neminem manet.",en:"Time waits for no one.",who:"Latin proverb",k:"Psychology",n:"The clock won't pause for your readiness. Begin against the running clock."},
+ {la:"Acti labores iucundi.",en:"Finished labours are pleasant.",who:"Cicero",k:"Psychology",n:"Completion feels good precisely because it was hard. Push to done."},
+ {la:"Nemo sine vitio est.",en:"No one is without fault.",who:"Seneca",k:"Psychology",n:"Perfection isn't the bar; progress is. Forgive the slip, keep the streak."},
+ {la:"Non progredi est regredi.",en:"Not to advance is to go backward.",who:"Latin maxim",k:"Psychology",n:"There is no standing still. A skipped day quietly costs you ground."},
+ {la:"Ex nihilo nihil fit.",en:"Nothing comes from nothing.",who:"Lucretius",k:"Philosophy",n:"Results require inputs. No work, no fruit — so plant the rep."},
+ {la:"Fabricando fit faber.",en:"By working, one becomes a craftsman.",who:"Latin proverb",k:"Psychology",n:"You don't wait to feel ready; you become skilled by doing the reps."},
+ {la:"Faciendo discimus.",en:"We learn by doing.",who:"Latin maxim",k:"Psychology",n:"Action is the teacher. Start clumsy; refine in motion."},
+ {la:"Fortuna audaces iuvat, timidos repellit.",en:"Fortune helps the bold and repels the timid.",who:"Latin maxim",k:"Philosophy",n:"Boldness is a magnet for luck; timidity, a wall."},
+ {la:"Hoc opus, hic labor est.",en:"This is the task, this the toil.",who:"Virgil",k:"Philosophy",n:"Name the hard part plainly — then do exactly that part."},
+ {la:"In magnis et voluisse sat est.",en:"In great things, even to have willed is enough.",who:"Propertius",k:"Psychology",n:"Aim high; the reach itself ennobles you before you arrive."},
+ {la:"Labor callum obducit dolori.",en:"Toil grows a callus over pain.",who:"Cicero",k:"Psychology",n:"Reps build calluses — in the hands and in the will."},
+ {la:"Potius sero quam numquam.",en:"Better late than never.",who:"Livy",k:"Psychology",n:"Missed yesterday? The comeback starts the moment you choose it."},
+ {la:"Quod cito fit, cito perit.",en:"What is done quickly, perishes quickly.",who:"Latin proverb",k:"Philosophy",n:"Build slowly to build permanently. Crash diets crash."},
+ {la:"Sapiens dominabitur astris.",en:"The wise will master the stars.",who:"Latin maxim",k:"Psychology",n:"Mindset overrides circumstance. Govern yourself and you govern your fate."},
+ {la:"Si vis pacem, para bellum.",en:"If you want peace, prepare for war.",who:"Vegetius",k:"Psychology",n:"Prepare in calm for the hard day; the morning workout is the rehearsal."},
+ {la:"Tantum possumus quantum scimus.",en:"We can do as much as we know.",who:"Francis Bacon",k:"Philosophy",n:"Knowledge is leverage; keep learning to keep growing."},
+ {la:"Temptanda via est.",en:"The way must be tried.",who:"Virgil",k:"Psychology",n:"Untested paths stay impossible only until you attempt them."},
+ {la:"Ubi concordia, ibi victoria.",en:"Where there is harmony, there is victory.",who:"Publilius Syrus",k:"Philosophy",n:"Align your habits with your identity and winning becomes the default."},
+ {la:"Una salus victis nullam sperare salutem.",en:"The only safety for the conquered is to hope for none.",who:"Virgil",k:"Psychology",n:"Burn the escape routes; do-or-die focus turns the timid bold."},
+ {la:"Virtus in actione consistit.",en:"Virtue consists in action.",who:"Latin maxim",k:"Psychology",n:"Character isn't a feeling; it's a thing you do — today."},
+ {la:"Vita non est vivere sed valere.",en:"Life is not merely to live, but to be strong.",who:"Martial",k:"Philosophy",n:"The aim isn't existence; it's vitality. Train for aliveness."},
+ {la:"Volenti nihil difficile.",en:"To the willing, nothing is difficult.",who:"Latin proverb",k:"Psychology",n:"Willingness dissolves difficulty. Decide you want it and the work lightens."},
+ {la:"Cedendo victor abibis.",en:"By yielding wisely you will come away the victor.",who:"Ovid",k:"Philosophy",n:"Sometimes the win is patience and rest, not force. Recover to conquer."}
+];
+
+/* ============================================================
+   RENDER
+   ============================================================ */
+function fmtDate(){ return new Date().toLocaleDateString(undefined,{weekday:'long',month:'long',day:'numeric'}); }
+
+function renderHero(){
+  document.getElementById('todayDate').textContent = fmtDate().toUpperCase();
+  document.getElementById('reflectDate').textContent = fmtDate().toUpperCase();
+  const idEl=document.getElementById('identityText');
+  if(S.identity){ idEl.innerHTML = 'I am someone who <span class="accent">'+esc(S.identity)+'</span>'; }
+  else { idEl.innerHTML='Tap ✎ to name who you\'re becoming'; }
+  document.getElementById('whyText').textContent = S.why||"";
+}
+
+function renderStreak(){
+  const s=streak(); 
+  if(s>S.best){ S.best=s; }
+  document.getElementById('streakNum').innerHTML=s+'<span>🔥</span>';
+  document.getElementById('votesNum').textContent=totalShowUp();
+  document.getElementById('bestNum').textContent=S.best;
+  document.getElementById('stStreak').textContent=s;
+}
+
+function renderKeystone(){
+  const d=D();
+  const btn=document.getElementById('gymBtn');
+  btn.classList.toggle('done', d.gym);
+  // week ring
+  let wk=weekMinutes();
+  const pct=Math.min(100, wk/180*100);
+  const r=15.5, c=2*Math.PI*r;
+  document.getElementById('weekRing').innerHTML=
+    '<circle cx="18" cy="18" r="'+r+'" fill="none" stroke="#2C2440" stroke-width="3.2"/>'+
+    '<circle cx="18" cy="18" r="'+r+'" fill="none" stroke="#A78BFA" stroke-width="3.2" stroke-linecap="round" stroke-dasharray="'+c+'" stroke-dashoffset="'+(c-c*pct/100)+'" transform="rotate(-90 18 18)"/>';
+  document.getElementById('weekMin').textContent=wk+' / 180 min';
+  document.getElementById('keystoneQ').textContent='"'+pick(STOIC).q+'"';
+}
+
+function renderStoic(){
+  const s=pick(STOIC);
+  document.getElementById('stoicTag').textContent=s.tag;
+  document.getElementById('stoicQuote').textContent='“'+s.q+'”';
+  document.getElementById('stoicWho').textContent='— '+s.who;
+  document.getElementById('stoicPrompt').textContent=s.p;
+}
+
+let maximOffset=0;
+function doyOf(d){ return Math.floor((d-new Date(d.getFullYear(),0,0))/86400000); }
+function maximIndexFor(d){
+  // step coprime with most lengths -> walks through every entry before repeating
+  const L=MAXIMS.length, step=(L%97===0)?89:97;
+  return ((doyOf(d)*step)%L+L)%L;
+}
+function todaysMaxim(){ return MAXIMS[maximIndexFor(new Date())]; }
+function maximBody(m){ return '“'+m.la+'” — '+m.en; }
+
+function renderMaxim(animate){
+  const L=MAXIMS.length;
+  const base=maximIndexFor(new Date());
+  const i=((base+maximOffset)%L+L)%L;
+  const m=MAXIMS[i];
+  document.getElementById('maximLatin').textContent='“'+m.la+'”';
+  document.getElementById('maximTrans').textContent=m.en;
+  document.getElementById('maximWho').textContent='— '+m.who;
+  document.getElementById('maximTag').textContent=m.k;
+  document.getElementById('maximNote').textContent=m.n;
+  document.getElementById('maximDay').textContent= maximOffset===0
+    ? 'Maxim of the day · '+new Date().toLocaleDateString(undefined,{month:'short',day:'numeric'}).toUpperCase()
+    : 'More firepower';
+  if(animate){ const c=document.getElementById('maximCard'); c.classList.remove('flip'); void c.offsetWidth; c.classList.add('flip'); }
+  // star state
+  const fav=S.favMaxims.includes(m.la);
+  document.getElementById('maximStar').classList.toggle('on',fav);
+  document.getElementById('maximCard').dataset.la=m.la;
+}
+function toggleFavMaxim(){
+  const la=document.getElementById('maximCard').dataset.la; if(!la) return;
+  const i=S.favMaxims.indexOf(la);
+  if(i>-1){ S.favMaxims.splice(i,1); toast('Removed from saved'); }
+  else { S.favMaxims.push(la); celebrate('Saved to your collection'); }
+  save(); renderMaxim(false); renderSaved();
+}
+function renderSaved(){
+  const el=document.getElementById('savedList'); if(!el) return;
+  if(!S.favMaxims.length){ el.innerHTML='<div class="jrn-empty">Star the maxims that hit hardest — they collect here.</div>'; return; }
+  el.innerHTML=S.favMaxims.map(la=>{
+    const m=MAXIMS.find(x=>x.la===la); if(!m) return '';
+    return '<div class="saved"><div class="unstar" data-unstar="'+esc(la)+'">★</div><div class="sl">“'+esc(m.la)+'”</div><div class="se">'+esc(m.en)+'</div><div class="sw">— '+esc(m.who)+'</div></div>';
+  }).join('');
+}
+
+/* ---------- ranks ---------- */
+const RANKS=[
+ {t:0,n:"Tiro",s:"Recruit"},
+ {t:3,n:"Miles",s:"Soldier"},
+ {t:7,n:"Legionarius",s:"Legionary"},
+ {t:14,n:"Decanus",s:"Leader of ten"},
+ {t:30,n:"Optio",s:"Second-in-command"},
+ {t:50,n:"Centurio",s:"Centurion"},
+ {t:75,n:"Primus Pilus",s:"First spear"},
+ {t:100,n:"Tribunus",s:"Tribune"},
+ {t:150,n:"Legatus",s:"Legate"},
+ {t:250,n:"Imperator",s:"Commander"}
+];
+function rankIndex(v){ let i=0; for(let k=0;k<RANKS.length;k++){ if(v>=RANKS[k].t) i=k; } return i; }
+function crestSVG(idx){
+  // laurel-ringed crest, fills with bronze by tier
+  const lit=Math.min(5,Math.round(idx/2)+1);
+  let stars=''; for(let i=0;i<lit;i++){ const x=20+(i-(lit-1)/2)*5; stars+='<circle cx="'+x.toFixed(1)+'" cy="14" r="1.3" fill="#C4B5FD"/>'; }
+  return '<circle cx="20" cy="20" r="15" fill="none" stroke="#7C3AED" stroke-width="1.3"/>'+
+    '<path d="M9 24c-3-3-3-8 0-11" fill="none" stroke="#A78BFA" stroke-width="1.4" stroke-linecap="round"/>'+
+    '<path d="M31 24c3-3 3-8 0-11" fill="none" stroke="#A78BFA" stroke-width="1.4" stroke-linecap="round"/>'+
+    '<path d="M14 27l6-4 6 4-2.3-7L29 16h-7l-2-6-2 6h-7l5.3 4z" fill="#A78BFA" opacity="'+(0.35+idx*0.07).toFixed(2)+'"/>'+stars;
+}
+function renderRank(){
+  const v=totalShowUp(), idx=rankIndex(v), r=RANKS[idx], next=RANKS[idx+1];
+  document.getElementById('rankCrest').innerHTML=crestSVG(idx);
+  document.getElementById('rankName').innerHTML=esc(r.n)+' <small>· '+esc(r.s)+'</small>';
+  if(next){
+    const span=next.t-r.t, prog=Math.max(0,Math.min(100,(v-r.t)/span*100));
+    document.getElementById('rankFill').style.width=prog+'%';
+    document.getElementById('rankNext').textContent=(next.t-v)+' more day'+((next.t-v)===1?'':'s')+' to '+next.n;
+  } else {
+    document.getElementById('rankFill').style.width='100%';
+    document.getElementById('rankNext').textContent='Highest rank attained. Imperator.';
+  }
+  // milestone celebration on crossing
+  if(idx>S.rankSeen){
+    S.rankSeen=idx; save();
+    setTimeout(()=>{ celebrate('New rank: '+r.n+' — '+r.s); notify('FORGE · Rank up','You rose to '+r.n+' ('+r.s+'). '+v+' votes cast for who you are.'); },400);
+  }
+}
+function renderLadder(){
+  const el=document.getElementById('ladder'); if(!el) return;
+  const v=totalShowUp(), cur=rankIndex(v);
+  el.innerHTML=RANKS.map((r,i)=>{
+    const done=v>=r.t;
+    return '<div class="lr '+(done?'done':'')+' '+(i===cur?'cur':'')+'">'+
+      '<svg class="lc" viewBox="0 0 40 40">'+crestSVG(i)+'</svg>'+
+      '<div class="ln2"><b>'+esc(r.n)+'</b><span>'+esc(r.s)+'</span></div>'+
+      '<div class="lt">'+(done?'✓':r.t+'d')+'</div></div>';
+  }).join('');
+}
+
+/* ---------- trends ---------- */
+function dForDaysAgo(i){ const d=new Date(); d.setDate(d.getDate()-i); return S.days[key(d)]; }
+function plateFull(d){ return d&&d.meals&&d.meals.every(m=>m.p&&m.f&&m.c); }
+function renderTrends(){
+  // weekly minutes, last 8 weeks (Mon-anchored)
+  const now=new Date(); const dow=(now.getDay()+6)%7;
+  const weeks=[]; let totalAll=0,wkCount=0;
+  for(let w=7;w>=0;w--){
+    let sum=0;
+    for(let day=0;day<7;day++){
+      const off=w*7 + (dow-day); if(off<0) continue;
+      const dt=new Date(); dt.setDate(now.getDate()-off);
+      const d=S.days[key(dt)]; if(d) sum+=d.min||0;
+    }
+    weeks.push(sum); if(w>0){totalAll+=sum;wkCount++;}
+  }
+  const maxW=Math.max(180,...weeks);
+  const bars=document.getElementById('weekBars');
+  let h=''; const labels=['7w','6w','5w','4w','3w','2w','last','now'];
+  weeks.forEach((m,i)=>{ const pct=Math.round(m/maxW*100);
+    h+='<div class="col '+(m>=180?'hit':'')+'"><div class="bk"><i style="height:'+pct+'%"></i></div><div class="lx">'+labels[i]+'</div></div>'; });
+  bars.innerHTML=h;
+  const avg=wkCount?Math.round(totalAll/wkCount):0;
+  document.getElementById('trAvgMin').textContent='avg '+avg+'/wk · goal 180';
+
+  // pillars last 14 days
+  const pb=document.getElementById('pillarBars'); let ph='';
+  for(let i=13;i>=0;i--){ const d=dForDaysAgo(i); let p=0; if(d){ if(d.gym)p++; if(plateFull(d))p++; if(d.water>=12)p++; }
+    const pct=Math.round(p/3*100);
+    ph+='<div class="col '+(p===3?'hit':'')+'"><div class="bk"><i style="height:'+Math.max(pct,p?8:0)+'%"></i></div><div class="lx">'+(i===0?'·':'')+'</div></div>'; }
+  pb.innerHTML=ph;
+
+  // consistency last 30 days
+  let g=0,pl=0,wa=0,tot=0;
+  for(let i=0;i<30;i++){ const d=dForDaysAgo(i); if(!d) continue; tot++; if(d.gym)g++; if(plateFull(d))pl++; if(d.water>=12)wa++; }
+  const denom=Math.max(tot,1);
+  const rows=[['Showed up',g],['Full plate',pl],['Hydrated',wa]];
+  document.getElementById('consist').innerHTML=rows.map(r=>{
+    const pc=Math.round(r[1]/denom*100);
+    return '<div class="hbar"><div class="hl">'+r[0]+'</div><div class="ht"><i style="width:'+pc+'%"></i></div><div class="hp">'+pc+'%</div></div>';
+  }).join('');
+  document.getElementById('trDays').textContent=tot+' tracked';
+
+  // behavioural insight: show-up rate with vs without morning premeditation
+  let mY=0,mYg=0,mN=0,mNg=0;
+  Object.values(S.days).forEach(d=>{ const hasM=(d.morning&&d.morning.trim().length>0);
+    if(hasM){ mY++; if(d.gym)mYg++; } else { mN++; if(d.gym)mNg++; } });
+  const ins=document.getElementById('insight');
+  if(mY>=3 && mN>=3){
+    const rY=Math.round(mYg/mY*100), rN=Math.round(mNg/mN*100);
+    if(rY-rN>=10){ ins.style.display='block'; ins.innerHTML='On days you wrote a <b>morning premeditation</b>, you showed up <b>'+rY+'%</b> of the time — versus <b>'+rN+'%</b> on days you skipped it. The two-minute ritual is pulling its weight.'; }
+    else ins.style.display='none';
+  } else ins.style.display='none';
+}
+
+function renderMeals(){
+  const d=D(); const names=['Breakfast','Lunch','Dinner'];
+  const icons={
+    p:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M6 3v7a3 3 0 0 0 6 0V3M9 10v11"/><path d="M16 3c-1.5 1-2 3-2 5s.5 4 2 5v8"/></svg>',
+    f:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 3c4 4 6 7 6 10a6 6 0 0 1-12 0c0-3 2-6 6-10Z"/></svg>',
+    c:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 11h16l-1 9H5z"/><path d="M8 11c0-3 1-5 4-5s4 2 4 5"/></svg>'
+  };
+  let h='';
+  d.meals.forEach((m,i)=>{
+    const full=m.p&&m.f&&m.c;
+    h+='<div class="meal '+(full?'full':'')+'">'+
+       '<div class="meal-top"><div class="name"><span class="dot"></span>'+names[i]+'</div><div class="kc">'+( (m.p+m.f+m.c) )+'/3 pillars</div></div>'+
+       '<div class="chips">'+
+       chip(i,'p',m.p,icons.p,'Protein')+chip(i,'f',m.f,icons.f,'Healthy fat')+chip(i,'c',m.c,icons.c,'Fibre/carb')+
+       '</div></div>';
+  });
+  document.getElementById('meals').innerHTML=h;
+}
+function chip(mi,k,on,svg,lbl){ return '<button class="chip '+(on?'on':'')+'" data-meal="'+mi+'" data-k="'+k+'">'+svg+lbl+'</button>'; }
+
+function renderWater(){
+  const d=D(); const total=12; const ml=d.water*250;
+  let h='';
+  for(let i=0;i<total;i++){ h+='<div class="drop '+(i<d.water?'on':'')+'" data-w="'+i+'"></div>'; }
+  document.getElementById('waterGrid').innerHTML=h;
+  document.getElementById('waterAmt').innerHTML=ml+'<small> / 3000 ml</small>';
+  document.getElementById('waterBar').style.width=Math.min(100,d.water/total*100)+'%';
+}
+
+function renderCues(){
+  const wrap=document.getElementById('cuesList');
+  let h='';
+  S.stacks.forEach(s=> h+=rem('After','I '+esc(s.a)+', I will <span class="k">'+esc(s.h)+'</span>'));
+  S.intentions.forEach(s=> h+=rem('I will','<span class="k">'+esc(s.b)+'</span> at <span class="k">'+esc(s.t)+'</span>'+(s.l?' in '+esc(s.l):'')));
+  S.bundles.forEach(s=> h+=rem('Bundle','Only when I '+esc(s.s)+' do I let myself <span class="k">'+esc(s.w)+'</span>'));
+  if(!h){ document.getElementById('cuesNote').style.display='block'; wrap.innerHTML=''; }
+  else { document.getElementById('cuesNote').style.display='none'; wrap.innerHTML=h; }
+}
+function rem(tag,txt){ return '<div class="rem"><div class="bar-i"></div><div class="txt"><small>'+tag+'</small>'+txt+'</div></div>'; }
+
+function renderEnv(){
+  const d=D();
+  let h='';
+  if(!S.envSteps.length){ h='<div class="empty">Add nightly prep steps in System →</div>'; }
+  S.envSteps.forEach((step,i)=>{
+    const on=d.env.includes(i);
+    h+='<div class="chk '+(on?'on':'')+'" data-env="'+i+'"><div class="box"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M5 12l5 5 9-11"/></svg></div><div class="l">'+esc(step)+'</div></div>';
+  });
+  document.getElementById('envList').innerHTML=h;
+}
+
+/* ----- system editors ----- */
+function renderSystem(){
+  document.getElementById('inIdentity').value=S.identity;
+  document.getElementById('inWhy').value=S.why;
+  document.getElementById('inContract').value=S.contract||"";
+  document.getElementById('inSign').value=S.sign||"";
+  listEdit('intList',S.intentions,(s,i)=>'<span><b>I will</b> '+esc(s.b)+' at '+esc(s.t)+(s.l?' in '+esc(s.l):'')+'</span>','int');
+  listEdit('stackList',S.stacks,(s,i)=>'<span><b>After</b> I '+esc(s.a)+', <b>I will</b> '+esc(s.h)+'</span>','stk');
+  listEdit('bundleList',S.bundles,(s,i)=>'<span>Only when I '+esc(s.s)+' → <b>'+esc(s.w)+'</b></span>','bnd');
+  listEdit('envEditList',S.envSteps.map(x=>({t:x})),(s,i)=>'<span>'+esc(s.t)+'</span>','env');
+  renderReminders();
+}
+function renderReminders(){
+  const wrap=document.getElementById('reminderList');
+  const granted = ('Notification' in window) && Notification.permission==='granted';
+  document.getElementById('permBanner').style.display = (('Notification' in window) && Notification.permission!=='granted') ? 'block':'none';
+  wrap.innerHTML=S.reminders.map(r=>
+    '<div class="rmd"><div class="info"><b>'+esc(r.label)+'</b>'+
+    '<div class="meta"><input type="time" value="'+r.time+'" data-rtime="'+r.id+'">'+
+    '<button class="cal" data-cal="'+r.id+'"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M3 9h18M8 2v4M16 2v4"/></svg>＋cal alarm</button></div></div>'+
+    '<div class="tog '+(r.on?'on':'')+'" data-rtog="'+r.id+'"></div></div>'
+  ).join('');
+}
+
+/* ----- journal / memory ----- */
+function renderJournal(){
+  const el=document.getElementById('journal');
+  const keys=Object.keys(S.days).sort().reverse();
+  let h='';
+  keys.forEach(k=>{
+    const d=S.days[k];
+    const has = d.morning||d.evening||d.gym||d.disc||(d.meals&&d.meals.some(m=>m.p||m.f||m.c))||d.water;
+    if(!has) return;
+    const dt=new Date(k+'T00:00:00');
+    const lbl=dt.toLocaleDateString(undefined,{weekday:'short',month:'short',day:'numeric'});
+    let badges=''; 
+    if(d.gym)badges+='<span class="bg" title="Showed up">⛏</span>';
+    if(d.meals&&d.meals.every(m=>m.p&&m.f&&m.c))badges+='<span class="bg" title="Full plate">🍽</span>';
+    if(d.water>=12)badges+='<span class="bg" title="Hydrated">💧</span>';
+    if(d.disc)badges+='<span class="bg" title="Embraced discomfort">🔥</span>';
+    h+='<div class="jrn"><div class="jd">'+lbl+(k===TODAY?' · today':'')+'<span class="badges">'+badges+'</span></div>';
+    if(d.morning)h+='<div class="seg2"><i>Morning</i>'+esc(d.morning)+'</div>';
+    if(d.evening)h+='<div class="seg2"><i>Evening</i>'+esc(d.evening)+'</div>';
+    if(!d.morning&&!d.evening&&badges)h+='<div class="seg2" style="color:var(--text-3)">Showed up — no words needed.</div>';
+    h+='</div>';
+  });
+  el.innerHTML = h || '<div class="jrn-empty">Your story starts today. Show up once and it appears here.</div>';
+}
+
+/* ============================================================
+   SHOW-UP TIMER
+   ============================================================ */
+const Timer=(()=>{
+  let total=S.timerDur*60, left=total, t=null, running=false;
+  const C=2*Math.PI*15.5;
+  function fmt(s){ return Math.floor(s/60)+':'+pad(s%60); }
+  function paint(){
+    document.getElementById('tDisplay').textContent=fmt(left);
+    const off=C*(1-left/total);
+    document.getElementById('tProg').setAttribute('stroke-dashoffset',off);
+    document.getElementById('tState').textContent= running?'forging':(left===total?'ready':(left===0?'done':'paused'));
+  }
+  function tick(){ if(left>0){left--; paint();} if(left===0){ finish(); } }
+  function finish(){
+    clearInterval(t); running=false; paint();
+    const d=D(); d.gym=true; if(d.min<S.timerDur) d.min=S.timerDur;
+    save(); rerenderToday(); renderProgress();
+    celebrate('Session complete. You forged it.');
+    notify('FORGE','You finished your '+S.timerDur+'-min session. That\'s a vote cast.');
+  }
+  return {
+    setDur(m){ S.timerDur=m; total=m*60; left=total; running=false; clearInterval(t); save(); paint(); },
+    start(){ if(running){ clearInterval(t); running=false; paint(); return; } if(left===0)left=total; running=true; t=setInterval(tick,1000); paint(); if(navigator.vibrate)navigator.vibrate(10); },
+    reset(){ clearInterval(t); running=false; left=total; paint(); },
+    init(){ document.querySelectorAll('#durPick button').forEach(b=>b.classList.toggle('sel',+b.dataset.d===S.timerDur)); total=S.timerDur*60; left=total; paint(); }
+  };
+})();
+
+/* ============================================================
+   NOTIFICATIONS + ALARMS
+   ============================================================ */
+function notif(title,body){
+  try{
+    if(!('Notification' in window) || Notification.permission!=='granted') return false;
+    if(navigator.serviceWorker && navigator.serviceWorker.ready){
+      navigator.serviceWorker.ready.then(reg=>reg.showNotification(title,{body,icon:'icon-192.png',badge:'icon-192.png',vibrate:[60,40,60],tag:title})).catch(()=>new Notification(title,{body,icon:'icon-192.png'}));
+    } else { new Notification(title,{body,icon:'icon-192.png'}); }
+    return true;
+  }catch(e){ return false; }
+}
+const notify=notif;
+
+async function askNotif(){
+  if(!('Notification' in window)){ toast('This browser has no notifications'); return; }
+  const p=await Notification.requestPermission();
+  S.notif = p==='granted'; save(); renderReminders();
+  if(p==='granted'){ celebrate('Notifications on'); notif('FORGE is watching your back','You\'ll get nudges at your chosen times while the app is open.'); scheduleAll(); }
+  else toast('Notifications blocked — use ＋cal alarms instead');
+}
+
+/* In-app scheduler: while FORGE is open, fire each reminder once at its minute. */
+let firedToday={};
+function checkReminders(){
+  if(!('Notification' in window) || Notification.permission!=='granted') return;
+  const now=new Date(); const hm=pad(now.getHours())+':'+pad(now.getMinutes());
+  S.reminders.forEach(r=>{
+    if(!r.on) return;
+    const stamp=TODAY+'|'+r.id;
+    if(r.time===hm && firedToday[stamp]!==true){ firedToday[stamp]=true;
+      let body=r.body;
+      if(r.id==='morn'){ const m=todaysMaxim(); body=maximBody(m)+'  ·  '+r.body; }
+      notif('FORGE · '+r.label, body); if(navigator.vibrate)navigator.vibrate([80,40,80]); }
+  });
+}
+function scheduleAll(){ /* Notification Triggers API (Chromium) for closed-app alarms, if present */
+  if(!('Notification' in window) || Notification.permission!=='granted') return;
+  if(!('serviceWorker' in navigator)) return;
+  navigator.serviceWorker.ready.then(reg=>{
+    if(!('showTrigger' in Notification.prototype)) return; // not supported -> rely on in-app + ICS
+    reg.getNotifications({includeTriggered:true}).then(ns=>ns.forEach(n=>{ if(n.tag&&n.tag.startsWith('forge-sched'))n.close(); })).catch(()=>{});
+    S.reminders.filter(r=>r.on).forEach(r=>{
+      const when=nextOccurrence(r.time);
+      let body=r.body;
+      if(r.id==='morn'){ const m=MAXIMS[maximIndexFor(new Date(when))]; body=maximBody(m); }
+      try{ reg.showNotification('FORGE · '+r.label,{body,icon:'icon-192.png',tag:'forge-sched-'+r.id,showTrigger:new TimestampTrigger(when)});}catch(e){}
+    });
+  }).catch(()=>{});
+}
+function nextOccurrence(hhmm){ const [h,m]=hhmm.split(':').map(Number); const d=new Date(); d.setHours(h,m,0,0); if(d<=new Date())d.setDate(d.getDate()+1); return d.getTime(); }
+
+/* ICS calendar alarm (works even when app is closed) */
+function downloadICS(r){
+  const [h,m]=r.time.split(':');
+  const now=new Date();
+  const dt=new Date(now.getFullYear(),now.getMonth(),now.getDate(),+h,+m,0);
+  if(dt<=now) dt.setDate(dt.getDate()+1);
+  const z=n=>String(n).padStart(2,'0');
+  const fmt=d=>d.getFullYear()+z(d.getMonth()+1)+z(d.getDate())+'T'+z(d.getHours())+z(d.getMinutes())+'00';
+  const uid='forge-'+r.id+'-'+Date.now()+'@forge.app';
+  const ics=['BEGIN:VCALENDAR','VERSION:2.0','PRODID:-//FORGE//EN','CALSCALE:GREGORIAN','BEGIN:VEVENT',
+    'UID:'+uid,'DTSTAMP:'+fmt(now),'DTSTART:'+fmt(dt),'DURATION:PT5M',
+    'RRULE:FREQ=DAILY','SUMMARY:FORGE · '+r.label,'DESCRIPTION:'+r.body.replace(/,/g,'\\,'),
+    'BEGIN:VALARM','TRIGGER:PT0M','ACTION:DISPLAY','DESCRIPTION:'+r.label,'END:VALARM',
+    'END:VEVENT','END:VCALENDAR'].join('\r\n');
+  const blob=new Blob([ics],{type:'text/calendar'});
+  const a=document.createElement('a'); a.href=URL.createObjectURL(blob); a.download='forge-'+r.id+'.ics'; a.click();
+  toast('Opening calendar alarm…');
+}
+
+/* ============================================================
+   MOTIVATION — "I don't feel like it"
+   ============================================================ */
+const REFRAMES=[
+ "You don't need to feel like it. The whole point of a system is that it carries you when motivation doesn't show up. Decide once. Move.",
+ "Amor fati — love what is required. The resistance you feel right now is the exact thing that builds the person you want to be.",
+ "Showing up for ten minutes is a complete win. You're not signing up for an hour. You're casting one vote. Then you're free.",
+ "The obstacle in front of you is the way forward. Don't go around the discomfort — walk straight into it. That's the rep.",
+ "Future-you is watching this moment. Be the version that didn't negotiate with the urge to quit.",
+ "You have power over your mind, not outside events. You can't control the result. You can absolutely control whether you start."
+];
+function openMotivate(){
+  const r=REFRAMES[Math.floor(Math.random()*REFRAMES.length)];
+  const s=pick(STOIC);
+  document.getElementById('mvtQuote').textContent='“'+s.q+'”';
+  document.getElementById('mvtIdentity').textContent= S.identity? ('someone who '+S.identity) : 'becoming the person who shows up';
+  const ww=document.getElementById('mvtWhyWrap');
+  if(S.why){ ww.style.display='block'; document.getElementById('mvtWhy').textContent=S.why; } else ww.style.display='none';
+  document.getElementById('mvtReframe').textContent=r;
+  document.getElementById('motivateModal').classList.add('open');
+  if(navigator.vibrate)navigator.vibrate(8);
+}
+function listEdit(id,arr,fmt,type){
+  const el=document.getElementById(id);
+  if(!arr.length){ el.innerHTML='<div class="empty">Nothing yet — add your first below.</div>'; return; }
+  el.innerHTML=arr.map((s,i)=>'<div class="list-item">'+fmt(s,i)+'<div class="del" data-del="'+type+'" data-i="'+i+'">×</div></div>').join('');
+}
+
+/* ----- reflect ----- */
+function renderReflect(){
+  const d=D();
+  document.getElementById('morningIntention').value=d.morning;
+  document.getElementById('eveningReflection').value=d.evening;
+  document.getElementById('discChallenge').textContent=pick(DISC);
+  document.getElementById('discBtn').classList.toggle('done',d.disc);
+}
+
+/* ----- progress ----- */
+function renderProgress(){
+  // last 35 days aligned to weeks (show 5 weeks)
+  const cells=35; const out=[];
+  const now=new Date();
+  // find start so that grid columns map Mon..Sun; we render simple last-35 row order
+  for(let i=cells-1;i>=0;i--){
+    const dt=new Date(now); dt.setDate(now.getDate()-i);
+    const k=key(dt); const d=S.days[k];
+    let lvl=0;
+    if(d){ let p=0; if(d.gym)p++; if(d.meals&&d.meals.every(m=>m.p&&m.f&&m.c))p++; if(d.water>=12)p++; lvl=p; }
+    out.push('<div class="cell '+(lvl?'l'+lvl:'')+' '+(k===TODAY?'today':'')+'"></div>');
+  }
+  document.getElementById('heatmap').innerHTML=out.join('');
+  document.getElementById('stTotal').textContent=totalShowUp();
+  document.getElementById('stPlate').textContent=count(d=>d.meals&&d.meals.every(m=>m.p&&m.f&&m.c));
+  document.getElementById('stWater').textContent=count(d=>d.water>=12);
+  document.getElementById('stMin').textContent=Object.values(S.days).reduce((a,d)=>a+(d.min||0),0);
+  document.getElementById('stDisc').textContent=count(d=>d.disc);
+}
+
+/* ---------- anchor: steady section ---------- */
+const Breathe=(()=>{
+  const phases=[['Breathe in',1],['Hold',1],['Breathe out',.55],['Hold',.55]];
+  let t=null, step=0, rounds=0, running=false;
+  function set(){ const [w,s]=phases[step%4]; document.getElementById('breathWord').textContent=w; document.getElementById('breathOrb').style.transform='scale('+s+')'; }
+  function stop(){ running=false; clearInterval(t); document.getElementById('breathBtn').textContent='Begin · 4 rounds'; document.getElementById('breathWord').textContent='Ready'; document.getElementById('breathOrb').style.transform='scale(.55)'; }
+  return {
+    toggle(){
+      if(running){ stop(); return; }
+      running=true; step=0; rounds=0; set();
+      document.getElementById('breathBtn').textContent='Stop';
+      if(navigator.vibrate)navigator.vibrate(10);
+      t=setInterval(()=>{ step++; if(step%4===0)rounds++; if(rounds>=4){ stop(); toast('Four rounds. Notice the change.'); return; } set(); if(navigator.vibrate)navigator.vibrate(6); },4000);
+    }
+  };
+})();
+const ANCHOR_ACTIONS=[
+ "Drink a glass of water, then step outside for two minutes.",
+ "Send one message to someone you care about — no agenda, just hello.",
+ "Tidy one small surface. Just one — not the whole room.",
+ "Write down one thing you're glad exists today.",
+ "Do one quiet kind thing for someone, without telling them.",
+ "Put on a song you love and let it play the whole way through.",
+ "Make the bed, or wash a single dish — one small order against the fog.",
+ "Step into daylight for five minutes.",
+ "Stretch your body slowly for one minute. Just notice it.",
+ "Make a warm drink and hold it with both hands for a moment.",
+ "Open the window and take ten slow breaths of fresh air.",
+ "Name three things you can see, two you can hear, one you can feel."
+];
+function renderAnchorPrompt(){ document.getElementById('anchorPrompt').textContent=ANCHOR_ACTIONS[Math.floor(Math.random()*ANCHOR_ACTIONS.length)]; }
+function renderWorth(){
+  const el=document.getElementById('worthList'); if(!el) return;
+  if(!S.worthLog.length){ el.innerHTML='<div class="jrn-empty">Empty for now. Add one true thing — it becomes evidence you can return to.</div>'; return; }
+  el.innerHTML=[...S.worthLog].reverse().map((w)=>{
+    const realIdx=S.worthLog.indexOf(w);
+    const dt=new Date(w.d).toLocaleDateString(undefined,{month:'short',day:'numeric'});
+    return '<div class="worth-item"><div class="bd"><div class="wd">'+dt+'</div><div class="wt">'+esc(w.t)+'</div></div><div class="wx" data-delworth="'+realIdx+'">×</div></div>';
+  }).join('');
+}
+function renderTrust(){
+  document.getElementById('trustName').value=S.trustName||'';
+  document.getElementById('trustContact').value=S.trustContact||'';
+  const sh=document.getElementById('trustShow');
+  if(S.trustName){
+    const tel=(S.trustContact||'').replace(/[^\d+]/g,'');
+    const contact = tel.length>=5 ? '<a href="tel:'+tel+'">'+esc(S.trustContact)+'</a>' : esc(S.trustContact||'');
+    sh.innerHTML='<div class="trust-show">On a hard day, reach <b>'+esc(S.trustName)+'</b>'+(S.trustContact?' — '+contact:'')+'. You don\'t need the perfect words. &quot;I\'m having a rough one&quot; is enough.</div>';
+  } else sh.innerHTML='';
+}
+function renderAnchor(){ renderWorth(); renderTrust(); if(document.getElementById('anchorPrompt').textContent==='—') renderAnchorPrompt(); }
+
+/* ---------- codex reader ---------- */
+const READINGS=[
+ {id:'machiavelli', title:'Niccolò Machiavelli', yr:'1469–1527 · Florence', sub:'Power, virtù, and the world as it is',
+  html:`<p>Niccolò Machiavelli was a Florentine diplomat, political theorist, and writer whose name became a byword for cunning — often unfairly so. Here's what matters.</p>
+  <h3>Life and context</h3>
+  <p>He served as a senior official in the Republic of Florence for 14 years, handling diplomacy and military affairs. When the Medici family returned to power in 1512, he was dismissed, accused of conspiracy, imprisoned, and tortured. He spent his later years writing in rural exile, hoping — mostly in vain — to win back a political post. That failure matters: his most famous book was partly a job application to the Medici.</p>
+  <h3>The Prince (1513)</h3>
+  <p>His notorious short treatise on how rulers gain and hold power. The key ideas:</p>
+  <ul>
+   <li><b>Realism over idealism.</b> He claimed to describe how people and politics actually behave, not how they should. Earlier "mirror for princes" books told rulers to be virtuous; he asked what actually works.</li>
+   <li><b>Virtù vs. fortuna.</b> "Virtù" doesn't mean virtue — it means skill, boldness, adaptability, the capacity to shape events. "Fortuna" is luck or circumstance. A great leader uses virtù to master fortuna.</li>
+   <li><b>The ends and the means.</b> A ruler must be willing to act immorally when necessary — to break promises, use cruelty efficiently, deceive — because the state's survival depends on it. He never quite says "the ends justify the means," but it captures the spirit.</li>
+   <li><b>Feared vs. loved.</b> If you can't be both, being feared is safer — provided you avoid being hated.</li>
+   <li><b>Cruelty "well used."</b> Harsh acts should be swift and decisive, not drawn out.</li>
+  </ul>
+  <h3>The Discourses on Livy</h3>
+  <p>Often overlooked, but arguably his deeper work. Here he praises republics, not princes — admiring Rome, civic participation, the rule of law, and even the productive value of social conflict between classes. This is why scholars debate whether he was a cynical advisor to tyrants or a committed republican. The likeliest reading: he preferred republics, but wrote The Prince for the world as he found it.</p>
+  <h3>"Machiavellian" vs. Machiavelli</h3>
+  <p>The adjective means scheming and unscrupulous. But that caricature flattens him. He wasn't celebrating evil; he was insisting that politics operates by different rules than private morality, and that pretending otherwise gets people killed.</p>
+  <div class="pull">Whether that's clear-eyed honesty or dangerous amorality is the enduring argument.</div>
+  <h3>Why he still matters</h3>
+  <p>He's often called the founder of modern political science, for separating politics from theology and ethics and analysing power empirically. He also wrote history, poetry, and a successful bawdy comedy (Mandragola) — so the grim reputation undersells a sharp, witty mind.</p>`}
+];
+function openCodex(){ document.getElementById('codexWrap').classList.add('open'); showCodexList(); }
+function closeCodex(){ document.getElementById('codexWrap').classList.remove('open'); }
+function showCodexList(){
+  document.getElementById('codexTitle').textContent='The Codex';
+  document.getElementById('codexBack').style.visibility='hidden';
+  document.getElementById('codexBody').innerHTML=
+   '<p class="note" style="margin:0 0 16px">Long-form readings on strategy, philosophy, and the examined life.</p>'+
+   READINGS.map(r=>'<div class="reading-item" data-read="'+r.id+'"><div class="yr">'+esc(r.yr)+'</div><h3>'+esc(r.title)+'</h3><p>'+esc(r.sub)+'</p></div>').join('');
+  document.getElementById('codexWrap').scrollTop=0;
+}
+function showReading(id){
+  const r=READINGS.find(x=>x.id===id); if(!r) return;
+  document.getElementById('codexTitle').textContent='Codex';
+  document.getElementById('codexBack').style.visibility='visible';
+  document.getElementById('codexBody').innerHTML='<div class="article"><div class="at">'+esc(r.title)+'</div><div class="asub">'+esc(r.yr)+' · '+esc(r.sub)+'</div>'+r.html+'</div>';
+  document.getElementById('codexWrap').scrollTop=0;
+}
+
+/* ---------- stats helpers ---------- */
+function renderRecover(){
+  const el=document.getElementById('recover'); if(!el) return;
+  const today=D();
+  const y=dForDaysAgo(1), dby=dForDaysAgo(2);
+  const missedY = !(y&&y.gym);
+  const missedDBY = !(dby&&dby.gym);
+  el.className='recover';
+  if(today.gym){ return; }            // already won today — no nudge
+  if(missedY && missedDBY){
+    el.classList.add('show','hard');
+    document.getElementById('recoverT').textContent='Two days down. This is where habits die.';
+    document.getElementById('recoverB').textContent='Not the missed day — the second one. Break the spiral now: just show up for ten minutes. Don\'t miss a third.';
+  } else if(missedY){
+    el.classList.add('show','soft');
+    document.getElementById('recoverT').textContent='You missed yesterday. Never miss twice.';
+    document.getElementById('recoverB').textContent='One slip is an accident; two is the start of a new habit. Reclaim it today — ten minutes is a full win.';
+  }
+}
+function totalShowUp(){ return count(d=>d.gym); }
+function count(fn){ return Object.values(S.days).filter(fn).length; }
+function weekMinutes(){
+  const now=new Date(); const dow=(now.getDay()+6)%7; // Mon=0
+  let sum=0;
+  for(let i=0;i<=dow;i++){ const dt=new Date(now); dt.setDate(now.getDate()-i); const d=S.days[key(dt)]; if(d) sum+=d.min||0; }
+  return sum;
+}
+function streak(){
+  let s=0; const now=new Date();
+  for(let i=0;i<400;i++){ const dt=new Date(now); dt.setDate(now.getDate()-i); const d=S.days[key(dt)];
+    if(d&&d.gym) s++; else { if(i===0) continue; break; } }
+  return s;
+}
+
+/* ============================================================
+   ACTIONS
+   ============================================================ */
+function celebrate(msg){
+  toast(msg);
+  if(navigator.vibrate) navigator.vibrate(18);
+  burst();
+}
+let toastT;
+function toast(m){ const t=document.getElementById('toast'); document.getElementById('toastMsg').textContent=m; t.classList.add('show'); clearTimeout(toastT); toastT=setTimeout(()=>t.classList.remove('show'),1900); }
+function burst(){
+  const cols=['#C4B5FD','#A78BFA','#F472B6','#34D399'];
+  for(let i=0;i<18;i++){
+    const s=document.createElement('div'); s.className='spark';
+    s.style.background=cols[i%cols.length];
+    s.style.left='50%'; s.style.top='34%';
+    document.body.appendChild(s);
+    const ang=Math.random()*Math.PI*2, dist=80+Math.random()*120;
+    const x=Math.cos(ang)*dist, y=Math.sin(ang)*dist - 40;
+    s.animate([{transform:'translate(-50%,-50%) scale(1)',opacity:1},
+      {transform:'translate('+x+'px,'+y+'px) scale(.2) rotate('+(Math.random()*360)+'deg)',opacity:0}],
+      {duration:750+Math.random()*350,easing:'cubic-bezier(.2,.7,.3,1)'}).onfinish=()=>s.remove();
+  }
+}
+
+function rerenderToday(){ renderHero(); renderStreak(); renderKeystone(); renderMeals(); renderWater(); renderCues(); renderEnv(); renderRank(); renderRecover(); save(); }
+
+/* delegation */
+document.addEventListener('click', e=>{
+  const t=e.target;
+
+  // gym keystone
+  if(t.closest('#gymBtn')){
+    const d=D(); d.gym=!d.gym;
+    if(d.gym){ if(d.min<10) d.min=10; celebrate('Showed up. A vote cast.'); }
+    else { toast('Unmarked'); }
+    rerenderToday(); renderProgress(); return;
+  }
+  // add minutes
+  const mb=t.closest('.minlog button');
+  if(mb){ const d=D(); d.gym=true; d.min=(d.min||0)+parseInt(mb.dataset.min); celebrate('+'+mb.dataset.min+' min logged'); rerenderToday(); renderProgress(); return; }
+
+  // meal chip
+  const chip=t.closest('.chip');
+  if(chip){ const d=D(); const mi=+chip.dataset.meal,k=chip.dataset.k; d.meals[mi][k]=d.meals[mi][k]?0:1;
+    if(d.meals[mi].p&&d.meals[mi].f&&d.meals[mi].c) celebrate('Balanced plate ✓'); 
+    renderMeals(); save(); renderProgress(); return; }
+
+  // water drop
+  const drop=t.closest('.drop');
+  if(drop){ const d=D(); const idx=+drop.dataset.w; d.water = (idx+1===d.water)? idx : idx+1; 
+    if(d.water>=12) celebrate('3 litres — hydrated 💧'); renderWater(); save(); renderProgress(); return; }
+
+  // env check (today)
+  const chk=t.closest('[data-env]');
+  if(chk && chk.closest('#envList')){ const d=D(); const i=+chk.dataset.env; const ix=d.env.indexOf(i); if(ix>-1) d.env.splice(ix,1); else d.env.push(i); renderEnv(); save(); return; }
+
+  // discomfort
+  if(t.closest('#discBtn')){ const d=D(); d.disc=!d.disc; if(d.disc) celebrate('Amor Fati. You chose the hard thing.'); renderReflect(); save(); renderProgress(); return; }
+
+  // show-up timer
+  if(t.closest('#tStart')){ Timer.start(); return; }
+  if(t.closest('#tReset')){ Timer.reset(); return; }
+  const dp=t.closest('#durPick button');
+  if(dp){ document.querySelectorAll('#durPick button').forEach(b=>b.classList.remove('sel')); dp.classList.add('sel'); Timer.setDur(+dp.dataset.d); return; }
+
+  // motivation
+  if(t.closest('#maximStar')){ toggleFavMaxim(); return; }
+  const us=t.closest('[data-unstar]');
+  if(us){ const la=us.dataset.unstar; const i=S.favMaxims.indexOf(la); if(i>-1)S.favMaxims.splice(i,1); save(); renderSaved(); renderMaxim(false); toast('Removed from saved'); return; }
+  if(t.closest('#maximAnother')){ maximOffset++; renderMaxim(true); if(navigator.vibrate)navigator.vibrate(8); return; }
+  if(t.closest('#motivateBtn')){ openMotivate(); return; }
+  if(t.closest('#mvtClose')){ document.getElementById('motivateModal').classList.remove('open'); return; }
+  if(t.closest('#mvtGo')){ document.getElementById('motivateModal').classList.remove('open'); switchView('today'); document.querySelectorAll('#durPick button').forEach(b=>b.classList.toggle('sel',+b.dataset.d===2)); Timer.setDur(2); Timer.start(); document.querySelector('.timer-wrap').scrollIntoView({behavior:'smooth',block:'center'}); return; }
+
+  // reminder toggle
+  const rt=t.closest('[data-rtog]');
+  if(rt){ const r=S.reminders.find(x=>x.id===rt.dataset.rtog); r.on=!r.on; save(); renderReminders(); if(r.on&&('Notification'in window)&&Notification.permission!=='granted'){ askNotif(); } else { scheduleAll(); } return; }
+  // reminder calendar export
+  const cal=t.closest('[data-cal]');
+  if(cal){ downloadICS(S.reminders.find(x=>x.id===cal.dataset.cal)); return; }
+  // enable notifications
+  if(t.closest('#enableNotif')){ askNotif(); return; }
+
+  // anchor: breathing, worth ledger, one-small-thing, trusted contact
+  if(t.closest('#breathBtn')){ Breathe.toggle(); return; }
+  if(t.closest('#anchorAnother')){ renderAnchorPrompt(); if(navigator.vibrate)navigator.vibrate(6); return; }
+  if(t.closest('#addWorth')){ const v=val('worthNew'); if(!v){ toast('Write one true thing first'); return; } S.worthLog.push({d:Date.now(),t:v}); clear(['worthNew']); save(); renderWorth(); celebrate('Added to your ledger'); return; }
+  const dw=t.closest('[data-delworth]');
+  if(dw){ S.worthLog.splice(+dw.dataset.delworth,1); save(); renderWorth(); return; }
+  if(t.closest('#saveTrust')){ S.trustName=val('trustName'); S.trustContact=val('trustContact'); save(); renderTrust(); if(S.trustName)celebrate('Saved. One tap away when you need them.'); return; }
+
+  // codex
+  if(t.closest('#codexBtn')){ openCodex(); return; }
+  if(t.closest('#codexClose')){ closeCodex(); return; }
+  if(t.closest('#codexBack')){ showCodexList(); return; }
+  const rd=t.closest('[data-read]');
+  if(rd){ showReading(rd.dataset.read); return; }
+
+  // tabs
+  const tab=t.closest('.tab');
+  if(tab){ switchView(tab.dataset.view); return; }
+
+  // identity modal open
+  if(t.closest('#editIdentity')){ openIdentity(); return; }
+
+  // delete list items
+  const del=t.closest('[data-del]');
+  if(del){ const type=del.dataset.del,i=+del.dataset.i;
+    if(type==='int')S.intentions.splice(i,1);
+    if(type==='stk')S.stacks.splice(i,1);
+    if(type==='bnd')S.bundles.splice(i,1);
+    if(type==='env')S.envSteps.splice(i,1);
+    save(); renderSystem(); renderCues(); renderEnv(); return; }
+});
+
+/* system add buttons */
+on('addII',()=>{ const b=val('iiBeh'),tm=val('iiTime'),l=val('iiLoc'); if(!b||!tm)return toast('Add a behaviour & time'); S.intentions.push({b,t:tm,l}); clear(['iiBeh','iiTime','iiLoc']); save(); renderSystem(); renderCues(); toast('Intention set'); });
+on('addHS',()=>{ const a=val('hsAnchor'),h=val('hsHabit'); if(!a||!h)return toast('Fill both fields'); S.stacks.push({a,h}); clear(['hsAnchor','hsHabit']); save(); renderSystem(); renderCues(); toast('Stack added'); });
+on('addTB',()=>{ const s=val('tbShould'),w=val('tbWant'); if(!s||!w)return toast('Fill both fields'); S.bundles.push({s,w}); clear(['tbShould','tbWant']); save(); renderSystem(); renderCues(); toast('Bundle added'); });
+on('addEnv',()=>{ const v=val('envNew'); if(!v)return; S.envSteps.push(v); clear(['envNew']); save(); renderSystem(); renderEnv(); toast('Prep step added'); });
+on('saveIdentity',()=>{ S.identity=val('inIdentity'); S.why=val('inWhy'); save(); renderHero(); celebrate('Identity forged'); });
+
+on('exportBtn',()=>{ const blob=new Blob([JSON.stringify(S,null,2)],{type:'application/json'}); const a=document.createElement('a'); a.href=URL.createObjectURL(blob); a.download='forge-backup-'+TODAY+'.json'; a.click(); toast('Backup downloaded'); });
+on('resetBtn',()=>{ if(confirm('Erase all FORGE data? This cannot be undone.')){ Store.set(KEY,null); location.reload(); } });
+on('saveContract',()=>{ S.contract=val('inContract'); S.sign=val('inSign'); save(); celebrate('Signed. Hold the line.'); });
+
+/* import / restore */
+on('importBtn',()=>document.getElementById('importFile').click());
+document.getElementById('importFile').addEventListener('change',ev=>{
+  const f=ev.target.files[0]; if(!f) return;
+  const rd=new FileReader();
+  rd.onload=()=>{ try{ const obj=JSON.parse(rd.result); if(!obj||!obj.days) throw 0;
+      if(confirm('Restore this backup? It replaces current data on this device.')){ S=obj; save(); location.reload(); }
+    }catch(e){ toast('That file isn\'t a valid FORGE backup'); } };
+  rd.readAsText(f);
+});
+
+/* reminder time edits (change delegation) */
+document.addEventListener('change',e=>{
+  const ti=e.target.closest('[data-rtime]');
+  if(ti){ const r=S.reminders.find(x=>x.id===ti.dataset.rtime); r.time=ti.value; save(); scheduleAll(); toast(r.label+' → '+ti.value); }
+});
+
+/* motivation modal backdrop */
+document.getElementById('motivateModal').addEventListener('click',e=>{ if(e.target.id==='motivateModal') e.target.classList.remove('open'); });
+
+/* identity modal */
+function openIdentity(){ document.getElementById('mIdentity').value=S.identity; document.getElementById('mWhy').value=S.why; document.getElementById('identityModal').classList.add('open'); }
+on('mSave',()=>{ S.identity=val('mIdentity'); S.why=val('mWhy'); save(); renderHero(); renderSystem(); document.getElementById('identityModal').classList.remove('open'); celebrate('Identity forged'); });
+document.getElementById('identityModal').addEventListener('click',e=>{ if(e.target.id==='identityModal') e.target.classList.remove('open'); });
+
+/* reflect autosave */
+bindText('morningIntention','morning');
+bindText('eveningReflection','evening');
+function bindText(id,field){ const el=document.getElementById(id); let t; el.addEventListener('input',()=>{ const d=D(); d[field]=el.value; clearTimeout(t); t=setTimeout(save,400); }); }
+
+/* ---------- view switching ---------- */
+function switchView(v){
+  document.querySelectorAll('.view').forEach(x=>x.classList.remove('active'));
+  document.querySelectorAll('.tab').forEach(x=>x.classList.remove('active'));
+  document.getElementById('view-'+v).classList.add('active');
+  document.querySelector('.tab[data-view="'+v+'"]').classList.add('active');
+  window.scrollTo({top:0,behavior:'instant'});
+  if(v==='system')renderSystem();
+  if(v==='reflect')renderReflect();
+  if(v==='progress'){ renderProgress(); renderJournal(); renderLadder(); renderTrends(); renderSaved(); }
+  if(v==='anchor') renderAnchor();
+}
+
+/* ---------- helpers ---------- */
+function esc(s){ return String(s||'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c])); }
+function on(id,fn){ const el=document.getElementById(id); if(el) el.addEventListener('click',fn); }
+function val(id){ return document.getElementById(id).value.trim(); }
+function clear(ids){ ids.forEach(i=>document.getElementById(i).value=''); }
+
+/* ---------- init ---------- */
+function init(){
+  if(S.rankSeen===0) S.rankSeen=rankIndex(totalShowUp());
+  renderHero(); renderStreak(); renderKeystone(); renderStoic(); renderMaxim(); renderMeals(); renderWater(); renderCues(); renderEnv(); renderRank(); renderRecover();
+  Timer.init();
+  save();
+  if(!S.identity){ setTimeout(openIdentity,500); }
+  // in-app reminder scheduler: check every 20s while open
+  checkReminders();
+  setInterval(checkReminders,20000);
+  // (re)arm OS-level triggers if supported
+  if(('Notification' in window) && Notification.permission==='granted') scheduleAll();
+  // refresh fired-tracker at midnight rollover
+  setInterval(()=>{ const k=key(new Date()); if(k!==TODAY){ location.reload(); } },60000);
+  // deep-link to a tab via #system / #reflect / #progress
+  const h=(location.hash||'').replace('#','');
+  if(['system','reflect','progress','anchor'].includes(h)) switchView(h);
+  window.addEventListener('hashchange',()=>{ const hh=(location.hash||'').replace('#',''); if(['today','system','reflect','progress','anchor'].includes(hh)) switchView(hh); });
+}
+init();
+
+/* ---------- PWA: service worker + install ---------- */
+if('serviceWorker' in navigator){ window.addEventListener('load',()=>{ navigator.serviceWorker.register('sw.js').catch(()=>{}); }); }
+let deferred;
+window.addEventListener('beforeinstallprompt',e=>{ e.preventDefault(); deferred=e; document.getElementById('installBtn').classList.add('show'); });
+on('installBtn',async()=>{ if(deferred){ deferred.prompt(); await deferred.userChoice; deferred=null; document.getElementById('installBtn').classList.remove('show'); } });
+</script>
 </body>
 </html>
