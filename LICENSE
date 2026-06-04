@@ -1,0 +1,136 @@
+PROPRIETARY LICENSE
+====================
+
+Bowline
+Copyright (c) 2025 D. Lockwood. All rights reserved.
+
+
+1. OWNERSHIP
+
+   Bowline (including all source code, design, copy, assets, names, and
+   logos in this repository — collectively "the Software") is the
+   exclusive property of D. Lockwood (the "Author"). The Software is
+   protected by copyright law and international treaty provisions.
+
+
+2. PUBLIC VIEWING
+
+   The Software's source code is published in a public repository for
+   the purposes of transparency, demonstration, and allowing prospective
+   users to inspect how the application works before using it.
+
+   Publication of the source code does NOT constitute a grant of any
+   rights to use, copy, modify, distribute, or sublicense the Software.
+
+
+3. PERMITTED USES
+
+   You are permitted to:
+
+   (a) View and read the source code in this repository for personal,
+       non-commercial, informational purposes;
+
+   (b) Run the application in your own web browser via the publicly
+       hosted instance maintained by the Author;
+
+   (c) Cite or reference the Software in writing, research, journalism,
+       or commentary, provided that proper attribution is given to the
+       Author and the source repository is linked.
+
+
+4. PROHIBITED USES
+
+   Without prior written permission from the Author, you may NOT:
+
+   (a) Copy, reproduce, or store any portion of the source code or
+       assets, except for transient browser caching during normal use;
+
+   (b) Modify, adapt, translate, port, or create derivative works based
+       on the Software or any part of it;
+
+   (c) Distribute, publish, sublicense, sell, rent, lease, or otherwise
+       transfer the Software or any portion of it;
+
+   (d) Host, deploy, mirror, or otherwise make the Software (modified or
+       unmodified) available to others;
+
+   (e) Use the Software's source code, design, or assets in any other
+       project, whether open-source, proprietary, commercial, or
+       non-commercial;
+
+   (f) Use the names "Bowline", any associated logos, lockups, or visual
+       identity, or any confusingly similar marks for any product,
+       service, publication, or undertaking;
+
+   (g) Remove, alter, or obscure any copyright, trademark, or other
+       proprietary notices contained in the Software;
+
+   (h) Use the Software in any way that violates applicable laws or
+       regulations.
+
+
+5. THIRD-PARTY COMPONENTS
+
+   The Software includes or depends on third-party libraries, fonts, and
+   services that are licensed under their own terms. Those components
+   remain subject to their original licenses. The terms of this License
+   apply only to the original code, content, and assets authored by
+   D. Lockwood.
+
+
+6. REQUESTS FOR PERMISSION
+
+   Requests for permission to use, license, fork, translate, or
+   otherwise build on the Software should be directed to the Author via
+   the project's public issue tracker at:
+
+       https://github.com/dlockwood13/Bowline/issues
+
+   Reasonable requests — particularly from non-profit, educational,
+   research, healthcare, or community organisations — are welcomed and
+   will be considered in good faith. The Author reserves the right to
+   grant, refuse, or attach conditions to any such request.
+
+
+7. NO WARRANTY
+
+   THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+   EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+   MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE, AND
+   NON-INFRINGEMENT.
+
+   THE SOFTWARE IS NOT A SUBSTITUTE FOR PROFESSIONAL MEDICAL, PSYCHIATRIC,
+   PSYCHOLOGICAL, OR LEGAL ADVICE, DIAGNOSIS, OR TREATMENT. ALWAYS SEEK
+   THE ADVICE OF A QUALIFIED HEALTHCARE PROVIDER OR OTHER APPROPRIATELY
+   QUALIFIED PROFESSIONAL FOR ANY QUESTIONS REGARDING YOUR HEALTH OR
+   WELLBEING.
+
+
+8. LIMITATION OF LIABILITY
+
+   IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR ANY CLAIM, DAMAGES, OR
+   OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT, OR OTHERWISE,
+   ARISING FROM, OUT OF, OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
+   OTHER DEALINGS IN THE SOFTWARE.
+
+
+9. TERMINATION
+
+   Any breach of the terms of this License automatically terminates any
+   rights granted to you under it. Upon termination, you must
+   immediately cease all use of the Software and destroy any copies in
+   your possession or control.
+
+
+10. GOVERNING LAW
+
+    This License shall be governed by and construed in accordance with
+    the laws of England and Wales. Any disputes arising under or in
+    connection with this License shall be subject to the exclusive
+    jurisdiction of the courts of England and Wales.
+
+
+---
+
+For questions about this License, contact the Author via the project's
+GitHub repository.
