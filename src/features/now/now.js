@@ -2,9 +2,6 @@ import { state, ACCENT } from '../../data/state.js';
 import { register, setTopbar, go } from '../../app/router.js';
 import { callClaude } from '../../services/api.js';
 
-// Expose 'go' globally for inline HTML onclick handlers
-window.go = go;
-
 // Init local state
 if (!state.nowView)        state.nowView = 'main';
 if (!state.nowStuckReason) state.nowStuckReason = null;
@@ -163,7 +160,7 @@ const TITRATION_MOODS = [
 
 // ─── Main router ──────────────────────────────────────────
 export function renderNow() {
-  setTopbar('Now', 'Focus on one thing at a time.');
+  setTopbar('Now', 'What do I do next?');
 
   switch (state.nowView) {
     case 'stuck':            return renderStuck();
@@ -190,176 +187,81 @@ function renderMain() {
 
   if (!cur) {
     document.getElementById('content').innerHTML = `
-      <div class="screen" style="max-width: 600px; margin: 0 auto; font-family: system-ui, -apple-system, sans-serif; padding: 12px;">
-        <!-- Empty State Hero -->
-        <div style="background: #f8fafc; border: 1.5px solid #e2e8f0; border-radius: 16px; padding: 32px 24px; text-align: center; margin-bottom: 24px;">
-          <div style="width: 56px; height: 56px; background: #ecfdf5; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 16px; color: #059669;">
-            <i class="ti ti-check" style="font-size: 32px;"></i>
-          </div>
-          <div style="font-size: 20px; font-weight: 800; color: #1e293b; margin-bottom: 8px;">All done for now.</div>
-          <div style="font-size: 14px; color: #64748b; line-height: 1.5;">Rest is valid. A smaller day still counts.</div>
+      <div class="screen">
+        <div class="notice green" style="text-align:center;padding:1.5rem">
+          <div style="font-size:18px;font-weight:700;margin-bottom:8px">All done for now.</div>
+          <div>Rest is valid. A smaller day still counts.</div>
         </div>
-        <!-- Quick Actions Grid -->
-        <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; margin-bottom: 24px;">
-          <button onclick="go('today')" style="background: #fff; border: 1.5px solid #e2e8f0; border-radius: 12px; padding: 16px; font-weight: 700; color: #1e293b; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px;">
-            <i class="ti ti-sun" style="color: #d97706; font-size: 20px;"></i> Back to Today
-          </button>
-          <button onclick="go('plan')" style="background: #fff; border: 1.5px solid #e2e8f0; border-radius: 12px; padding: 16px; font-weight: 700; color: #1e293b; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px;">
-            <i class="ti ti-plus" style="color: #3b82f6; font-size: 20px;"></i> Add Task
-          </button>
-        </div>
-        ${renderHealthTools()}
-      </div>
-    `;
+        <button class="btn primary" onclick="go('today')"><i class="ti ti-sun"></i> Back to Today</button>
+        <button class="btn" onclick="go('plan')"><i class="ti ti-plus"></i> Add something</button>
+        <button class="btn sky" onclick="go('reset')"><i class="ti ti-refresh"></i> Take a recovery moment</button>
+        <button class="btn lavender" onclick="nowSetView('titration')"><i class="ti ti-pill"></i> Titration log</button>
+      </div>`;
     return;
   }
 
   document.getElementById('content').innerHTML = `
-    <div class="screen" style="max-width: 600px; margin: 0 auto; font-family: system-ui, -apple-system, sans-serif; padding: 16px 12px;">
-      
-      <!-- Main Task Card (Compacted) -->
-      <div style="background: #fff; border: 1.5px solid #e2e8f0; border-radius: 12px; border-left: 6px solid var(--teal, #41967a); padding: 20px 20px 16px 20px; margin-bottom: 20px; box-shadow: 0 2px 4px rgba(0,0,0,0.02);">
-        
-        <div style="font-size: 11px; font-weight: 800; color: #94a3b8; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 8px;">YOUR NEXT STEP</div>
-        <div style="font-size: 20px; font-weight: 800; color: #1e293b; line-height: 1.3; margin-bottom: 12px;">${cur.text}</div>
-        
-        <div style="font-size: 13px; color: #64748b; margin-bottom: 16px; display: flex; align-items: center; gap: 8px;">
-          <span>${cur.meta || 'Essentials · 5 min'}</span>
-          <span style="color: #cbd5e1;">|</span>
-          <span style="color: #059669; font-weight: 700; display: flex; align-items: center; gap: 4px;"><i class="ti ti-bolt" style="font-size: 14px;"></i> Low energy</span>
+    <div class="screen">
+      <div class="card teal">
+        <div class="card-label">Your next step</div>
+        <div class="card-main">${cur.text}</div>
+        <div class="card-sub">${cur.meta}</div>
+        <div style="margin-top:12px;display:flex;gap:8px;flex-wrap:wrap">
+          <span class="tag green"><i class="ti ti-bolt" style="font-size:12px"></i> Low energy</span>
+          <span class="tag amber"><i class="ti ti-clock" style="font-size:12px"></i> 5 min</span>
         </div>
+      </div>
 
-        <button onclick="nowDone(${cur.id})" style="width: 100%; padding: 14px; background: var(--teal, #41967a); color: white; border: none; border-radius: 8px; font-size: 15px; font-weight: 700; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; margin-bottom: 4px;">
-          <i class="ti ti-check" style="font-size: 18px;"></i> Mark as Done
+      <button class="btn primary" onclick="nowDone(${cur.id})">
+        <i class="ti ti-check"></i> Done
+      </button>
+
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:8px">
+        <button class="btn lavender" style="margin:0" onclick="nowSetView('stuck')">
+          <i class="ti ti-help"></i> I am stuck
         </button>
+        <button class="btn sky" style="margin:0" onclick="nowSetView('smaller')">
+          <i class="ti ti-arrows-minimize"></i> Make smaller
+        </button>
+        <button class="btn" style="margin:0" onclick="nowSetView('bodyDouble')">
+          <i class="ti ti-users"></i> Body double
+        </button>
+        <button class="btn" style="margin:0" onclick="nowSetView('timerSetup')">
+          <i class="ti ti-clock"></i> Timer
+        </button>
+      </div>
 
-        ${undone.length > 1 ? `
-          <div style="margin-top: 16px; padding-top: 16px; border-top: 1px solid #f1f5f9; display: flex; align-items: center; gap: 12px; font-size: 13px; color: #64748b;">
-            <span style="font-weight: 800; color: #94a3b8; text-transform: uppercase; letter-spacing: 1px;">NEXT UP:</span>
-            <span style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis; flex: 1;">${undone[1].text}</span>
+      <button class="btn amber-btn" onclick="nowSnooze(${cur.id})">
+        <i class="ti ti-clock-pause"></i> Snooze · do this later
+      </button>
+      <button class="btn" onclick="nowSwap(${cur.id})">
+        <i class="ti ti-arrows-shuffle"></i> Swap to next task
+      </button>
+      <button class="btn peach" onclick="go('reset')">
+        <i class="ti ti-refresh"></i> I need a reset first
+      </button>
+
+      <!-- Titration tracker entry point -->
+      <button class="btn lavender" onclick="nowSetView('titration')">
+        <i class="ti ti-pill"></i> Titration log${state.titrationEntries.length > 0 ? ` · ${state.titrationEntries.length} entries` : ''}
+      </button>
+
+      <div class="section-label">Next up</div>
+      <div class="card" style="padding:0.5rem 1.25rem">
+        ${undone.slice(1, 3).map(t => `
+          <div class="task-row">
+            <div style="flex:1">
+              <div class="task-text" style="font-size:14px">${t.text}</div>
+              <div class="task-meta">${t.meta}</div>
+            </div>
+            <span style="width:6px;height:6px;border-radius:50%;background:${ACCENT[t.color] || '#888780'};margin-top:8px;flex-shrink:0"></span>
           </div>
-        ` : ''}
+        `).join('') || `
+          <div class="task-row">
+            <div class="task-text" style="color:var(--text-muted);font-size:14px">Nothing else queued.</div>
+          </div>`}
       </div>
-
-      <!-- Settings Grid (Descriptive labels + Fits in screen) -->
-      <div style="background: #fff; border: 1.5px solid #e2e8f0; border-radius: 12px; padding: 16px; margin-bottom: 20px;">
-        <div style="font-size: 11px; font-weight: 800; color: #94a3b8; text-transform: uppercase; letter-spacing: 1.2px; margin-bottom: 16px;">NEED TO ADJUST?</div>
-        
-        <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px;">
-          <button onclick="nowSetView('stuck')" class="grid-action-btn">
-            <i class="ti ti-help-circle" style="color: #059669;"></i>
-            <div class="gab-title">I'm stuck</div>
-            <div class="gab-sub">Find a way in</div>
-          </button>
-          <button onclick="nowSetView('smaller')" class="grid-action-btn">
-            <i class="ti ti-arrows-minimize" style="color: #3b82f6;"></i>
-            <div class="gab-title">Smaller</div>
-            <div class="gab-sub">Break it down</div>
-          </button>
-          <button onclick="nowSetView('bodyDouble')" class="grid-action-btn">
-            <i class="ti ti-users" style="color: #8b5cf6;"></i>
-            <div class="gab-title">Double</div>
-            <div class="gab-sub">Work together</div>
-          </button>
-          <button onclick="nowSetView('timerSetup')" class="grid-action-btn">
-            <i class="ti ti-clock" style="color: #d97706;"></i>
-            <div class="gab-title">Timer</div>
-            <div class="gab-sub">Time-box it</div>
-          </button>
-          <button onclick="nowSnooze(${cur.id})" class="grid-action-btn">
-            <i class="ti ti-clock-pause" style="color: #94a3b8;"></i>
-            <div class="gab-title">Snooze</div>
-            <div class="gab-sub">Do it later</div>
-          </button>
-          <button onclick="nowSwap(${cur.id})" class="grid-action-btn">
-            <i class="ti ti-arrows-shuffle" style="color: #94a3b8;"></i>
-            <div class="gab-title">Swap</div>
-            <div class="gab-sub">Change task</div>
-          </button>
-        </div>
-      </div>
-
-      ${renderHealthTools()}
-      
-    </div>
-    
-    ${actionGridStyles()}
-  `;
-}
-
-// ─── Reusable UI Helpers ───────────────────────────────────
-
-function renderHealthTools() {
-  return `
-    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
-      
-      <!-- Reset Card (Compact) -->
-      <div style="background: #ecfdf5; border: 1.5px solid #a7f3d0; border-radius: 12px; padding: 16px; display: flex; flex-direction: column; justify-content: space-between; gap: 12px;">
-        <div>
-          <div style="font-size: 15px; font-weight: 800; color: #065f46; margin-bottom: 4px;">Need a reset?</div>
-          <div style="font-size: 13px; color: #064e3b; line-height: 1.4;">Step away completely.</div>
-        </div>
-        <button onclick="go('reset')" style="width: 100%; padding: 10px; background: #ffffff; border: 1.5px solid #a7f3d0; color: #059669; border-radius: 8px; font-weight: 700; font-size: 13px; cursor: pointer; transition: background 0.2s;">
-          Take a Reset
-        </button>
-      </div>
-
-      <!-- Titration Card (Compact) -->
-      <div style="background: #f5f3ff; border: 1.5px solid #ddd6fe; border-radius: 12px; padding: 16px; display: flex; flex-direction: column; justify-content: space-between; gap: 12px;">
-        <div>
-          <div style="font-size: 15px; font-weight: 800; color: #4c1d95; margin-bottom: 4px;">Titration Log</div>
-          <div style="font-size: 13px; color: #5b21b6; line-height: 1.4;">Log meds & vitals.</div>
-        </div>
-        <button onclick="nowSetView('titration')" style="width: 100%; padding: 10px; background: #ffffff; border: 1.5px solid #ddd6fe; color: #6d28d9; border-radius: 8px; font-weight: 700; font-size: 13px; cursor: pointer; transition: background 0.2s;">
-          Open Log
-        </button>
-      </div>
-
-    </div>
-  `;
-}
-
-function actionGridStyles() {
-  return `
-    <style>
-      .grid-action-btn {
-        background: #fff;
-        border: 1.5px solid #e2e8f0;
-        border-radius: 10px;
-        padding: 14px 4px;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        justify-content: center;
-        gap: 6px;
-        cursor: pointer;
-        transition: border-color 0.2s, background 0.2s;
-        color: #1e293b;
-        font-family: inherit;
-      }
-      .grid-action-btn:hover {
-        border-color: #cbd5e1;
-        background: #f8fafc;
-      }
-      .grid-action-btn i {
-        font-size: 24px;
-        margin-bottom: 2px;
-      }
-      .gab-title {
-        font-size: 14px;
-        font-weight: 800;
-        text-align: center;
-        color: #1e293b;
-      }
-      .gab-sub {
-        font-size: 11px;
-        font-weight: 500;
-        color: #64748b;
-        text-align: center;
-        line-height: 1.2;
-      }
-    </style>
-  `;
+    </div>`;
 }
 
 // ─── Stuck picker ─────────────────────────────────────────
@@ -692,7 +594,6 @@ function renderTitrationHub() {
   const count = entries.length;
   const streak = streakDays();
 
-  // Trend calculations
   const bpSysVals = entries.map(e => e.bp_sys).filter(v => v != null);
   const hrVals    = entries.map(e => e.hr).filter(v => v != null);
   const wtVals    = entries.map(e => e.weight).filter(v => v != null);
@@ -819,7 +720,6 @@ function renderTitrationLog() {
         <div class="card-sub">Fill what you can. Skip anything you do not have right now.</div>
       </div>
 
-      <!-- Date & Time -->
       <div class="section-label"><i class="ti ti-calendar" style="color:var(--lavender);font-size:14px"></i> When</div>
       <div class="card" style="padding:1rem 1.25rem">
         <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
@@ -836,7 +736,6 @@ function renderTitrationLog() {
         </div>
       </div>
 
-      <!-- Dose -->
       <div class="section-label"><i class="ti ti-pill" style="color:var(--lavender);font-size:14px"></i> Dose</div>
       <div class="card" style="padding:1rem 1.25rem">
         <input type="text" placeholder="e.g. Elvanse 30mg, Concerta 36mg" value="${d.dose || ''}"
@@ -844,7 +743,6 @@ function renderTitrationLog() {
           style="width:100%;padding:10px;border:1.5px solid var(--border);border-radius:var(--r-md);font-family:var(--font);font-size:14px;background:var(--bg-card);color:var(--text-primary)">
       </div>
 
-      <!-- Vitals -->
       <div class="section-label"><i class="ti ti-heart-rate-monitor" style="color:var(--teal);font-size:14px"></i> Vitals</div>
       <div class="card" style="padding:1rem 1.25rem">
         <div style="display:grid;grid-template-columns:2fr 1fr 1fr;gap:10px">
@@ -875,7 +773,6 @@ function renderTitrationLog() {
         </div>
       </div>
 
-      <!-- Mood -->
       <div class="section-label"><i class="ti ti-mood-smile" style="color:var(--sky);font-size:14px"></i> Mood today</div>
       <div class="card" style="padding:0.85rem 1rem">
         <div style="display:grid;grid-template-columns:repeat(5,1fr);gap:6px">
@@ -893,7 +790,6 @@ function renderTitrationLog() {
         </div>
       </div>
 
-      <!-- Side effects -->
       <div class="section-label"><i class="ti ti-alert-circle" style="color:var(--amber);font-size:14px"></i> Side effects</div>
       <div class="notice blue" style="margin-bottom:0.85rem;font-size:13px">
         Tap to set severity. Default is none — only change what you noticed.
@@ -924,7 +820,6 @@ function renderTitrationLog() {
         `).join('')}
       </div>
 
-      <!-- Notes -->
       <div class="section-label"><i class="ti ti-note" style="color:var(--peach);font-size:14px"></i> Other notes</div>
       <div class="card" style="padding:1rem 1.25rem">
         <textarea placeholder="Anything else worth recording — other side effects, what helped, what was hard..."
@@ -1105,7 +1000,7 @@ function renderSparkline(entries, label, field, color, minOverride, maxOverride)
       <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:8px">
         <div class="card-label">${label}</div>
         <div style="display:flex;gap:10px;align-items:baseline">
-          <span style="font-size:18px;font-weight:700;color:var(--${color});line-height:1">${latest.val}${field === 'weight' ? '' : ''}</span>
+          <span style="font-size:18px;font-weight:700;color:var(--${color});line-height:1">${latest.val}</span>
           <span style="font-size:11px;color:var(--text-muted)">${change >= 0 ? '↑' : '↓'} ${changeStr}</span>
         </div>
       </div>
@@ -1308,7 +1203,7 @@ window.nowOpenReset = function (resetKey) {
 
 // ─── Titration window handlers ───────────────────────────
 window.titrationStartLog = function () {
-  state.titrationDraft = null; // force fresh draft
+  state.titrationDraft = null;
   state.nowView = 'titrationLog';
   renderNow();
 };
@@ -1322,7 +1217,6 @@ window.titrationCancelLog = function () {
 window.titrationField = function (key, value) {
   if (!state.titrationDraft) return;
   state.titrationDraft[key] = value;
-  // Do not re-render — keep input focus
 };
 
 window.titrationSetSideEffect = function (effectKey, severity) {
@@ -1334,7 +1228,6 @@ window.titrationSetSideEffect = function (effectKey, severity) {
 window.titrationSaveLog = function () {
   const d = state.titrationDraft;
   if (!d) return;
-  // Read latest values from inputs (covers fields that did not re-render)
   state.titrationEntries.push({ ...d });
   state.titrationDraft = null;
   state.nowView = 'titration';
