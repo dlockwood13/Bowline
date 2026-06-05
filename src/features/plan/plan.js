@@ -6,9 +6,9 @@ import { callClaude, BREAKDOWN_SYSTEM } from '../../services/api.js';
 window.go = go;
 
 // ─── Local state ──────────────────────────────────────────
-if (!state.planMode)         state.planMode = 'home'; // home | masterlist | timeblock | chunking | tiered | kanban | shape | brainDump | routines | quickAdd
-if (!state.masterList)       state.masterList = []; // { id, text, priority, done }
-if (!state.timeBlocks)       state.timeBlocks = []; // { id, hour, label, color }
+if (!state.planMode)         state.planMode = 'home';
+if (!state.masterList)       state.masterList = [];
+if (!state.timeBlocks)       state.timeBlocks = [];
 if (!state.tieredGoals)      state.tieredGoals = { monthly: '', weekly: [], daily: [] };
 if (!state.kanban)           state.kanban = { todo: [], doing: [], done: [] };
 if (!state.shape)            state.shape = { friction: '', supports: '', environment: '', plan: '', evaluate: '' };
@@ -19,59 +19,40 @@ if (!state.bdTaskInput)      state.bdTaskInput = '';
 if (!state.activeRoutine)    state.activeRoutine = null;
 if (!state.routineStep)      state.routineStep = 0;
 
-// ─── Planning methodologies — each is a full tool ─────────
+// ─── Planning methodologies ───────────────────────────────
 const METHODOLOGIES = [
   {
-    k: 'masterlist',
-    icon: 'ti-list-check',
-    color: 'teal',
-    l: 'Master List',
-    sub: 'One brain dump. Anxiety down.',
-    why: 'A single ongoing list captures everything so your brain stops trying to remember it. Good for chronic overwhelm and forgetting.',
+    k: 'masterlist',  icon: 'ti-list-check',   color: 'teal',
+    l: 'Master List', sub: 'One brain dump. Anxiety down.',
+    why: 'A single ongoing list captures everything so your brain stops trying to remember it.',
   },
   {
-    k: 'chunking',
-    icon: 'ti-arrows-split',
-    color: 'lavender',
-    l: 'Chunking',
-    sub: 'Big task → small actions',
-    why: 'Break overwhelming tasks into tiny actionable steps. "Clean house" becomes "wash dishes, vacuum room". Good for paralysis and ambiguity.',
+    k: 'chunking',    icon: 'ti-arrows-split', color: 'lavender',
+    l: 'Chunking',    sub: 'Big task → small actions',
+    why: 'Break overwhelming tasks into tiny steps. "Clean house" becomes "wash dishes, vacuum room".',
   },
   {
-    k: 'timeblock',
-    icon: 'ti-layout-grid',
-    color: 'amber',
-    l: 'Time Blocking',
-    sub: 'Day in colour-coded chunks',
-    why: 'Divide the day into specific blocks for types of activity. Reduces decision fatigue and gives the day shape.',
+    k: 'timeblock',   icon: 'ti-layout-grid',  color: 'amber',
+    l: 'Time Blocking', sub: 'Day in coloured chunks',
+    why: 'Divide the day into specific blocks. Reduces decision fatigue and gives the day shape.',
   },
   {
-    k: 'tiered',
-    icon: 'ti-stairs',
-    color: 'sky',
-    l: 'Tiered Goals',
-    sub: 'Monthly → weekly → daily',
-    why: 'A big monthly goal breaks into weekly steps, which break into daily tasks. Useful when you need to see the path from now to a long-term goal.',
+    k: 'tiered',      icon: 'ti-stairs',       color: 'sky',
+    l: 'Tiered Goals', sub: 'Monthly → weekly → daily',
+    why: 'Long-term goal breaks into weekly steps, which break into daily tasks.',
   },
   {
-    k: 'kanban',
-    icon: 'ti-columns-3',
-    color: 'sky',
-    l: 'Kanban Board',
-    sub: 'To-do · Doing · Done',
-    why: 'Visual columns showing what is to do, in progress, and complete. Good for visual processors and people who lose track of what is in flight.',
+    k: 'kanban',      icon: 'ti-columns-3',    color: 'sky',
+    l: 'Kanban Board', sub: 'To-do · Doing · Done',
+    why: 'Visual columns. Good for visual processors and people who lose track of what is in flight.',
   },
   {
-    k: 'shape',
-    icon: 'ti-shapes',
-    color: 'peach',
-    l: 'SHAPE Method',
-    sub: 'Workplace planning framework',
-    why: 'Source friction → Hold conversation → Assess environment → Plan → Evaluate. A structured framework for workplace adjustments.',
+    k: 'shape',       icon: 'ti-shapes',       color: 'peach',
+    l: 'SHAPE Method', sub: 'Workplace planning framework',
+    why: 'Source friction, Hold conversations, Assess environment, Plan, Evaluate.',
   },
 ];
 
-// ─── Routine templates (existing) ────────────────────────
 const ROUTINES = {
   morning: { l: 'Basic morning',  c: 'teal',     steps: ['Sit up', 'Drink water', 'Bathroom', 'Medication', 'Eat something', 'Get dressed', 'Check Today', 'Choose first step'] },
   leaving: { l: 'Leaving home',   c: 'sky',      steps: ['Check time', 'Check destination', 'Keys', 'Phone', 'Wallet/card', 'Headphones', 'Medication', 'Weather item', 'Shoes', 'Leave'] },
@@ -79,7 +60,7 @@ const ROUTINES = {
   work:    { l: 'Work start',     c: 'amber',    steps: ['Open Today', 'Check first task', 'Clear desk', 'Headphones on', 'Set first timer', 'Begin'] },
 };
 
-// ─── Main render router ──────────────────────────────────
+// ─── Main router ──────────────────────────────────────────
 export function renderPlan() {
   setTopbar('Plan', 'Choose how to plan today.');
 
@@ -98,88 +79,67 @@ export function renderPlan() {
   }
 }
 
-// ─── HOME: methodology picker ────────────────────────────
+// ─── HOME ─────────────────────────────────────────────────
 function renderHome() {
   document.getElementById('content').innerHTML = `
-    <div class="screen" style="max-width: 600px; margin: 0 auto; font-family: system-ui, -apple-system, sans-serif;">
-      
-      <!-- Planning Methodologies Grid -->
-      <div style="background: #fff; border: 1.5px solid #e2e8f0; border-radius: 16px; padding: 24px; margin-bottom: 24px;">
-        <div style="font-size: 11px; font-weight: 800; color: #94a3b8; text-transform: uppercase; letter-spacing: 1.2px; margin-bottom: 8px;">PLANNING METHODS</div>
-        <div style="font-size: 14px; color: #475569; margin-bottom: 20px; line-height: 1.5;">Different brains need different methods. Pick the one that fits how you feel right now.</div>
-        
-        <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px;">
-          ${METHODOLOGIES.map(m => `
-            <button onclick="setPlanMode('${m.k}')" class="grid-action-btn method-btn" style="border-left: 6px solid var(--${m.color});">
-              <i class="ti ${m.icon}" style="color: var(--${m.color}); font-size: 24px; margin-bottom: 4px;"></i>
-              <span style="font-size: 15px; font-weight: 700; color: #1e293b;">${m.l}</span>
-              <span style="font-size: 13px; font-weight: 400; color: #64748b; line-height: 1.4; margin-top: 2px;">${m.sub}</span>
-            </button>
-          `).join('')}
+    <div class="screen">
+
+      <div class="card lavender">
+        <div class="card-label">Plan</div>
+        <div class="card-main" style="font-size:17px">Different brains need different methods.</div>
+        <div class="card-sub" style="margin-top:6px;line-height:1.6">
+          Pick the one that fits how you feel right now. You can mix and switch — nothing is locked in.
         </div>
       </div>
 
-      <!-- Quick Tools Grid (3-column) -->
-      <div style="background: #fff; border: 1.5px solid #e2e8f0; border-radius: 16px; padding: 24px; margin-bottom: 24px;">
-        <div style="font-size: 11px; font-weight: 800; color: #94a3b8; text-transform: uppercase; letter-spacing: 1.2px; margin-bottom: 16px;">QUICK TOOLS</div>
-        
-        <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px;">
-          <button onclick="setPlanMode('brainDump')" class="grid-action-btn">
-            <i class="ti ti-brain" style="color: #8b5cf6;"></i>
-            <span>Brain Dump</span>
-          </button>
-          <button onclick="setPlanMode('routines')" class="grid-action-btn">
-            <i class="ti ti-repeat" style="color: #0ea5e9;"></i>
-            <span>Routines</span>
-          </button>
-          <button onclick="setPlanMode('quickAdd')" class="grid-action-btn">
-            <i class="ti ti-plus" style="color: #10b981;"></i>
-            <span>Quick Add</span>
-          </button>
-        </div>
+      <div class="section-label">
+        <i class="ti ti-bulb" style="color:var(--lavender);font-size:14px"></i> Planning methods
       </div>
 
-    </div>
+      ${METHODOLOGIES.map(m => `
+        <button class="btn" style="border-left:4px solid var(--${m.color});justify-content:flex-start;text-align:left;padding-left:14px"
+          onclick="setPlanMode('${m.k}')">
+          <span style="
+            width:36px;height:36px;border-radius:8px;
+            background:var(--${m.color}-l);color:var(--${m.color}-d);
+            display:flex;align-items:center;justify-content:center;flex-shrink:0">
+            <i class="ti ${m.icon}" style="font-size:18px;color:var(--${m.color}-d)"></i>
+          </span>
+          <div style="flex:1;text-align:left">
+            <div style="font-size:14px;font-weight:700">${m.l}</div>
+            <div style="font-size:12px;font-weight:400;color:var(--text-muted);margin-top:2px">${m.sub}</div>
+          </div>
+          <i class="ti ti-chevron-right" style="font-size:16px;color:var(--text-muted);flex-shrink:0"></i>
+        </button>
+      `).join('')}
 
-    <style>
-      .grid-action-btn {
-        background: #fff;
-        border: 1.5px solid #e2e8f0;
-        border-radius: 12px;
-        padding: 16px 8px;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        justify-content: center;
-        gap: 8px;
-        cursor: pointer;
-        transition: border-color 0.2s, background 0.2s;
-        color: #1e293b;
-        font-family: inherit;
-      }
-      .grid-action-btn:hover {
-        border-color: #cbd5e1;
-        background: #f8fafc;
-      }
-      .grid-action-btn i {
-        font-size: 24px;
-      }
-      .grid-action-btn span {
-        font-size: 13px;
-        font-weight: 700;
-      }
-      /* Specific override for the methodologies to align text left */
-      .method-btn {
-        padding: 16px;
-        align-items: flex-start;
-        text-align: left;
-        gap: 4px;
-      }
-      .method-btn span {
-        font-size: 15px; /* Override the 13px */
-      }
-    </style>
-  `;
+      <div class="section-label">
+        <i class="ti ti-tool" style="color:var(--teal);font-size:14px"></i> Quick tools
+      </div>
+
+      <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px">
+        <button class="btn lavender" style="margin:0;flex-direction:column;padding:14px 8px;min-height:80px"
+          onclick="setPlanMode('brainDump')">
+          <i class="ti ti-brain" style="color:var(--lavender);font-size:22px"></i>
+          <span style="font-size:12px;font-weight:700;color:var(--lavender-d)">Brain Dump</span>
+        </button>
+        <button class="btn sky" style="margin:0;flex-direction:column;padding:14px 8px;min-height:80px"
+          onclick="setPlanMode('routines')">
+          <i class="ti ti-repeat" style="color:var(--sky);font-size:22px"></i>
+          <span style="font-size:12px;font-weight:700;color:var(--sky-d)">Routines</span>
+        </button>
+        <button class="btn teal" style="margin:0;flex-direction:column;padding:14px 8px;min-height:80px"
+          onclick="setPlanMode('quickAdd')">
+          <i class="ti ti-plus" style="color:var(--teal);font-size:22px"></i>
+          <span style="font-size:12px;font-weight:700;color:var(--teal-d)">Quick Add</span>
+        </button>
+      </div>
+
+      <div class="notice purple" style="margin-top:1.25rem">
+        <strong>New here?</strong> Master List is the easiest start — dump everything in, then sort. You do not have to pick the "right" method on the first try.
+      </div>
+
+    </div>`;
 }
 
 // ─── METHOD 1: Master List ───────────────────────────────
@@ -187,10 +147,12 @@ function renderMasterList() {
   const items   = state.masterList;
   const undone  = items.filter(i => !i.done);
   const done    = items.filter(i =>  i.done);
-  const byPrio  = { must: undone.filter(i => i.priority === 'must'),
-                    helpful: undone.filter(i => i.priority === 'helpful'),
-                    wait: undone.filter(i => i.priority === 'wait'),
-                    unsorted: undone.filter(i => !i.priority) };
+  const byPrio  = {
+    must:     undone.filter(i => i.priority === 'must'),
+    helpful:  undone.filter(i => i.priority === 'helpful'),
+    wait:     undone.filter(i => i.priority === 'wait'),
+    unsorted: undone.filter(i => !i.priority),
+  };
 
   document.getElementById('content').innerHTML = `
     <div class="screen">
@@ -198,33 +160,32 @@ function renderMasterList() {
 
       <div class="card teal">
         <div class="card-label">Master List</div>
-        <div class="card-main" style="font-size:16px">${items.length === 0 ? 'Start by adding anything that is on your mind.' : `${undone.length} items · ${done.length} done`}</div>
+        <div class="card-main" style="font-size:16px">${items.length === 0 ? 'Start by adding anything that is on your mind.' : `${undone.length} active · ${done.length} done`}</div>
         <div class="card-sub" style="margin-top:6px">A single list captures everything so your brain stops trying to remember it.</div>
       </div>
 
-      <!-- Add new item -->
-      <div class="card" style="padding:0.85rem 1.25rem">
+      <div class="card">
         <input id="ml-input" type="text" placeholder="Add anything..."
           onkeydown="if(event.key==='Enter')mlAdd()"
-          style="width:100%;border:none;background:none;font-size:15px;font-family:var(--font);color:var(--text-primary);padding:8px 0;outline:none">
-        <button class="btn primary" style="margin:8px 0 0;justify-content:center" onclick="mlAdd()">
+          style="width:100%;border:1.5px solid var(--border);background:var(--bg-card);border-radius:var(--r-md);padding:0.85rem;font-size:15px;font-family:var(--font);outline:none;color:var(--text-primary)">
+        <button class="btn primary" style="margin:10px 0 0;justify-content:center" onclick="mlAdd()">
           <i class="ti ti-plus"></i> Add to list
         </button>
       </div>
 
       ${items.length === 0 ? `
         <div class="notice blue">
-          <strong>Tip.</strong> Do not filter or judge what you add. Write everything that is in your head, even tiny things. Sorting comes after.
+          <strong>Tip.</strong> Do not filter or judge what you add. Write everything in your head, even tiny things. Sorting comes after.
         </div>
       ` : `
-        ${byPrio.unsorted.length > 0 ? renderMasterSection('Unsorted', byPrio.unsorted, 'amber') : ''}
-        ${byPrio.must.length > 0     ? renderMasterSection('Must happen today', byPrio.must, 'teal') : ''}
-        ${byPrio.helpful.length > 0  ? renderMasterSection('Helpful today',     byPrio.helpful, 'sky') : ''}
-        ${byPrio.wait.length > 0     ? renderMasterSection('Can wait',          byPrio.wait, 'lavender') : ''}
+        ${byPrio.unsorted.length > 0 ? renderMasterSection('Unsorted',         byPrio.unsorted, 'amber') : ''}
+        ${byPrio.must.length > 0     ? renderMasterSection('Must happen today',byPrio.must,     'teal')  : ''}
+        ${byPrio.helpful.length > 0  ? renderMasterSection('Helpful today',    byPrio.helpful,  'sky')   : ''}
+        ${byPrio.wait.length > 0     ? renderMasterSection('Can wait',         byPrio.wait,     'lavender') : ''}
         ${done.length > 0            ? renderMasterDone(done) : ''}
 
         <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:1rem">
-          <button class="btn" style="margin:0" onclick="mlPushAllMust()">
+          <button class="btn primary" style="margin:0" onclick="mlPushAllMust()">
             <i class="ti ti-send"></i> Send "Must" to Today
           </button>
           <button class="btn" style="margin:0;color:var(--text-muted)" onclick="mlClear()">
@@ -238,20 +199,20 @@ function renderMasterList() {
 function renderMasterSection(label, items, color) {
   return `
     <div class="section-label">${label}</div>
-    <div class="card" style="padding:0.5rem 1.25rem;border-left:5px solid var(--${color})">
+    <div class="card" style="padding:0.5rem 1.25rem;border-left:4px solid var(--${color})">
       ${items.map(i => `
         <div class="task-row">
           <div class="task-check" onclick="mlToggleDone(${i.id})" style="border-color:var(--${color})"></div>
           <div class="task-text" style="font-size:14px;flex:1">${i.text}</div>
-          <div style="display:flex;gap:4px;flex-shrink:0">
+          <div style="display:flex;gap:4px;flex-shrink:0;align-items:center">
             <button onclick="mlSetPriority(${i.id}, 'must')" title="Must today"
-              style="border:none;background:${i.priority==='must'?'var(--teal-l)':'none'};color:${i.priority==='must'?'var(--teal-d)':'var(--text-muted)'};cursor:pointer;padding:4px 6px;border-radius:6px;font-size:11px;font-weight:700;font-family:var(--font)">M</button>
+              style="border:none;background:${i.priority==='must'?'var(--teal-l)':'transparent'};color:${i.priority==='must'?'var(--teal-d)':'var(--text-muted)'};cursor:pointer;padding:4px 7px;border-radius:6px;font-size:11px;font-weight:700;font-family:var(--font)">M</button>
             <button onclick="mlSetPriority(${i.id}, 'helpful')" title="Helpful today"
-              style="border:none;background:${i.priority==='helpful'?'var(--sky-l)':'none'};color:${i.priority==='helpful'?'var(--sky-d)':'var(--text-muted)'};cursor:pointer;padding:4px 6px;border-radius:6px;font-size:11px;font-weight:700;font-family:var(--font)">H</button>
+              style="border:none;background:${i.priority==='helpful'?'var(--sky-l)':'transparent'};color:${i.priority==='helpful'?'var(--sky-d)':'var(--text-muted)'};cursor:pointer;padding:4px 7px;border-radius:6px;font-size:11px;font-weight:700;font-family:var(--font)">H</button>
             <button onclick="mlSetPriority(${i.id}, 'wait')" title="Can wait"
-              style="border:none;background:${i.priority==='wait'?'var(--lavender-l)':'none'};color:${i.priority==='wait'?'var(--lavender-d)':'var(--text-muted)'};cursor:pointer;padding:4px 6px;border-radius:6px;font-size:11px;font-weight:700;font-family:var(--font)">W</button>
+              style="border:none;background:${i.priority==='wait'?'var(--lavender-l)':'transparent'};color:${i.priority==='wait'?'var(--lavender-d)':'var(--text-muted)'};cursor:pointer;padding:4px 7px;border-radius:6px;font-size:11px;font-weight:700;font-family:var(--font)">W</button>
             <button onclick="mlDelete(${i.id})" title="Delete"
-              style="border:none;background:none;color:var(--text-muted);cursor:pointer;padding:4px;border-radius:6px">
+              style="border:none;background:none;color:var(--text-muted);cursor:pointer;padding:4px">
               <i class="ti ti-x" style="font-size:14px"></i>
             </button>
           </div>
@@ -263,8 +224,8 @@ function renderMasterSection(label, items, color) {
 
 function renderMasterDone(done) {
   return `
-    <div class="section-label" style="opacity:0.6">Done (${done.length})</div>
-    <div class="card" style="padding:0.5rem 1.25rem;opacity:0.6">
+    <div class="section-label" style="opacity:0.65">Done (${done.length})</div>
+    <div class="card" style="padding:0.5rem 1.25rem;opacity:0.65">
       ${done.map(i => `
         <div class="task-row">
           <div class="task-check done" onclick="mlToggleDone(${i.id})"><i class="ti ti-check" style="font-size:14px"></i></div>
@@ -290,14 +251,14 @@ function renderChunking() {
         <div class="card-sub" style="margin-top:6px">Bowline will break your task into Prepare → Start → Continue → Finish → Recover.</div>
       </div>
 
-      <textarea id="bd-in" placeholder="What task feels too big? e.g. Clean the kitchen, file the tax return, reply to that email..." style="min-height:90px">${state.bdTaskInput || ''}</textarea>
+      <textarea id="bd-in" placeholder="What task feels too big? e.g. Clean the kitchen, file the tax return, reply to that email..." style="min-height:100px">${state.bdTaskInput || ''}</textarea>
 
       <button class="btn primary" style="margin-top:10px" onclick="doBreakdown()">
         <i class="ti ti-sparkles"></i> Break it down with AI
       </button>
 
       ${state.bdLoading ? `
-        <div style="display:flex;align-items:center;gap:10px;padding:12px 0;justify-content:center">
+        <div style="display:flex;align-items:center;gap:12px;padding:14px 0;justify-content:center">
           <div class="spinner"></div>
           <span style="font-size:14px;color:var(--text-secondary)">Finding the smallest first step...</span>
         </div>
@@ -309,7 +270,7 @@ function renderChunking() {
           <button class="btn primary" style="margin:0" onclick="addBdFirstStepToToday()">
             <i class="ti ti-calendar-plus"></i> Add first step
           </button>
-          <button class="btn" style="margin:0" onclick="addBdAllToToday()">
+          <button class="btn sky" style="margin:0" onclick="addBdAllToToday()">
             <i class="ti ti-list-numbers"></i> Add all steps
           </button>
         </div>
@@ -318,7 +279,7 @@ function renderChunking() {
         </button>
       ` : ''}
 
-      <div class="notice blue" style="margin-top:1.25rem">
+      <div class="notice purple" style="margin-top:1.25rem">
         <strong>Tip.</strong> The first step does not need to be impressive. "Open the document" is a real step.
       </div>
     </div>`;
@@ -328,14 +289,6 @@ function renderChunking() {
 function renderTimeBlock() {
   const hours = [];
   for (let h = 6; h <= 22; h++) hours.push(h);
-
-  const colors = [
-    { k: 'teal',     l: 'Focus' },
-    { k: 'lavender', l: 'Admin' },
-    { k: 'sky',      l: 'Calm/recovery' },
-    { k: 'amber',    l: 'Energy' },
-    { k: 'peach',    l: 'Self-care' },
-  ];
 
   document.getElementById('content').innerHTML = `
     <div class="screen">
@@ -373,7 +326,7 @@ function renderTimeBlock() {
       </div>
 
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:8px">
-        <button class="btn" style="margin:0" onclick="tbAddSuggested()">
+        <button class="btn primary" style="margin:0" onclick="tbAddSuggested()">
           <i class="ti ti-bulb"></i> Suggest a block
         </button>
         <button class="btn" style="margin:0;color:var(--text-muted)" onclick="tbClear()">
@@ -397,51 +350,58 @@ function renderTiered() {
         <div class="card-sub" style="margin-top:6px">When you have a long-term thing that feels too far away to act on.</div>
       </div>
 
-      <div class="section-label">This month\'s goal</div>
+      <div class="section-label">This month's goal</div>
       <div class="card teal" style="padding:1rem 1.25rem">
         <textarea id="tg-monthly" placeholder="One sentence. What do you want to be different by the end of the month?"
-          style="min-height:60px;margin-bottom:8px"
+          style="min-height:60px;margin-bottom:0"
           onblur="state.tieredGoals.monthly=this.value">${g.monthly || ''}</textarea>
       </div>
 
       <div class="section-label">This week — break it down</div>
-      ${g.weekly.map((w, i) => `
-        <div class="card" style="padding:0.75rem 1rem;margin-bottom:6px;border-left:4px solid var(--lavender)">
-          <div style="display:flex;align-items:center;gap:8px">
-            <span style="font-size:14px;flex:1">${w}</span>
-            <button onclick="tgRemoveWeekly(${i})" style="border:none;background:none;color:var(--text-muted);cursor:pointer">
-              <i class="ti ti-x" style="font-size:14px"></i>
-            </button>
-          </div>
+      ${g.weekly.length > 0 ? `
+        <div class="card" style="padding:0.5rem 1rem;margin-bottom:6px;border-left:4px solid var(--lavender)">
+          ${g.weekly.map((w, i) => `
+            <div class="task-row">
+              <i class="ti ti-point" style="color:var(--lavender);font-size:18px;flex-shrink:0;margin-top:2px"></i>
+              <span style="font-size:14px;flex:1">${w}</span>
+              <button onclick="tgRemoveWeekly(${i})" style="border:none;background:none;color:var(--text-muted);cursor:pointer;padding:4px">
+                <i class="ti ti-x" style="font-size:14px"></i>
+              </button>
+            </div>
+          `).join('')}
         </div>
-      `).join('')}
-      <div class="card" style="padding:0.5rem 1rem">
+      ` : ''}
+      <div class="card" style="padding:0.85rem 1rem">
         <input id="tg-weekly-input" type="text" placeholder="Add a weekly step..."
           onkeydown="if(event.key==='Enter')tgAddWeekly()"
-          style="width:100%;border:none;background:none;font-size:14px;font-family:var(--font);outline:none;padding:6px 0">
-        <button class="btn lavender" style="margin:6px 0 0;justify-content:center;padding:8px" onclick="tgAddWeekly()">
-          <i class="ti ti-plus" style="font-size:16px"></i> Add weekly step
+          style="width:100%;border:1.5px solid var(--border);background:var(--bg-card);border-radius:var(--r-md);padding:0.7rem;font-size:14px;font-family:var(--font);outline:none;color:var(--text-primary)">
+        <button class="btn lavender" style="margin:8px 0 0;justify-content:center" onclick="tgAddWeekly()">
+          <i class="ti ti-plus"></i> Add weekly step
         </button>
       </div>
 
       <div class="section-label">Today — daily tasks</div>
-      ${g.daily.map((d, i) => `
-        <div class="card" style="padding:0.75rem 1rem;margin-bottom:6px;border-left:4px solid var(--teal)">
-          <div style="display:flex;align-items:center;gap:8px">
-            <span style="font-size:14px;flex:1">${d}</span>
-            <button onclick="tgPushDailyToToday(${i})" style="border:none;background:var(--teal-l);color:var(--teal-d);cursor:pointer;padding:4px 8px;border-radius:6px;font-size:11px;font-weight:700;font-family:var(--font)">→ Today</button>
-            <button onclick="tgRemoveDaily(${i})" style="border:none;background:none;color:var(--text-muted);cursor:pointer">
-              <i class="ti ti-x" style="font-size:14px"></i>
-            </button>
-          </div>
+      ${g.daily.length > 0 ? `
+        <div class="card" style="padding:0.5rem 1rem;margin-bottom:6px;border-left:4px solid var(--teal)">
+          ${g.daily.map((d, i) => `
+            <div class="task-row" style="align-items:center">
+              <i class="ti ti-point" style="color:var(--teal);font-size:18px;flex-shrink:0"></i>
+              <span style="font-size:14px;flex:1">${d}</span>
+              <button onclick="tgPushDailyToToday(${i})"
+                style="border:none;background:var(--teal-l);color:var(--teal-d);cursor:pointer;padding:5px 10px;border-radius:6px;font-size:11px;font-weight:700;font-family:var(--font)">→ Today</button>
+              <button onclick="tgRemoveDaily(${i})" style="border:none;background:none;color:var(--text-muted);cursor:pointer;padding:4px">
+                <i class="ti ti-x" style="font-size:14px"></i>
+              </button>
+            </div>
+          `).join('')}
         </div>
-      `).join('')}
-      <div class="card" style="padding:0.5rem 1rem">
+      ` : ''}
+      <div class="card" style="padding:0.85rem 1rem">
         <input id="tg-daily-input" type="text" placeholder="Add a task for today..."
           onkeydown="if(event.key==='Enter')tgAddDaily()"
-          style="width:100%;border:none;background:none;font-size:14px;font-family:var(--font);outline:none;padding:6px 0">
-        <button class="btn primary" style="margin:6px 0 0;justify-content:center;padding:8px" onclick="tgAddDaily()">
-          <i class="ti ti-plus" style="font-size:16px"></i> Add daily task
+          style="width:100%;border:1.5px solid var(--border);background:var(--bg-card);border-radius:var(--r-md);padding:0.7rem;font-size:14px;font-family:var(--font);outline:none;color:var(--text-primary)">
+        <button class="btn primary" style="margin:8px 0 0;justify-content:center" onclick="tgAddDaily()">
+          <i class="ti ti-plus"></i> Add daily task
         </button>
       </div>
 
@@ -465,17 +425,15 @@ function renderKanban() {
         <div class="card-sub" style="margin-top:6px">Tap → to move items across columns. Doing should only have 1-2 items.</div>
       </div>
 
-      <!-- Add task -->
       <div class="card" style="padding:0.85rem 1rem">
         <input id="kb-input" type="text" placeholder="Add a task..."
           onkeydown="if(event.key==='Enter')kbAdd()"
-          style="width:100%;border:none;background:none;font-size:15px;font-family:var(--font);outline:none;padding:8px 0">
+          style="width:100%;border:1.5px solid var(--border);background:var(--bg-card);border-radius:var(--r-md);padding:0.7rem;font-size:15px;font-family:var(--font);outline:none;color:var(--text-primary)">
         <button class="btn primary" style="margin:8px 0 0;justify-content:center" onclick="kbAdd()">
           <i class="ti ti-plus"></i> Add to To-do
         </button>
       </div>
 
-      <!-- Three columns stacked vertically for mobile -->
       ${renderKanbanColumn('To do',  'todo',  k.todo,  'lavender', 'doing')}
       ${renderKanbanColumn('Doing',  'doing', k.doing, 'amber',    'done')}
       ${renderKanbanColumn('Done',   'done',  k.done,  'teal',     null)}
@@ -490,7 +448,7 @@ function renderKanban() {
 
 function renderKanbanColumn(label, key, items, color, nextCol) {
   return `
-    <div class="section-label" style="display:flex;align-items:center;gap:6px">
+    <div class="section-label" style="display:flex;align-items:center;gap:8px">
       <span style="width:10px;height:10px;border-radius:50%;background:var(--${color})"></span>
       ${label} (${items.length})
     </div>
@@ -501,18 +459,17 @@ function renderKanbanColumn(label, key, items, color, nextCol) {
     ` : `
       <div class="card" style="padding:0.5rem 0;border-left:4px solid var(--${color})">
         ${items.map((it, i) => `
-          <div style="display:flex;align-items:center;gap:8px;padding:8px 1rem;border-bottom:1.5px solid var(--border)">
+          <div style="display:flex;align-items:center;gap:8px;padding:10px 1rem;border-bottom:1px solid var(--border)">
             <span style="font-size:14px;flex:1">${it}</span>
             ${nextCol ? `
               <button onclick="kbMove('${key}', '${nextCol}', ${i})"
-                style="border:none;background:var(--${color}-l);color:var(--${color}-d);cursor:pointer;padding:4px 8px;border-radius:6px;font-size:11px;font-weight:700;font-family:var(--font)">
+                style="border:none;background:var(--${color}-l);color:var(--${color}-d);cursor:pointer;padding:5px 10px;border-radius:6px;font-size:11px;font-weight:700;font-family:var(--font)">
                 → ${nextCol === 'doing' ? 'Doing' : 'Done'}
               </button>
             ` : ''}
             ${key !== 'todo' ? `
               <button onclick="kbBack('${key}', ${i})"
-                style="border:none;background:none;color:var(--text-muted);cursor:pointer;padding:4px"
-                title="Move back">
+                style="border:none;background:none;color:var(--text-muted);cursor:pointer;padding:4px" title="Move back">
                 <i class="ti ti-arrow-left" style="font-size:14px"></i>
               </button>
             ` : ''}
@@ -532,15 +489,15 @@ function renderShape() {
   const s = state.shape;
 
   const fields = [
-    { k: 'friction', l: 'S — Sources of friction', icon: 'ti-alert-triangle', color: 'peach',
+    { k: 'friction',    l: 'S — Sources of friction', icon: 'ti-alert-triangle', color: 'peach',
       placeholder: 'What is creating friction right now? e.g. noisy office, unclear briefs, back-to-back meetings...' },
-    { k: 'supports', l: 'H — Holding supportive conversations', icon: 'ti-message-circle', color: 'sky',
+    { k: 'supports',    l: 'H — Holding supportive conversations', icon: 'ti-message-circle', color: 'sky',
       placeholder: 'Who could you talk to? What would you ask for? e.g. manager 1:1, occupational health...' },
     { k: 'environment', l: 'A — Assessing the environment', icon: 'ti-building', color: 'amber',
       placeholder: 'What environment changes could help? e.g. quiet room, written instructions, dimmer lights...' },
-    { k: 'plan', l: 'P — Plan (focus on quick wins)', icon: 'ti-target', color: 'teal',
+    { k: 'plan',        l: 'P — Plan (focus on quick wins)', icon: 'ti-target', color: 'teal',
       placeholder: 'What is one small change you can try this week? Pick something achievable, not perfect...' },
-    { k: 'evaluate', l: 'E — Evaluate', icon: 'ti-chart-line', color: 'lavender',
+    { k: 'evaluate',    l: 'E — Evaluate', icon: 'ti-chart-line', color: 'lavender',
       placeholder: 'How will you know if it worked? What will you check in a week or month?' },
   ];
 
@@ -562,7 +519,7 @@ function renderShape() {
           </div>
           <textarea
             placeholder="${f.placeholder}"
-            style="min-height:70px"
+            style="min-height:70px;margin:0"
             onblur="state.shape['${f.k}']=this.value">${s[f.k] || ''}</textarea>
         </div>
       `).join('')}
@@ -577,7 +534,7 @@ function renderShape() {
     </div>`;
 }
 
-// ─── Brain Dump (kept as quick tool) ─────────────────────
+// ─── Brain Dump ──────────────────────────────────────────
 function renderBrainDump() {
   document.getElementById('content').innerHTML = `
     <div class="screen">
@@ -590,7 +547,7 @@ function renderBrainDump() {
       </div>
 
       <textarea id="dump-in" placeholder="Email Alex, book appointment, laundry, eat, fill form, reply to message, mum's birthday, that thing I forgot..."
-        style="min-height:200px"
+        style="min-height:220px"
         oninput="state.brainDumpText=this.value">${state.brainDumpText || ''}</textarea>
 
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:8px">
@@ -617,16 +574,17 @@ function renderRoutineList() {
       <div class="card sky">
         <div class="card-label">Routines</div>
         <div class="card-main" style="font-size:16px">Step-by-step sequences for familiar moments.</div>
+        <div class="card-sub" style="margin-top:6px">Reduce sequencing load. Tap "Start" to walk through a routine step at a time.</div>
       </div>
 
       ${Object.entries(ROUTINES).map(([k, r]) => `
-        <div class="card ${r.c}" style="margin-bottom:10px">
-          <div style="display:flex;align-items:center;justify-content:space-between">
-            <div>
+        <div class="card ${r.c}">
+          <div style="display:flex;align-items:center;justify-content:space-between;gap:12px">
+            <div style="flex:1">
               <div class="card-main" style="font-size:16px">${r.l}</div>
               <div class="card-sub">${r.steps.length} steps</div>
             </div>
-            <button class="btn primary" style="width:auto;margin:0;padding:10px 18px;font-size:14px" onclick="startRoutine('${k}')">
+            <button class="btn primary" style="width:auto;margin:0;padding:10px 18px;font-size:14px;flex-shrink:0" onclick="startRoutine('${k}')">
               Start
             </button>
           </div>
@@ -656,13 +614,13 @@ function renderRoutineFlow() {
 
   document.getElementById('content').innerHTML = `
     <div class="screen">
-      <div class="notice blue">Step ${step + 1} of ${r.steps.length}</div>
-      <div class="card teal">
+      <div class="notice blue">Step ${step + 1} of ${r.steps.length} · ${r.l}</div>
+      <div class="card ${r.c}">
         <div class="card-label">${r.l}</div>
         <div class="card-main">${r.steps[step]}</div>
       </div>
       <div class="progress-bar">
-        <div class="progress-fill" style="width:${(step / r.steps.length) * 100}%"></div>
+        <div class="progress-fill" style="width:${((step + 1) / r.steps.length) * 100}%"></div>
       </div>
       <button class="btn primary" onclick="state.routineStep++;renderPlan()">
         <i class="ti ti-check"></i> Done — next step
@@ -681,7 +639,7 @@ function renderRoutineFlow() {
     </div>`;
 }
 
-// ─── Quick add (single task) ─────────────────────────────
+// ─── Quick Add ────────────────────────────────────────────
 function renderQuickAdd() {
   document.getElementById('content').innerHTML = `
     <div class="screen">
@@ -695,12 +653,22 @@ function renderQuickAdd() {
       <div class="card">
         <input id="qa-input" type="text" placeholder="What needs to happen?"
           onkeydown="if(event.key==='Enter')qaAdd()"
-          style="width:100%;border:2px solid var(--border);border-radius:var(--r-md);padding:0.85rem;font-size:15px;font-family:var(--font);outline:none;margin-bottom:10px">
-        <div class="section-label" style="margin-top:0">Energy needed</div>
-        <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-bottom:10px">
-          <button class="mood-btn" id="qa-low" onclick="qaSetEnergy('low')">Low</button>
-          <button class="mood-btn" id="qa-med" onclick="qaSetEnergy('med')">Medium</button>
-          <button class="mood-btn" id="qa-high" onclick="qaSetEnergy('high')">High</button>
+          style="width:100%;border:1.5px solid var(--border);background:var(--bg-card);border-radius:var(--r-md);padding:0.85rem;font-size:15px;font-family:var(--font);outline:none;color:var(--text-primary);margin-bottom:14px">
+
+        <div class="card-label" style="margin-bottom:8px">Energy needed</div>
+        <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-bottom:14px">
+          <button class="mood-btn" id="qa-low" onclick="qaSetEnergy('low')">
+            <i class="ti ti-battery-1" style="color:var(--teal)"></i>
+            <span>Low</span>
+          </button>
+          <button class="mood-btn" id="qa-med" onclick="qaSetEnergy('med')">
+            <i class="ti ti-battery-2" style="color:var(--sky)"></i>
+            <span>Medium</span>
+          </button>
+          <button class="mood-btn" id="qa-high" onclick="qaSetEnergy('high')">
+            <i class="ti ti-battery-4" style="color:var(--amber)"></i>
+            <span>High</span>
+          </button>
         </div>
         <button class="btn primary" style="margin:0" onclick="qaAdd()">
           <i class="ti ti-plus"></i> Add to Today
@@ -712,18 +680,17 @@ function renderQuickAdd() {
 // ─── Helpers ──────────────────────────────────────────────
 function backButton() {
   return `
-    <button class="btn" style="margin-bottom:10px;color:var(--text-muted)" onclick="setPlanMode('home')">
+    <button class="btn" style="margin-bottom:10px;color:var(--text-muted);justify-content:flex-start" onclick="setPlanMode('home')">
       <i class="ti ti-arrow-left"></i> All planning tools
     </button>`;
 }
 
-// ─── Window handlers — generic ────────────────────────────
+// ─── Window handlers ──────────────────────────────────────
 window.setPlanMode = function (m) {
   state.planMode = m;
   renderPlan();
 };
 
-// ─── Master List handlers ─────────────────────────────────
 window.mlAdd = function () {
   const input = document.getElementById('ml-input');
   if (!input) return;
@@ -768,7 +735,6 @@ window.mlClear = function () {
   }
 };
 
-// ─── Chunking handlers ────────────────────────────────────
 window.doBreakdown = async function () {
   const v = (document.getElementById('bd-in')?.value || state.bdTaskInput || '').trim();
   if (!v) return;
@@ -819,11 +785,9 @@ window.clearBdOutput = function () {
   renderPlan();
 };
 
-// ─── Time Block handlers ──────────────────────────────────
 window.tbAddPrompt = function (hour) {
   const label = prompt('What is this hour for? (e.g. Focus on report, Lunch, Walk)');
   if (!label) return;
-  const colors = ['teal', 'lavender', 'sky', 'amber', 'peach'];
   const colorChoice = prompt('Colour? Type one of: focus, admin, calm, energy, self-care', 'focus');
   const map = { focus: 'teal', admin: 'lavender', calm: 'sky', energy: 'amber', 'self-care': 'peach' };
   const color = map[colorChoice?.toLowerCase()] || 'teal';
@@ -834,11 +798,11 @@ window.tbAddPrompt = function (hour) {
 window.tbAddSuggested = function () {
   const suggestions = [
     { hour: 9,  label: 'Focus block',   color: 'teal' },
-    { hour: 10, label: 'Buffer',         color: 'sky' },
-    { hour: 11, label: 'Admin',          color: 'lavender' },
-    { hour: 13, label: 'Lunch + walk',   color: 'peach' },
-    { hour: 14, label: 'Focus block',    color: 'teal' },
-    { hour: 16, label: 'Wrap-up',        color: 'amber' },
+    { hour: 10, label: 'Buffer',        color: 'sky' },
+    { hour: 11, label: 'Admin',         color: 'lavender' },
+    { hour: 13, label: 'Lunch + walk',  color: 'peach' },
+    { hour: 14, label: 'Focus block',   color: 'teal' },
+    { hour: 16, label: 'Wrap-up',       color: 'amber' },
   ];
   const empty = suggestions.find(s => !state.timeBlocks.find(b => b.hour === s.hour));
   if (empty) {
@@ -861,7 +825,6 @@ window.tbClear = function () {
   }
 };
 
-// ─── Tiered Goals handlers ────────────────────────────────
 window.tgAddWeekly = function () {
   const input = document.getElementById('tg-weekly-input');
   if (!input) return;
@@ -905,7 +868,6 @@ window.tgPushDailyToToday = function (i) {
   renderPlan();
 };
 
-// ─── Kanban handlers ──────────────────────────────────────
 window.kbAdd = function () {
   const input = document.getElementById('kb-input');
   if (!input) return;
@@ -936,33 +898,20 @@ window.kbDelete = function (col, idx) {
   renderPlan();
 };
 
-// ─── SHAPE handlers ───────────────────────────────────────
 window.shapeExport = function () {
   const s = state.shape;
   const text = [
-    'SHAPE plan',
-    '',
-    'Sources of friction:',
-    s.friction || '(empty)',
-    '',
-    'Holding supportive conversations:',
-    s.supports || '(empty)',
-    '',
-    'Assessing the environment:',
-    s.environment || '(empty)',
-    '',
-    'Plan (quick wins):',
-    s.plan || '(empty)',
-    '',
-    'Evaluate:',
-    s.evaluate || '(empty)',
+    'SHAPE plan', '',
+    'Sources of friction:', s.friction || '(empty)', '',
+    'Holding supportive conversations:', s.supports || '(empty)', '',
+    'Assessing the environment:', s.environment || '(empty)', '',
+    'Plan (quick wins):', s.plan || '(empty)', '',
+    'Evaluate:', s.evaluate || '(empty)',
   ].join('\n');
-
   navigator.clipboard.writeText(text).catch(() => {});
   alert('SHAPE plan copied to clipboard.');
 };
 
-// ─── Brain Dump handlers ──────────────────────────────────
 window.dumpToMasterList = function () {
   const text = (document.getElementById('dump-in')?.value || state.brainDumpText || '').trim();
   if (!text) return;
@@ -976,11 +925,9 @@ window.dumpToMasterList = function () {
 window.dumpSort = function () {
   const text = (document.getElementById('dump-in')?.value || state.brainDumpText || '').trim();
   if (!text) { alert('Write something first.'); return; }
-  // Same as dumpToMasterList but stays on the same screen logic
   window.dumpToMasterList();
 };
 
-// ─── Routine handlers ─────────────────────────────────────
 window.startRoutine = function (k) {
   state.activeRoutine = k;
   state.routineStep   = 0;
@@ -988,12 +935,22 @@ window.startRoutine = function (k) {
   renderPlan();
 };
 
-// ─── Quick Add handlers ───────────────────────────────────
 let qaEnergy = 'med';
 window.qaSetEnergy = function (e) {
   qaEnergy = e;
-  ['qa-low', 'qa-med', 'qa-high'].forEach(id => document.getElementById(id)?.classList.remove('sel'));
-  document.getElementById('qa-' + e)?.classList.add('sel');
+  ['qa-low', 'qa-med', 'qa-high'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) {
+      el.style.background = '';
+      el.style.borderColor = '';
+    }
+  });
+  const el = document.getElementById('qa-' + e);
+  if (el) {
+    const colors = { low: 'teal', med: 'sky', high: 'amber' };
+    el.style.background = `var(--${colors[e]}-l)`;
+    el.style.borderColor = `var(--${colors[e]})`;
+  }
 };
 
 window.qaAdd = function () {
