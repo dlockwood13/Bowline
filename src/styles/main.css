@@ -367,6 +367,61 @@ html, body {
   -webkit-user-select: none;
 }
 
+/* ─── Persistent home button in topbar ──────────────────────────── */
+.topbar-home {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  flex-shrink: 0;
+  background: transparent;
+  border: none;
+  border-radius: var(--r-md);
+  padding: 0;
+  cursor: pointer;
+  color: var(--teal-deep);
+  transition: background var(--duration-fast) var(--ease-out),
+              transform var(--duration-fast) var(--ease-out);
+  -webkit-appearance: none;
+  appearance: none;
+  -webkit-user-select: none;
+}
+
+.topbar-home:active {
+  background: var(--teal-l);
+  transform: scale(0.92);
+}
+
+.topbar-home:focus-visible {
+  outline: none;
+  background: var(--teal-l);
+  box-shadow: var(--shadow-focus);
+}
+
+.topbar-home svg {
+  width: 32px;
+  height: 32px;
+  display: block;
+  pointer-events: none;
+}
+
+#topbar-content {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  min-width: 0;
+}
+
+/* ─── Lockup blend fix — drops white background of PNG ─────────── */
+.splash-lockup {
+  /* If the PNG has a solid white background, this dissolves it
+     into the warm oat page colour. Has no effect on SVGs or
+     PNGs with transparent backgrounds. */
+  mix-blend-mode: multiply;
+}
+
 .topbar h1 {
   font-size: var(--text-xl);
   font-weight: 700;
@@ -383,6 +438,14 @@ html, body {
 @media (prefers-color-scheme: dark) {
   .topbar {
     background: rgba(28, 36, 32, 0.95);
+  }
+  .topbar-home {
+    color: var(--teal);
+  }
+  .splash-lockup {
+    /* multiply would make a white logo invisible on dark bg;
+       screen drops black backgrounds instead */
+    mix-blend-mode: screen;
   }
 }
 
@@ -910,6 +973,36 @@ html::-webkit-scrollbar { display: none; }
   opacity: 0.95;
 }
 
+/* ─── Inline brand (SVG mark + wordmark) — replaces lockup PNG ─── */
+.splash-brand {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-3);
+  margin-bottom: var(--space-2);
+}
+
+.splash-mark {
+  width: 80px;
+  height: 80px;
+  color: var(--teal-deep);
+  display: block;
+}
+
+.splash-wordmark {
+  font-size: 36px;
+  font-weight: 700;
+  color: var(--teal-deep);
+  letter-spacing: -0.025em;
+  line-height: 1;
+}
+
+@media (prefers-color-scheme: dark) {
+  .splash-mark, .splash-wordmark {
+    color: var(--teal);
+  }
+}
+
 .splash-hero {
   font-size: var(--text-2xl);
   font-weight: 700;
@@ -1067,6 +1160,11 @@ html::-webkit-scrollbar { display: none; }
   .nav button:hover {
     color: var(--text-primary);
     background: var(--bg-sunken);
+  }
+
+  .topbar-home:hover {
+    background: var(--teal-l);
+    transform: translateY(-1px);
   }
 
   .link-card:hover {
