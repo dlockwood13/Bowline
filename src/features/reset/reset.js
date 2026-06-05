@@ -5,26 +5,26 @@ import { register, setTopbar, go } from '../../app/router.js';
 window.go = go;
 
 // ─── Local state ──────────────────────────────────────────
-if (!state.resetView)     state.resetView     = 'picker';   // picker | category | flow | breathing | complete
-if (!state.resetCategory) state.resetCategory = null;       // sensory | cognitive | emotional | recovery | unknown
+if (!state.resetView)     state.resetView     = 'picker';
+if (!state.resetCategory) state.resetCategory = null;
 if (state.resetStep === undefined) state.resetStep = 0;
 if (!state.resetOutcome)  state.resetOutcome  = null;
 
 // ─── Category Definitions ─────────────────────────────────
 const CATEGORIES = [
-  { k: 'sensory',   l: 'Sensory',   sub: 'Overwhelm, understimulation',        icon: 'ti-ear',          keys: ['over', 'under'],                  color: 'peach' },
-  { k: 'cognitive', l: 'Cognitive', sub: 'Task paralysis, decisions, changes', icon: 'ti-brain',        keys: ['start', 'decision', 'change'],    color: 'lavender' },
-  { k: 'emotional', l: 'Emotional', sub: 'Anxiety, anger, meltdowns',          icon: 'ti-heart',        keys: ['anxiety', 'anger', 'meltdown'],   color: 'sky' },
-  { k: 'recovery',  l: 'Recovery',  sub: 'Shutdowns, burnout, pain',           icon: 'ti-battery-1',    keys: ['shutdown', 'social', 'pain'],     color: 'teal' },
-  { k: 'unknown',   l: 'Not sure',  sub: 'Something feels off',                icon: 'ti-question-mark',keys: ['unknown'],                        color: 'amber' }
+  { k: 'sensory',   l: 'Sensory',   sub: 'Overwhelm, understimulation',        icon: 'ti-ear',           keys: ['over', 'under'],                color: 'peach' },
+  { k: 'cognitive', l: 'Cognitive', sub: 'Task paralysis, decisions, changes', icon: 'ti-brain',         keys: ['start', 'decision', 'change'],  color: 'lavender' },
+  { k: 'emotional', l: 'Emotional', sub: 'Anxiety, anger, meltdowns',          icon: 'ti-heart',         keys: ['anxiety', 'anger', 'meltdown'], color: 'sky' },
+  { k: 'recovery',  l: 'Recovery',  sub: 'Shutdowns, burnout, pain',           icon: 'ti-battery-1',     keys: ['shutdown', 'social', 'pain'],   color: 'teal' },
+  { k: 'unknown',   l: 'Not sure',  sub: 'Something feels off',                icon: 'ti-question-mark', keys: ['unknown'],                      color: 'amber' },
 ];
 
 // ─── Reset definitions ────────────────────────────────────
 const RESETS = [
-  // ── SENSORY ────────────────────────────────────────────
+  // ── SENSORY ─────────────────────────────────────────────
   {
     k: 'over', icon: 'ti-volume-3', l: 'Too much input', sub: 'Overstimulated, sensory overload', color: 'peach',
-    intro: "When your senses are full, your thinking brain shuts down. The fix is not willpower — it's reducing input.",
+    intro: "When your senses are full, your thinking brain shuts down. The fix is not willpower — it is reducing input.",
     steps: [
       { type: 'action',    text: 'Move away from the loudest source of noise if you can.', tip: 'Even one room over makes a difference.' },
       { type: 'action',    text: 'Lower the screen brightness on whatever device you can see right now.', tip: 'Brightness is sensory input too.' },
@@ -38,7 +38,7 @@ const RESETS = [
   },
   {
     k: 'under', icon: 'ti-battery-1', l: 'Too little stimulation', sub: 'Understimulated, flat, restless', color: 'amber',
-    intro: "Understimulated brains can't focus either. They need safe input first — then the task gets possible.",
+    intro: "Understimulated brains cannot focus either. They need safe input first — then the task gets possible.",
     steps: [
       { type: 'action',  text: 'Put on familiar music — something with energy you like.', tip: 'Familiar matters more than new.' },
       { type: 'action',  text: 'Pick up a fidget, stress ball, or tactile object.', tip: 'Anything to engage your hands.' },
@@ -47,16 +47,16 @@ const RESETS = [
       { type: 'action',  text: 'Make a drink — something with flavour.', tip: 'Cold water, tea, coffee, squash. Sip slowly.' },
       { type: 'choice',  text: 'Choose what comes next.' },
     ],
-    recoveryHint: "If you're still flat, try a body-double timer — sometimes only structure breaks through.",
+    recoveryHint: "If you are still flat, try a body-double timer — sometimes only structure breaks through.",
   },
 
-  // ── COGNITIVE ──────────────────────────────────────────
+  // ── COGNITIVE ───────────────────────────────────────────
   {
-    k: 'start', icon: 'ti-player-pause', l: "Can't start", sub: 'Frozen, task paralysis', color: 'lavender',
-    intro: "Freeze is real. It's not laziness. The way out is to shrink the task until your brain accepts it.",
+    k: 'start', icon: 'ti-player-pause', l: "Cannot start", sub: 'Frozen, task paralysis', color: 'lavender',
+    intro: "Freeze is real. It is not laziness. The way out is to shrink the task until your brain accepts it.",
     steps: [
       { type: 'reflect', text: 'What is the smallest possible first step?', detail: 'Not the first real step — the step before the first real step. Opening the email. Putting on shoes. Finding the file.' },
-      { type: 'action',  text: 'Set a 3-minute timer.', tip: "Just 3 minutes. You don't have to continue after." },
+      { type: 'action',  text: 'Set a 3-minute timer.', tip: "Just 3 minutes. You do not have to continue after." },
       { type: 'action',  text: 'You only need to start. Not finish.', tip: 'Starting is the win.' },
       { type: 'reflect', text: 'Notice the resistance without judging it.', detail: 'Your brain is doing what it does. You are not broken.' },
       { type: 'action',  text: 'Begin — even if it feels wrong.', tip: 'Wrong-feeling progress is still progress.' },
@@ -66,20 +66,20 @@ const RESETS = [
   },
   {
     k: 'decision', icon: 'ti-brain', l: 'Decision overload', sub: 'Too many choices to make', color: 'lavender',
-    intro: "When every option feels equally important, your brain can't pick. The fix is to remove options, not analyse them.",
+    intro: "When every option feels equally important, your brain cannot pick. The fix is to remove options, not analyse them.",
     steps: [
       { type: 'reflect', text: 'Pause all decisions for the next 10 minutes.', detail: 'Set the timer mentally. Nothing has to be decided right now.' },
       { type: 'reflect', text: 'What is the one most urgent thing?', detail: 'Urgent means: there are consequences within hours.' },
-      { type: 'reflect', text: 'Can anything wait 24 hours?', detail: "Be honest — most things can wait. They feel urgent but aren't." },
+      { type: 'reflect', text: 'Can anything wait 24 hours?', detail: "Be honest — most things can wait. They feel urgent but are not." },
       { type: 'action',  text: 'Choose the smallest available option.', tip: "When in doubt, pick the one with the lowest cost." },
       { type: 'reflect', text: 'Nothing else until that one is done.', detail: 'Decision-making is a finite resource. Spend it on one thing.' },
       { type: 'choice',  text: 'Choose what comes next.' },
     ],
-    recoveryHint: 'If decisions stack up regularly, try deciding less — automate, delegate, or just default to your usual choice.',
+    recoveryHint: 'If decisions stack up regularly, try deciding less — automate, delegate, or default to your usual choice.',
   },
   {
     k: 'change', icon: 'ti-route-x', l: 'Change of plan', sub: 'Something unexpected happened', color: 'amber',
-    intro: "Change of plan is hard for neurodivergent brains. The plan in your head needs time to be replaced — that's a real cost.",
+    intro: "Change of plan is hard for neurodivergent brains. The plan in your head needs time to be replaced — that is a real cost.",
     steps: [
       { type: 'reflect', text: 'Pause. This is allowed.', detail: 'You do not need to immediately adapt. Give yourself a minute.' },
       { type: 'reflect', text: 'What actually changed?', detail: 'Be specific. One sentence.' },
@@ -92,7 +92,7 @@ const RESETS = [
     recoveryHint: 'After a change of plan, your brain may need a recovery buffer. Reduce demands for the next hour.',
   },
 
-  // ── EMOTIONAL ──────────────────────────────────────────
+  // ── EMOTIONAL ───────────────────────────────────────────
   {
     k: 'anxiety', icon: 'ti-wind', l: 'Anxiety spike', sub: 'Racing thoughts, tight chest', color: 'sky',
     intro: "Anxiety adds noise to everything. Reducing the noise is more useful than solving the worry.",
@@ -109,7 +109,7 @@ const RESETS = [
   },
   {
     k: 'anger', icon: 'ti-flame', l: 'Anger or frustration', sub: 'Heat building, want to react', color: 'amber',
-    intro: "Anger is data. Something feels wrong or unfair. The aim is to feel it without acting on it before you've cooled.",
+    intro: "Anger is data. Something feels wrong or unfair. The aim is to feel it without acting on it before you have cooled.",
     steps: [
       { type: 'action',    text: 'Delay any reply for 10 minutes.', tip: 'No texts, no emails, no Slack. Set the phone down.' },
       { type: 'breathing', text: 'Slow exhale × 4', detail: 'Out for 6, pause, repeat. Three rounds minimum.' },
@@ -136,7 +136,7 @@ const RESETS = [
     recoveryHint: 'After a meltdown, give yourself the rest of the day at minimum. Cancel what you can.',
   },
 
-  // ── RECOVERY ───────────────────────────────────────────
+  // ── RECOVERY ────────────────────────────────────────────
   {
     k: 'shutdown', icon: 'ti-moon', l: 'Shutdown', sub: 'Withdrawn, empty, blank', color: 'sky',
     intro: "Shutdown is when your system protects you by switching off. Pushing through makes it worse. Essentials only.",
@@ -167,127 +167,118 @@ const RESETS = [
   },
   {
     k: 'pain', icon: 'ti-bandage', l: 'Pain or illness', sub: 'Body is asking for less', color: 'lavender',
-    intro: "Pain and illness reduce capacity — full stop. Today is a smaller-day. The plan must change.",
+    intro: "Pain and illness reduce capacity — full stop. Today is a smaller day. The plan must change.",
     steps: [
       { type: 'reflect', text: 'Today is a smaller day. That is allowed.', detail: 'Your capacity is real, not a setting you can change with effort.' },
       { type: 'action',  text: 'Take any medication you need.', tip: 'Pain meds, anti-nausea, whatever you have.' },
       { type: 'action',  text: 'Get comfortable — bed, sofa, blanket, water in reach.', tip: 'Set yourself up like you mean it.' },
       { type: 'reflect', text: 'Pick the 1–3 things that truly must happen today.', detail: 'Drop the rest. Move them to a "later" list.' },
       { type: 'action',  text: 'Tell someone you trust that you are struggling.', tip: 'Not for help — just to be witnessed.' },
-      { type: 'reflect', text: 'Recovery counts as a task today.', detail: "Rest is the work today. That's real." },
+      { type: 'reflect', text: 'Recovery counts as a task today.', detail: "Rest is the work today. That is real." },
       { type: 'choice',  text: 'Choose what comes next.' },
     ],
     recoveryHint: 'Chronic pain deserves chronic accommodation — see your doctor if today is part of a longer pattern.',
   },
 
-  // ── NOT SURE ───────────────────────────────────────────
+  // ── NOT SURE ────────────────────────────────────────────
   {
-    k: 'unknown', icon: 'ti-question-mark', l: "I don't know what's wrong", sub: 'Something feels off', color: 'sky',
-    intro: "Sometimes the brain just says 'no' and won't say why. That is also valid. Let's check the basics first.",
+    k: 'unknown', icon: 'ti-question-mark', l: "I do not know what is wrong", sub: 'Something feels off', color: 'sky',
+    intro: "Sometimes the brain just says 'no' and will not say why. That is also valid. Let us check the basics first.",
     steps: [
       { type: 'reflect', text: 'When did you last drink water?', detail: 'If more than 2 hours, drink some now.' },
       { type: 'reflect', text: 'When did you last eat?', detail: 'If more than 4 hours, eat something — even small.' },
       { type: 'reflect', text: 'How much sleep did you get?', detail: 'Under 6 hours puts everything in deficit.' },
       { type: 'reflect', text: 'Are you in pain anywhere?', detail: 'Including tension, headaches, eye strain.' },
       { type: 'reflect', text: 'When did you last go outside?', detail: 'Indoor-only days affect mood and energy.' },
-      { type: 'reflect', text: 'Are you waiting for news, or holding stress about something specific?', detail: 'Background worry shows up as "I don\'t know what\'s wrong".' },
+      { type: 'reflect', text: 'Are you waiting for news, or holding stress about something specific?', detail: 'Background worry shows up as "I do not know what is wrong".' },
       { type: 'choice',  text: 'Choose what comes next.' },
     ],
-    recoveryHint: "If you can't name what's wrong but it keeps happening, that's worth telling a GP or therapist.",
+    recoveryHint: "If you cannot name what is wrong but it keeps happening, that is worth telling a GP or therapist.",
   },
 ];
 
-// ─── Shared Palette ────────────────────────────────────────
-const PALETTE = {
-  lavender: { bg: '#f5f3ff', border: '#ddd6fe', text: '#4c1d95', sub: '#6d28d9', icon: '#8b5cf6', btn: '#6d28d9' },
-  peach:    { bg: '#fef2f2', border: '#fecaca', text: '#9f1239', sub: '#be123c', icon: '#f43f5e', btn: '#e11d48' },
-  amber:    { bg: '#fffbeb', border: '#fde68a', text: '#b45309', sub: '#d97706', icon: '#f59e0b', btn: '#d97706' },
-  sky:      { bg: '#f0f9ff', border: '#bae6fd', text: '#0369a1', sub: '#0284c7', icon: '#0ea5e9', btn: '#0284c7' },
-  teal:     { bg: '#ecfdf5', border: '#a7f3d0', text: '#047857', sub: '#059669', icon: '#10b981', btn: '#059669' }
-};
-
+// ─── Reset buttons list ──────────────────────────────────
 function renderResetButtons(keys) {
   return keys.map(k => {
     const r = RESETS.find(r => r.k === k);
     if (!r) return '';
-    
-    const palette = PALETTE[r.color] || PALETTE.lavender;
-    
     return `
-      <button onclick="openReset('${r.k}')" 
-              style="width: 100%; text-align: left; background: ${palette.bg}; border: 1.5px solid ${palette.border}; 
-                     border-radius: 12px; padding: 16px 20px; margin-bottom: 12px; display: flex; align-items: center; 
-                     gap: 16px; cursor: pointer; transition: transform 0.1s; font-family: inherit;">
-        <div style="width: 40px; height: 40px; border-radius: 10px; background: rgba(255,255,255,0.6); display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
-          <i class="ti ${r.icon}" style="font-size: 24px; color: ${palette.text};"></i>
+      <button class="btn" style="border-left:4px solid var(--${r.color});justify-content:flex-start;text-align:left;padding-left:14px"
+        onclick="openReset('${r.k}')">
+        <span style="
+          width:36px;height:36px;border-radius:8px;
+          background:var(--${r.color}-l);
+          display:flex;align-items:center;justify-content:center;flex-shrink:0">
+          <i class="ti ${r.icon}" style="font-size:18px;color:var(--${r.color}-d)"></i>
+        </span>
+        <div style="flex:1;text-align:left">
+          <div style="font-size:14px;font-weight:700">${r.l}</div>
+          <div style="font-size:12px;font-weight:400;color:var(--text-muted);margin-top:2px">${r.sub}</div>
         </div>
-        <div style="flex: 1;">
-          <div style="font-size: 15px; font-weight: 700; color: ${palette.text}; margin-bottom: 2px;">${r.l}</div>
-          <div style="font-size: 13px; font-weight: 400; color: ${palette.sub}; opacity: 0.9;">${r.sub}</div>
-        </div>
-        <i class="ti ti-chevron-right" style="font-size: 20px; color: ${palette.text}; opacity: 0.5;"></i>
+        <i class="ti ti-chevron-right" style="font-size:16px;color:var(--text-muted);flex-shrink:0"></i>
       </button>`;
   }).join('');
 }
 
-// ─── Main Category Picker view ─────────────────────────────
+// ─── Category picker (main entry) ─────────────────────────
 function renderPicker() {
   document.getElementById('content').innerHTML = `
-    <div class="screen" style="max-width: 600px; margin: 0 auto; font-family: system-ui, -apple-system, sans-serif;">
-      
-      <!-- Purple Regulation Notice -->
-      <div style="background: #f5f3ff; border: 1.5px solid #ddd6fe; border-radius: 12px; padding: 16px; margin-bottom: 28px;">
-        <div style="font-size: 14px; font-weight: 700; color: #4c1d95; margin-bottom: 4px;">Regulation before productivity.</div>
-        <div style="font-size: 14px; color: #6d28d9;">You do not need to do everything. What kind of hard is this?</div>
+    <div class="screen">
+
+      <div class="card lavender">
+        <div class="card-label">Reset</div>
+        <div class="card-main" style="font-size:17px">Regulation before productivity.</div>
+        <div class="card-sub" style="margin-top:6px;line-height:1.6">
+          You do not need to do everything. What kind of hard is this?
+        </div>
       </div>
 
-      <div style="display: flex; flex-direction: column; gap: 12px; margin-bottom: 24px;">
-        ${CATEGORIES.map(c => {
-          const pal = PALETTE[c.color] || PALETTE.lavender;
-          return `
-            <button onclick="openCategory('${c.k}')"
-                    style="width: 100%; text-align: left; background: #fff; border: 1.5px solid #e2e8f0; border-left: 6px solid ${pal.icon}; border-radius: 12px; padding: 20px; display: flex; align-items: center; gap: 16px; cursor: pointer; transition: all 0.2s; font-family: inherit;">
-              <div style="width: 48px; height: 48px; border-radius: 12px; background: ${pal.bg}; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
-                <i class="ti ${c.icon}" style="font-size: 24px; color: ${pal.text};"></i>
-              </div>
-              <div style="flex: 1;">
-                <div style="font-size: 16px; font-weight: 700; color: #1e293b; margin-bottom: 4px;">${c.l}</div>
-                <div style="font-size: 13px; color: #64748b;">${c.sub}</div>
-              </div>
-              <i class="ti ti-chevron-right" style="font-size: 20px; color: #cbd5e1;"></i>
-            </button>
-          `;
-        }).join('')}
-      </div>
-      
+      ${CATEGORIES.map(c => `
+        <button class="btn" style="border-left:4px solid var(--${c.color});justify-content:flex-start;text-align:left;padding-left:14px"
+          onclick="openCategory('${c.k}')">
+          <span style="
+            width:36px;height:36px;border-radius:8px;
+            background:var(--${c.color}-l);
+            display:flex;align-items:center;justify-content:center;flex-shrink:0">
+            <i class="ti ${c.icon}" style="font-size:18px;color:var(--${c.color}-d)"></i>
+          </span>
+          <div style="flex:1;text-align:left">
+            <div style="font-size:14px;font-weight:700">${c.l}</div>
+            <div style="font-size:12px;font-weight:400;color:var(--text-muted);margin-top:2px">${c.sub}</div>
+          </div>
+          <i class="ti ti-chevron-right" style="font-size:16px;color:var(--text-muted);flex-shrink:0"></i>
+        </button>
+      `).join('')}
+
     </div>
   `;
 }
 
-// ─── Sub-category view ─────────────────────────────────────
+// ─── Sub-category view ───────────────────────────────────
 function renderCategoryView() {
   const cat = CATEGORIES.find(c => c.k === state.resetCategory);
   if (!cat) { state.resetView = 'picker'; renderReset(); return; }
 
   document.getElementById('content').innerHTML = `
-    <div class="screen" style="max-width: 600px; margin: 0 auto; font-family: system-ui, -apple-system, sans-serif;">
-      
-      <button onclick="exitToPicker()" style="background: transparent; border: none; color: #64748b; font-size: 14px; font-weight: 600; cursor: pointer; display: flex; align-items: center; gap: 6px; margin-bottom: 24px; padding: 0;">
-        <i class="ti ti-arrow-left" style="font-size: 18px;"></i> Back to categories
+    <div class="screen">
+
+      <button class="btn" style="margin-bottom:10px;color:var(--text-muted);justify-content:flex-start" onclick="exitToPicker()">
+        <i class="ti ti-arrow-left"></i> Back to categories
       </button>
 
-      <div style="margin-bottom: 24px;">
-        <div style="font-size: 11px; font-weight: 800; color: #94a3b8; text-transform: uppercase; letter-spacing: 1.2px; margin-bottom: 8px;">SELECT A RESET</div>
-        <div style="font-size: 22px; font-weight: 800; color: #1e293b;">${cat.l}</div>
+      <div class="card ${cat.color}">
+        <div class="card-label">${cat.l} resets</div>
+        <div class="card-main" style="font-size:16px">${cat.sub}</div>
+        <div class="card-sub" style="margin-top:6px">Pick the one closest to what you are experiencing.</div>
       </div>
 
       ${renderResetButtons(cat.keys)}
-      
+
     </div>
   `;
 }
 
-// ─── Step-by-step flow ─────────────────────────────────────
+// ─── Step-by-step flow ───────────────────────────────────
 function renderFlow() {
   const r = RESETS.find(r => r.k === state.resetMode);
   if (!r) { state.resetView = 'picker'; renderReset(); return; }
@@ -301,72 +292,67 @@ function renderFlow() {
   }
 
   const pct = ((step + 1) / r.steps.length) * 100;
-  const palette = PALETTE[r.color] || PALETTE.lavender;
 
   document.getElementById('content').innerHTML = `
-    <div class="screen" style="max-width: 600px; margin: 0 auto; font-family: system-ui, -apple-system, sans-serif;">
+    <div class="screen">
 
-      <!-- Intro card on first step -->
       ${step === 0 ? `
-        <div style="background: ${palette.bg}; border: 1.5px solid ${palette.border}; border-radius: 12px; padding: 16px; margin-bottom: 24px;">
-          <div style="font-size: 14px; color: ${palette.text}; line-height: 1.5; font-weight: 500;">${r.intro}</div>
+        <div class="notice ${r.color === 'lavender' ? 'purple' : r.color === 'sky' ? 'blue' : r.color === 'teal' ? 'green' : r.color}">
+          ${r.intro}
         </div>
       ` : ''}
 
-      <!-- Step card -->
-      <div style="background: #fff; border: 1.5px solid #e2e8f0; border-left: 6px solid ${palette.icon}; border-radius: 12px; padding: 24px; margin-bottom: 24px;">
-        <div style="font-size: 11px; font-weight: 800; color: #94a3b8; text-transform: uppercase; letter-spacing: 1.2px; margin-bottom: 12px;">${r.l} · STEP ${step + 1} OF ${r.steps.length - 1}</div>
-        
+      <div class="card ${r.color}">
+        <div class="card-label">${r.l} · Step ${step + 1} of ${r.steps.length - 1}</div>
+
         ${current.type === 'breathing' ? `
-          <div style="text-align:center; padding: 24px 0;">
-            <i class="ti ti-wind" style="font-size: 48px; color: ${palette.icon}; margin-bottom: 16px;"></i>
-            <div style="font-size: 20px; font-weight: 700; color: #1e293b; margin-bottom: 8px;">${current.text}</div>
-            <div style="font-size: 14px; color: #64748b; line-height: 1.5;">${current.detail}</div>
+          <div style="text-align:center;padding:1.5rem 0">
+            <i class="ti ti-wind" style="font-size:42px;color:var(--${r.color});display:block;margin-bottom:12px"></i>
+            <div class="card-main" style="font-size:18px;margin-bottom:6px">${current.text}</div>
+            <div class="card-sub" style="margin-top:4px">${current.detail}</div>
           </div>
         ` : current.type === 'reflect' ? `
-          <div style="font-size: 18px; font-weight: 600; color: #1e293b; margin-bottom: 8px;">${current.text}</div>
-          ${current.detail ? `<div style="font-size: 14px; color: #475569; line-height: 1.6;">${current.detail}</div>` : ''}
+          <div class="card-main" style="font-size:18px;margin-top:8px">${current.text}</div>
+          ${current.detail ? `<div class="card-sub" style="margin-top:6px;line-height:1.6">${current.detail}</div>` : ''}
         ` : `
-          <div style="font-size: 18px; font-weight: 600; color: #1e293b; margin-bottom: 8px;">${current.text}</div>
-          ${current.tip ? `<div style="font-size: 13px; color: #64748b; font-style: italic;">💡 ${current.tip}</div>` : ''}
+          <div class="card-main" style="font-size:17px;margin-top:8px">${current.text}</div>
+          ${current.tip ? `<div class="card-sub" style="margin-top:6px;font-style:italic">💡 ${current.tip}</div>` : ''}
         `}
       </div>
 
-      <!-- Progress Bar -->
-      <div style="height: 6px; background: #e2e8f0; border-radius: 3px; margin-bottom: 24px; overflow: hidden;">
-        <div style="height: 100%; width: ${pct}%; background: ${palette.icon}; transition: width 0.3s ease;"></div>
-      </div>
+      <div class="progress-bar"><div class="progress-fill" style="width:${pct}%"></div></div>
 
       ${current.type === 'breathing' ? `
-        <button onclick="startBreathing()" style="width: 100%; padding: 14px; background: ${palette.btn}; color: white; border: none; border-radius: 12px; font-size: 16px; font-weight: 700; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; margin-bottom: 12px;">
-          <i class="ti ti-player-play" style="font-size: 20px;"></i> Start guided breathing
+        <button class="btn primary" onclick="startBreathing()">
+          <i class="ti ti-player-play"></i> Start guided breathing
         </button>
-        <button onclick="nextStep()" style="width: 100%; padding: 14px; background: #f8fafc; color: #475569; border: 1.5px solid #e2e8f0; border-radius: 12px; font-size: 15px; font-weight: 700; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px;">
-          Done — next step <i class="ti ti-arrow-right" style="font-size: 18px;"></i>
+        <button class="btn" onclick="nextStep()">
+          Done — next step <i class="ti ti-arrow-right"></i>
         </button>
       ` : `
-        <button onclick="nextStep()" style="width: 100%; padding: 14px; background: ${palette.btn}; color: white; border: none; border-radius: 12px; font-size: 16px; font-weight: 700; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; margin-bottom: 12px;">
-          <i class="ti ti-check" style="font-size: 20px;"></i> ${current.type === 'reflect' ? 'I have considered this' : 'Done'} — next step
+        <button class="btn primary" onclick="nextStep()">
+          <i class="ti ti-check"></i> ${current.type === 'reflect' ? 'I have considered this' : 'Done'} — next step
         </button>
       `}
 
-      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 12px;">
-        <button onclick="prevStep()" ${step === 0 ? 'disabled' : ''} style="padding: 12px; background: transparent; border: 1.5px solid #e2e8f0; color: #64748b; border-radius: 10px; font-size: 14px; font-weight: 600; cursor: pointer; opacity: ${step === 0 ? '0.4' : '1'};">
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:6px">
+        <button class="btn" style="margin:0;${step === 0 ? 'opacity:0.4;pointer-events:none' : ''}" onclick="prevStep()">
           <i class="ti ti-arrow-left"></i> Back
         </button>
-        <button onclick="skipStep()" style="padding: 12px; background: transparent; border: 1.5px solid #e2e8f0; color: #64748b; border-radius: 10px; font-size: 14px; font-weight: 600; cursor: pointer;">
+        <button class="btn" style="margin:0" onclick="skipStep()">
           Skip <i class="ti ti-skip-forward"></i>
         </button>
       </div>
 
-      <button onclick="exitToPicker()" style="width: 100%; padding: 16px; background: transparent; border: none; color: #94a3b8; font-size: 14px; font-weight: 600; cursor: pointer; margin-top: 16px;">
+      <button class="btn" style="margin-top:8px;color:var(--text-muted)" onclick="exitToPicker()">
         <i class="ti ti-x"></i> Exit reset
       </button>
+
     </div>
   `;
 }
 
-// ─── Guided breathing animation ────────────────────────────
+// ─── Guided breathing animation ──────────────────────────
 function renderBreathing() {
   const r = RESETS.find(r => r.k === state.resetMode);
   if (!r) { exitToPicker(); return; }
@@ -374,37 +360,36 @@ function renderBreathing() {
   const phase = state.breathPhase || 'breathe-out';
   const round = state.breathRound || 1;
   const max   = 4;
-  const palette = PALETTE[r.color] || PALETTE.lavender;
 
   document.getElementById('content').innerHTML = `
-    <div class="screen" style="max-width: 600px; margin: 0 auto; display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 70vh; text-align: center; font-family: system-ui, -apple-system, sans-serif;">
-      
-      <div style="position: relative; width: 220px; height: 220px; display: flex; align-items: center; justify-content: center; margin-bottom: 32px;">
-        <div id="breath-circle" style="
-          width: ${phase === 'breathe-out' ? '200' : '90'}px;
-          height: ${phase === 'breathe-out' ? '200' : '90'}px;
-          border-radius: 50%;
-          background: ${palette.bg};
-          border: 3px solid ${palette.icon};
-          transition: all 6s ease-in-out;
-          display: flex; align-items: center; justify-content: center;
-        ">
-          <span style="font-size: 16px; font-weight: 700; color: ${palette.text}; transition: opacity 0.5s;">
+    <div class="screen" style="display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:60vh;text-align:center">
+
+      <div style="position:relative;width:220px;height:220px;display:flex;align-items:center;justify-content:center;margin-bottom:32px">
+        <div style="
+          width:${phase === 'breathe-out' ? '200' : '90'}px;
+          height:${phase === 'breathe-out' ? '200' : '90'}px;
+          border-radius:50%;
+          background:var(--${r.color}-l);
+          border:3px solid var(--${r.color});
+          transition:all 6s ease-in-out;
+          display:flex;align-items:center;justify-content:center">
+          <span style="font-size:16px;font-weight:700;color:var(--${r.color}-d);transition:opacity 0.5s">
             ${phase === 'breathe-out' ? 'breathe out' : 'pause'}
           </span>
         </div>
       </div>
 
-      <div style="font-size: 32px; font-weight: 800; color: #1e293b; font-variant-numeric: tabular-nums; margin-bottom: 8px;">
+      <div style="font-size:28px;font-weight:700;color:var(--text-primary);font-variant-numeric:tabular-nums;margin-bottom:6px">
         Round ${round} of ${max}
       </div>
-      <div style="font-size: 15px; color: #64748b; max-width: 280px; line-height: 1.5;">
+      <div style="font-size:14px;color:var(--text-muted);max-width:280px;line-height:1.5">
         Out for 6 counts. Pause. Repeat.
       </div>
 
-      <button onclick="endBreathing()" style="margin-top: 48px; padding: 14px 24px; background: ${palette.btn}; color: white; border: none; border-radius: 12px; font-size: 16px; font-weight: 700; cursor: pointer; display: flex; align-items: center; gap: 8px;">
-        <i class="ti ti-check" style="font-size: 20px;"></i> Done with breathing
+      <button class="btn primary" style="margin-top:32px;max-width:240px" onclick="endBreathing()">
+        <i class="ti ti-check"></i> Done with breathing
       </button>
+
     </div>
   `;
 
@@ -425,108 +410,82 @@ function renderBreathing() {
   }
 }
 
-// ─── Completion screen ────────────────────────────────────
+// ─── Completion screen ───────────────────────────────────
 function renderCompletion() {
   const r = RESETS.find(r => r.k === state.resetMode);
   if (!r) { state.resetView = 'picker'; renderReset(); return; }
-  
-  const palette = PALETTE[r.color] || PALETTE.lavender;
 
   document.getElementById('content').innerHTML = `
-    <div class="screen" style="max-width: 600px; margin: 0 auto; font-family: system-ui, -apple-system, sans-serif;">
+    <div class="screen">
 
-      <!-- Success Block -->
-      <div style="background: #ecfdf5; border: 1.5px solid #a7f3d0; border-radius: 16px; padding: 32px 24px; text-align: center; margin-bottom: 24px;">
-        <div style="width: 56px; height: 56px; background: #d1fae5; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 16px; color: #059669;">
-          <i class="ti ti-check" style="font-size: 32px;"></i>
-        </div>
-        <div style="font-size: 20px; font-weight: 800; color: #064e3b; margin-bottom: 8px;">Reset complete.</div>
-        <div style="font-size: 14px; color: #065f46; line-height: 1.5;">The plan can change. A smaller version still counts.</div>
+      <div class="notice green" style="text-align:center;padding:1.75rem">
+        <i class="ti ti-circle-check" style="font-size:34px;color:var(--teal);display:block;margin-bottom:10px"></i>
+        <div style="font-size:18px;font-weight:700;color:var(--teal-deep);margin-bottom:6px">Reset complete.</div>
+        <div style="font-size:14px;line-height:1.6">The plan can change. A smaller version still counts.</div>
       </div>
 
       ${r.recoveryHint ? `
-        <div style="background: #f0f9ff; border: 1.5px solid #bae6fd; border-radius: 12px; padding: 16px; margin-bottom: 24px;">
-          <div style="font-size: 13px; color: #0369a1; line-height: 1.5;">
-            <strong>💡 Hint:</strong> ${r.recoveryHint}
-          </div>
+        <div class="notice blue">
+          <strong>Tip.</strong> ${r.recoveryHint}
         </div>
       ` : ''}
 
-      <div style="font-size: 11px; font-weight: 800; color: #94a3b8; text-transform: uppercase; letter-spacing: 1.2px; margin-bottom: 12px;">HOW DO YOU FEEL NOW?</div>
-      <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; margin-bottom: 24px;">
-        <button onclick="logOutcome('better')" class="grid-action-btn" style="${state.resetOutcome === 'better' ? `border-color: ${palette.icon}; background: ${palette.bg};` : ''}">A bit better</button>
-        <button onclick="logOutcome('same')" class="grid-action-btn" style="${state.resetOutcome === 'same' ? `border-color: ${palette.icon}; background: ${palette.bg};` : ''}">About the same</button>
-        <button onclick="logOutcome('worse')" class="grid-action-btn" style="${state.resetOutcome === 'worse' ? `border-color: ${palette.icon}; background: ${palette.bg};` : ''}">Worse — need more</button>
-        <button onclick="logOutcome('done')" class="grid-action-btn" style="${state.resetOutcome === 'done' ? `border-color: ${palette.icon}; background: ${palette.bg};` : ''}">Done, moving on</button>
+      <div class="section-label">How do you feel now?</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
+        <button class="btn ${state.resetOutcome === 'better' ? 'teal' : ''}" style="margin:0" onclick="logOutcome('better')">A bit better</button>
+        <button class="btn ${state.resetOutcome === 'same'   ? 'sky'  : ''}" style="margin:0" onclick="logOutcome('same')">About the same</button>
+        <button class="btn ${state.resetOutcome === 'worse'  ? 'peach': ''}" style="margin:0" onclick="logOutcome('worse')">Worse — need more</button>
+        <button class="btn ${state.resetOutcome === 'done'   ? 'lavender':''}" style="margin:0" onclick="logOutcome('done')">Done, moving on</button>
       </div>
 
       ${state.resetOutcome === 'worse' ? `
-        <div style="background: #fef2f2; border: 1.5px solid #fecaca; border-radius: 12px; padding: 16px; margin-bottom: 24px;">
-          <div style="font-size: 14px; font-weight: 700; color: #9f1239; margin-bottom: 8px;">If the reset didn't help:</div>
-          <ul style="margin: 0 0 0 20px; padding: 0; color: #be123c; font-size: 13px; line-height: 1.7;">
+        <div class="notice peach" style="margin-top:1rem">
+          <strong>If the reset did not help:</strong>
+          <ul style="margin:8px 0 0 20px;padding:0;line-height:1.7">
             <li>Try essentials only — drop everything non-urgent</li>
             <li>Reach out to someone you trust</li>
-            <li>If this is a recurring crisis, contact Mind, Samaritans (116 123), or Shout (text HOME to 85258)</li>
+            <li>If this is a recurring crisis, contact <strong>Mind</strong>, <strong>Samaritans</strong> (116 123), or <strong>Shout</strong> (text HOME to 85258)</li>
           </ul>
         </div>
       ` : ''}
 
-      <div style="font-size: 11px; font-weight: 800; color: #94a3b8; text-transform: uppercase; letter-spacing: 1.2px; margin-bottom: 12px;">WHAT'S NEXT?</div>
-      <div style="display: flex; flex-direction: column; gap: 10px;">
-        <button onclick="exitToToday()" style="padding: 14px; background: #fff; border: 1.5px solid #e2e8f0; border-radius: 12px; font-size: 14px; font-weight: 600; color: #1e293b; cursor: pointer; display: flex; align-items: center; gap: 10px;">
-          <i class="ti ti-sun" style="color: #d97706; font-size: 20px;"></i> Back to Today
+      <div class="section-label">What's next?</div>
+      <button class="btn amber-btn" onclick="exitToToday()">
+        <i class="ti ti-sun"></i> Back to Today
+      </button>
+      <button class="btn lavender" onclick="exitToEssentials()">
+        <i class="ti ti-minimize"></i> Essentials only mode
+      </button>
+      <button class="btn sky" onclick="exitToNow()">
+        <i class="ti ti-player-play"></i> Try the next step
+      </button>
+
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:6px">
+        <button class="btn" style="margin:0;color:var(--text-muted)" onclick="restartReset()">
+          <i class="ti ti-rotate"></i> Run again
         </button>
-        <button onclick="exitToEssentials()" style="padding: 14px; background: #fff; border: 1.5px solid #e2e8f0; border-radius: 12px; font-size: 14px; font-weight: 600; color: #1e293b; cursor: pointer; display: flex; align-items: center; gap: 10px;">
-          <i class="ti ti-minimize" style="color: #8b5cf6; font-size: 20px;"></i> Essentials only mode
+        <button class="btn" style="margin:0;color:var(--text-muted)" onclick="exitToPicker()">
+          <i class="ti ti-list"></i> Different reset
         </button>
-        <button onclick="exitToNow()" style="padding: 14px; background: #fff; border: 1.5px solid #e2e8f0; border-radius: 12px; font-size: 14px; font-weight: 600; color: #1e293b; cursor: pointer; display: flex; align-items: center; gap: 10px;">
-          <i class="ti ti-player-play" style="color: #0ea5e9; font-size: 20px;"></i> Try the next step
-        </button>
-        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 8px;">
-          <button onclick="restartReset()" style="padding: 12px; background: transparent; border: 1.5px solid #e2e8f0; color: #64748b; border-radius: 10px; font-size: 13px; font-weight: 600; cursor: pointer;">
-            <i class="ti ti-rotate"></i> Run again
-          </button>
-          <button onclick="exitToPicker()" style="padding: 12px; background: transparent; border: 1.5px solid #e2e8f0; color: #64748b; border-radius: 10px; font-size: 13px; font-weight: 600; cursor: pointer;">
-            <i class="ti ti-list"></i> Different reset
-          </button>
-        </div>
       </div>
-      
-      <style>
-        .grid-action-btn {
-          background: #fff;
-          border: 1.5px solid #e2e8f0;
-          border-radius: 10px;
-          padding: 14px;
-          font-size: 13px;
-          font-weight: 600;
-          color: #475569;
-          cursor: pointer;
-          transition: all 0.2s;
-          font-family: inherit;
-        }
-        .grid-action-btn:hover {
-          border-color: #cbd5e1;
-          background: #f8fafc;
-        }
-      </style>
+
     </div>
   `;
 }
 
-// ─── Main render entry ────────────────────────────────────
+// ─── Main render entry ───────────────────────────────────
 export function renderReset() {
   setTopbar('Reset', 'Regulation before action.');
-  
-  if (state.resetView === 'picker')   return renderPicker();
-  if (state.resetView === 'category') return renderCategoryView();
+
+  if (state.resetView === 'picker')    return renderPicker();
+  if (state.resetView === 'category')  return renderCategoryView();
   if (state.resetView === 'breathing') return renderBreathing();
   if (state.resetView === 'complete')  return renderCompletion();
-  
+
   renderFlow();
 }
 
-// ─── Window-scoped handlers ───────────────────────────────
+// ─── Window handlers ─────────────────────────────────────
 window.openCategory = (catKey) => {
   state.resetCategory = catKey;
   state.resetView     = 'category';
@@ -587,8 +546,7 @@ window.logOutcome = (o) => {
 };
 
 window.exitToToday = () => { window.exitToPicker(); go('today'); };
-
-window.exitToNow = () => { window.exitToPicker(); go('now'); };
+window.exitToNow   = () => { window.exitToPicker(); go('now'); };
 
 window.exitToEssentials = () => {
   state.tasks = state.tasks.filter(t =>
