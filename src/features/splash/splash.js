@@ -18,11 +18,11 @@ export function renderSplash() {
   document.getElementById('content').innerHTML = `
     <div class="screen splash">
 
-      <!-- Inline SVG mark + wordmark (transparent background, blends cleanly) -->
+      <!-- Brand mark (logo image, transparent background) -->
       <div class="splash-brand">
-        <svg viewBox="0 0 64 64" class="splash-mark" aria-hidden="true">
-          <use href="#bowline-mark"></use>
-        </svg>
+        <img src="src/assets/bowline-mark-256.png"
+             alt="Bowline logo"
+             class="splash-mark" />
         <div class="splash-wordmark">${BRAND ? BRAND.name : 'Bowline'}</div>
       </div>
 
