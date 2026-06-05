@@ -1,26 +1,99 @@
 import { BRAND } from '../../data/state.js';
-import { register, setTopbar } from '../../app/router.js';
+import { register, setTopbar, go } from '../../app/router.js';
+
+// Expose 'go' globally for inline HTML onclick handlers
+window.go = go;
+
+const FEATURES = [
+  {
+    icon: 'ti-sun',
+    color: 'teal',
+    label: 'Today',
+    sub: 'Adapts to how you feel',
+  },
+  {
+    icon: 'ti-player-play',
+    color: 'lavender',
+    label: 'Now',
+    sub: 'One next step. No pressure.',
+  },
+  {
+    icon: 'ti-message-2',
+    color: 'sky',
+    label: 'TL;DR',
+    sub: 'Decodes hard messages',
+  },
+  {
+    icon: 'ti-refresh',
+    color: 'peach',
+    label: 'Reset',
+    sub: 'When the day breaks down',
+  },
+];
 
 export function renderSplash() {
-  // Hide the topbar — splash screen is fully branded
+  // Hide the topbar for a clean, fully branded entry
   setTopbar('', '', { branded: false });
+
+  const lockupSrc = 'src/assets/bowline-lockup.png';
+  const fallbackHero = `
+    <div style="display:flex;align-items:center;gap:14px;justify-content:center;margin-bottom:8px">
+      <svg width="56" height="56" viewBox="0 0 64 64" aria-hidden="true">
+        <use href="#bowline-mark" style="color:var(--teal-d)"></use>
+      </svg>
+      <div style="font-size:36px;font-weight:700;color:var(--teal-deep);letter-spacing:-0.02em">Bowline</div>
+    </div>`;
 
   document.getElementById('content').innerHTML = `
     <div class="screen splash">
-      <img src="src/assets/bowline-lockup.png"
-           alt="Bowline — A calmer way through your day"
-           class="splash-lockup" />
 
-      <button class="btn primary" style="max-width:280px;margin-top:36px"
+      <!-- Brand lockup with fallback -->
+      <img
+        src="${lockupSrc}"
+        alt="Bowline"
+        class="splash-lockup"
+        onerror="this.style.display='none';document.getElementById('splash-fallback').style.display='block'"
+      />
+      <div id="splash-fallback" style="display:none">${fallbackHero}</div>
+
+      <!-- Hero copy -->
+      <h1 class="splash-hero">A calmer way through your day.</h1>
+      <p class="splash-sub">
+        A daily support app built for ADHD, autism, dyslexia, dyspraxia,
+        burnout, and the days in between. Structure when you need it.
+        Never trapped by it.
+      </p>
+
+      <!-- Four feature highlights -->
+      <div class="splash-features">
+        ${FEATURES.map(f => `
+          <div class="splash-feature">
+            <i class="ti ${f.icon}" style="color:var(--${f.color})"></i>
+            <div class="splash-feature-label">${f.label}</div>
+            <div class="splash-feature-sub">${f.sub}</div>
+          </div>
+        `).join('')}
+      </div>
+
+      <!-- Primary CTA -->
+      <button class="btn primary" style="max-width:280px;margin-top:8px"
               onclick="go('today')">
-        <i class="ti ti-arrow-right"></i> Open ${BRAND.name}
+        <i class="ti ti-arrow-right"></i> Open ${BRAND ? BRAND.name : 'Bowline'}
       </button>
 
-      <div style="margin-top:48px;max-width:340px;width:100%">
-        <div class="notice green" style="margin-bottom:0;text-align:center">
-          ${BRAND.motto}
-        </div>
+      <!-- Secondary CTA: jump into Journey -->
+      <button class="btn" style="max-width:280px;margin-bottom:0"
+              onclick="go('diagnosis')">
+        <i class="ti ti-map"></i> Just exploring? See the Journey
+      </button>
+
+      <!-- Crisis strip — always available -->
+      <div class="splash-crisis">
+        In crisis? <strong>Samaritans</strong> 116 123 ·
+        <strong>Shout</strong> text HOME to 85258 ·
+        <a href="https://www.mind.org.uk/need-urgent-help/" target="_blank" rel="noopener noreferrer">Mind</a>
       </div>
+
     </div>`;
 }
 
