@@ -45,19 +45,19 @@
   /* ─── Borders & dividers ────────────────────────────────────── */
   --border:        #DCD5C5;    /* Soft warm border */
   --border-strong: #B8B0A0;
-  --border-focus:  #7A9E84;    /* Sage focus ring */
+  --border-focus:  #339A7E;    /* Teal focus ring */
 
   /* ─── ACCENT TOKENS — research-backed, low-saturation ──────────
      Each colour kept below ~50% saturation to avoid sensory load.
      Sage and soft blue are the most-cited neurodivergent-friendly tones. */
 
-  /* SAGE — primary accent (replaces moss-teal)
-     Cool sage green: most research-favoured calming colour for ND adults.
-     Concentration-supportive, low-arousal, biophilic. */
-  --teal:        #7A9E84;     /* Sage — primary accent */
-  --teal-l:      #DCE8DD;     /* Pale sage — backgrounds, fills */
-  --teal-d:      #4F7259;     /* Deep sage — text on pale sage */
-  --teal-deep:   #324A39;     /* Darkest sage — display, hero text */
+  /* TEAL — primary accent (matches Bowline logo)
+     A medium teal-green, biophilic and grounding.
+     Low-arousal, concentration-supportive, colour-blind friendly. */
+  --teal:        #339A7E;     /* Bowline brand teal — matches logo */
+  --teal-l:      #D1ECE2;     /* Pale teal — backgrounds, fills */
+  --teal-d:      #1F6B57;     /* Deep teal — text on pale teal */
+  --teal-deep:   #144738;     /* Darkest teal — display, hero text */
 
   /* SOFT LILAC — gentle, grounding (replaces heather)
      Pastel lavender consistently rated calmest accent for autism. */
@@ -104,7 +104,7 @@
   --shadow-md:   0 4px 12px rgba(40, 50, 58, 0.08), 0 2px 4px rgba(40, 50, 58, 0.04);
   --shadow-lg:   0 12px 32px rgba(40, 50, 58, 0.10), 0 4px 8px rgba(40, 50, 58, 0.06);
   --shadow-frame:0 24px 64px rgba(40, 50, 58, 0.18), 0 8px 16px rgba(40, 50, 58, 0.08);
-  --shadow-focus: 0 0 0 3px rgba(122, 158, 132, 0.30);
+  --shadow-focus: 0 0 0 3px rgba(51, 154, 126, 0.30);
 
   /* ─── Spacing scale ──────────────────────────────────────── */
   --space-1:     4px;
@@ -146,7 +146,7 @@
   --duration-base:   200ms;
   --duration-slow:   320ms;
 
-  --theme-color:  #7A9E84;
+  --theme-color:  #339A7E;
   --haptic-duration: 50ms;
 }
 
@@ -169,7 +169,7 @@
     --border-strong:  #556059;
 
     /* Slightly brighter in dark mode for legibility, still muted */
-    --teal:        #9CC0A4;     --teal-l:     #2F4438;     --teal-d:    #C3DAC8;
+    --teal:        #6BC4A4;     --teal-l:     #1F4438;     --teal-d:    #A8DCC5;
     --lavender:    #B5A8CC;     --lavender-l: #3A3247;     --lavender-d: #D2C8E0;
     --sky:         #A5C2D6;     --sky-l:      #2F4452;     --sky-d:     #C5D9E5;
     --amber:       #D9C19A;     --amber-l:    #4A3E29;     --amber-d:   #E5D2AE;
@@ -212,9 +212,9 @@ body {
   height: 100%;
   position: fixed;
   overflow: hidden;
-  /* Subtle organic background — barely visible, warm sage hint */
+  /* Subtle organic background — barely visible, warm teal hint */
   background-image:
-    radial-gradient(circle at 25% 15%, rgba(122, 158, 132, 0.05) 0%, transparent 50%),
+    radial-gradient(circle at 25% 15%, rgba(51, 154, 126, 0.05) 0%, transparent 50%),
     radial-gradient(circle at 75% 80%, rgba(197, 168, 119, 0.04) 0%, transparent 50%);
   background-attachment: fixed;
   overscroll-behavior: none;
@@ -421,12 +421,12 @@ html, body {
   border-radius: var(--r-md);
   padding: 0;
   cursor: pointer;
-  color: var(--teal-deep);
   transition: background var(--duration-fast) var(--ease-out),
               transform var(--duration-fast) var(--ease-out);
   -webkit-appearance: none;
   appearance: none;
   -webkit-user-select: none;
+  overflow: hidden;
 }
 
 .topbar-home:active {
@@ -440,11 +440,12 @@ html, body {
   box-shadow: var(--shadow-focus);
 }
 
-.topbar-home svg {
-  width: 32px;
-  height: 32px;
+.topbar-home img {
+  width: 36px;
+  height: 36px;
   display: block;
   pointer-events: none;
+  border-radius: 8px;
 }
 
 #topbar-content {
@@ -476,9 +477,6 @@ html, body {
 @media (prefers-color-scheme: dark) {
   .topbar {
     background: rgba(30, 36, 40, 0.95);
-  }
-  .topbar-home {
-    color: var(--teal);
   }
   .splash-lockup {
     mix-blend-mode: screen;
@@ -1028,10 +1026,11 @@ html::-webkit-scrollbar { display: none; }
 }
 
 .splash-mark {
-  width: 80px;
-  height: 80px;
-  color: var(--teal-deep);
+  width: 112px;
+  height: 112px;
   display: block;
+  border-radius: 24px;
+  box-shadow: var(--shadow-md);
 }
 
 .splash-wordmark {
@@ -1043,7 +1042,7 @@ html::-webkit-scrollbar { display: none; }
 }
 
 @media (prefers-color-scheme: dark) {
-  .splash-mark, .splash-wordmark {
+  .splash-wordmark {
     color: var(--teal);
   }
 }
@@ -1129,10 +1128,10 @@ html::-webkit-scrollbar { display: none; }
   }
 
   body {
-    /* Calming sage-tinted gradient frame around the app */
+    /* Calming teal-tinted gradient frame around the app */
     background: linear-gradient(135deg, #EDE5D2 0%, #E2DAC4 100%);
     background-image:
-      radial-gradient(circle at 10% 20%, rgba(122, 158, 132, 0.10) 0%, transparent 50%),
+      radial-gradient(circle at 10% 20%, rgba(51, 154, 126, 0.10) 0%, transparent 50%),
       radial-gradient(circle at 90% 80%, rgba(197, 168, 119, 0.07) 0%, transparent 50%);
     background-attachment: fixed;
     display: flex;
