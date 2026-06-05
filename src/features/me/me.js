@@ -104,9 +104,10 @@ function renderMeMenu() {
 
       <!-- Branded header card -->
       <div class="card teal" style="text-align:center;padding:1.5rem 1.25rem">
-        <svg width="48" height="48" viewBox="0 0 64 64" style="margin:0 auto 10px;display:block;color:var(--teal-deep)" aria-hidden="true">
-          <use href="#bowline-mark"></use>
-        </svg>
+        <img src="src/assets/bowline-mark-128.png"
+             alt=""
+             aria-hidden="true"
+             style="width:64px;height:64px;margin:0 auto 10px;display:block;border-radius:14px;box-shadow:var(--shadow-sm)" />
         <div class="card-main" style="font-size:20px;letter-spacing:-0.02em">${BRAND ? BRAND.name : 'Bowline'}</div>
         <div class="card-sub" style="margin-top:6px">${BRAND && BRAND.motto ? BRAND.motto : 'A calmer way through your day.'}</div>
       </div>
