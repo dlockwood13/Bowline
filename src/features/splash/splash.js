@@ -5,56 +5,26 @@ import { register, setTopbar, go } from '../../app/router.js';
 window.go = go;
 
 const FEATURES = [
-  {
-    icon: 'ti-sun',
-    color: 'teal',
-    label: 'Today',
-    sub: 'Adapts to how you feel',
-  },
-  {
-    icon: 'ti-player-play',
-    color: 'lavender',
-    label: 'Now',
-    sub: 'One next step. No pressure.',
-  },
-  {
-    icon: 'ti-message-2',
-    color: 'sky',
-    label: 'TL;DR',
-    sub: 'Decodes hard messages',
-  },
-  {
-    icon: 'ti-refresh',
-    color: 'peach',
-    label: 'Reset',
-    sub: 'When the day breaks down',
-  },
+  { icon: 'ti-sun',            color: 'teal',     label: 'Today',  sub: 'Adapts to how you feel' },
+  { icon: 'ti-player-play',    color: 'lavender', label: 'Now',    sub: 'One next step. No pressure.' },
+  { icon: 'ti-message-2',      color: 'sky',      label: 'TL;DR',  sub: 'Decodes hard messages' },
+  { icon: 'ti-refresh',        color: 'peach',    label: 'Reset',  sub: 'When the day breaks down' },
 ];
 
 export function renderSplash() {
   // Hide the topbar for a clean, fully branded entry
   setTopbar('', '', { branded: false });
 
-  const lockupSrc = 'src/assets/bowline-lockup.png';
-  const fallbackHero = `
-    <div style="display:flex;align-items:center;gap:14px;justify-content:center;margin-bottom:8px">
-      <svg width="56" height="56" viewBox="0 0 64 64" aria-hidden="true">
-        <use href="#bowline-mark" style="color:var(--teal-d)"></use>
-      </svg>
-      <div style="font-size:36px;font-weight:700;color:var(--teal-deep);letter-spacing:-0.02em">Bowline</div>
-    </div>`;
-
   document.getElementById('content').innerHTML = `
     <div class="screen splash">
 
-      <!-- Brand lockup with fallback -->
-      <img
-        src="${lockupSrc}"
-        alt="Bowline"
-        class="splash-lockup"
-        onerror="this.style.display='none';document.getElementById('splash-fallback').style.display='block'"
-      />
-      <div id="splash-fallback" style="display:none">${fallbackHero}</div>
+      <!-- Inline SVG mark + wordmark (transparent background, blends cleanly) -->
+      <div class="splash-brand">
+        <svg viewBox="0 0 64 64" class="splash-mark" aria-hidden="true">
+          <use href="#bowline-mark"></use>
+        </svg>
+        <div class="splash-wordmark">${BRAND ? BRAND.name : 'Bowline'}</div>
+      </div>
 
       <!-- Hero copy -->
       <h1 class="splash-hero">A calmer way through your day.</h1>
