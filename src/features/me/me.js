@@ -4,10 +4,11 @@ import { register, setTopbar, go } from '../../app/router.js';
 // Expose 'go' globally for inline HTML onclick handlers
 window.go = go;
 
-// Init local state
-if (!state.meView) state.meView = 'menu'; // menu | resources | scripts | sensory | essentials
+// ─── Local state ──────────────────────────────────────────
+if (!state.meView) state.meView = 'menu';
 if (!state.supportTab) state.supportTab = 'adhd';
 
+// ─── Scripts ──────────────────────────────────────────────
 const SCRIPTS = [
   { l: 'Ask for clarity',    t: 'Thanks for the message. Could you clarify what you need from me and by when?' },
   { l: 'Running late',       t: "I'm running late. I'm still coming, but I need more time. I'll update you when I know my arrival time." },
@@ -20,12 +21,23 @@ const SCRIPTS = [
 ];
 
 const SENSORY_TOOLS = [
-  'Headphones', 'Sunglasses', 'Weighted blanket', 'Fidget', 
-  'Hoodie', 'Quiet room', 'Familiar music', 'Movement'
+  { l: 'Headphones',       icon: 'ti-headphones' },
+  { l: 'Sunglasses',       icon: 'ti-sunglasses' },
+  { l: 'Weighted blanket', icon: 'ti-bed' },
+  { l: 'Fidget',           icon: 'ti-hand-finger' },
+  { l: 'Hoodie',           icon: 'ti-shirt' },
+  { l: 'Quiet room',       icon: 'ti-door' },
+  { l: 'Familiar music',   icon: 'ti-music' },
+  { l: 'Movement',         icon: 'ti-walk' },
 ];
 
 const ESSENTIALS = [
-  'Water', 'Food', 'Medication', 'Hygiene minimum', 'Sleep', 'Key responsibility'
+  { l: 'Water',              icon: 'ti-droplet' },
+  { l: 'Food',               icon: 'ti-bowl' },
+  { l: 'Medication',         icon: 'ti-pill' },
+  { l: 'Hygiene minimum',    icon: 'ti-bath' },
+  { l: 'Sleep',              icon: 'ti-zzz' },
+  { l: 'Key responsibility', icon: 'ti-star' },
 ];
 
 const SUPPORT_TABS = [
@@ -37,250 +49,290 @@ const SUPPORT_TABS = [
 
 const SUPPORT_LINKS = {
   adhd: [
-    { title: 'ADHD Foundation (UK)',    sub: 'Resources, diagnosis info, adult ADHD support',          url: 'https://www.adhdfoundation.org.uk',                             icon: 'ti-brain',       color: 'lavender' },
-    { title: 'CHADD',                   sub: 'Evidence-based ADHD information and support',            url: 'https://chadd.org',                                             icon: 'ti-book',        color: 'lavender' },
-    { title: 'How to ADHD (YouTube)',   sub: 'Practical strategies from a neurodivergent creator',     url: 'https://www.youtube.com/@HowtoADHD',                            icon: 'ti-player-play', color: 'sky' },
-    { title: 'Body doubling explained', sub: 'Why working alongside others helps ADHD focus',          url: 'https://www.additudemag.com/body-doubling-adhd-focus/',           icon: 'ti-users',       color: 'teal' },
-    { title: 'ADDitude Magazine',       sub: 'Practical guidance for ADHD adults and parents',         url: 'https://www.additudemag.com',                                   icon: 'ti-news',        color: 'amber' },
+    { title: 'ADHD Foundation (UK)',     sub: 'Resources, diagnosis info, adult ADHD support',     url: 'https://www.adhdfoundation.org.uk', icon: 'ti-brain', color: 'lavender' },
+    { title: 'CHADD',                    sub: 'Evidence-based ADHD information and support',       url: 'https://chadd.org', icon: 'ti-book', color: 'lavender' },
+    { title: 'How to ADHD (YouTube)',    sub: 'Practical strategies from a neurodivergent creator',url: 'https://www.youtube.com/@HowtoADHD', icon: 'ti-player-play', color: 'sky' },
+    { title: 'Body doubling explained',  sub: 'Why working alongside others helps ADHD focus',     url: 'https://www.additudemag.com/body-doubling-adhd-focus/', icon: 'ti-users', color: 'teal' },
+    { title: 'ADDitude Magazine',        sub: 'Practical guidance for ADHD adults and parents',    url: 'https://www.additudemag.com', icon: 'ti-news', color: 'amber' },
   ],
   autism: [
-    { title: 'Autistic UK',             sub: 'Autistic-led support and resources',                     url: 'https://autisticuk.org',                                        icon: 'ti-heart',       color: 'teal' },
-    { title: 'Autism Toolbox',          sub: 'Strategies for everyday autistic life',                  url: 'https://www.autismtoolbox.co.uk',                               icon: 'ti-tool',        color: 'teal' },
-    { title: 'Understanding sensory needs', sub: 'NHS guide to sensory processing',                    url: 'https://www.nhs.uk/conditions/autism/signs/children/',          icon: 'ti-ear',         color: 'sky' },
-    { title: 'Meltdown vs shutdown',    sub: 'What they are and how to recover',                       url: 'https://neuroclastic.com/meltdown-vs-shutdown/',                icon: 'ti-info-circle', color: 'amber' },
-    { title: 'Ambitious About Autism',  sub: 'UK charity for autistic children and young people',      url: 'https://www.ambitiousaboutautism.org.uk',                       icon: 'ti-star',        color: 'lavender' },
+    { title: 'National Autistic Society',sub: "UK's leading autism charity",                       url: 'https://www.autism.org.uk', icon: 'ti-heart', color: 'teal' },
+    { title: 'Autistic UK',              sub: 'Autistic-led support and resources',                url: 'https://autisticuk.org', icon: 'ti-heart', color: 'teal' },
+    { title: 'NHS — Autism in adults',   sub: 'Official UK NHS guidance',                          url: 'https://www.nhs.uk/conditions/autism/', icon: 'ti-stethoscope', color: 'sky' },
+    { title: 'Meltdown vs shutdown',     sub: 'What they are and how to recover',                  url: 'https://neuroclastic.com/meltdown-vs-shutdown/', icon: 'ti-info-circle', color: 'amber' },
+    { title: 'Ambitious About Autism',   sub: 'UK charity for autistic children and young people', url: 'https://www.ambitiousaboutautism.org.uk', icon: 'ti-star', color: 'lavender' },
   ],
   strategies: [
-    { title: 'Pomodoro technique',      sub: 'Work in short timed bursts with breaks',                 url: 'https://en.wikipedia.org/wiki/Pomodoro_Technique',                icon: 'ti-clock',       color: 'amber' },
-    { title: 'Interoception guide',     sub: "Recognising your body's internal signals",               url: 'https://www.sensorysmart.com.au/interoception.html',              icon: 'ti-activity',    color: 'peach' },
-    { title: 'Sensory diet planning',   sub: 'Building a personalised sensory routine',                url: 'https://www.sensoryprocessingdisorder.com/sensory-diet.html',     icon: 'ti-list',        color: 'teal' },
-    { title: 'Task initiation strategies',   sub: 'Practical ways to start when you feel stuck',       url: 'https://www.additudemag.com/how-to-start-tasks-adhd/',            icon: 'ti-player-play', color: 'lavender' },
-    { title: 'Executive function explained', sub: 'What it is and how to work with it',                url: 'https://www.understood.org/articles/what-is-executive-function',  icon: 'ti-brain',       color: 'sky' },
+    { title: 'Pomodoro technique',       sub: 'Work in short timed bursts with breaks',            url: 'https://en.wikipedia.org/wiki/Pomodoro_Technique', icon: 'ti-clock', color: 'amber' },
+    { title: 'Interoception guide',      sub: "Recognising your body's internal signals",          url: 'https://www.sensorysmart.com.au/interoception.html', icon: 'ti-activity', color: 'peach' },
+    { title: 'Sensory diet planning',    sub: 'Building a personalised sensory routine',           url: 'https://www.sensoryprocessingdisorder.com/sensory-diet.html', icon: 'ti-list', color: 'teal' },
+    { title: 'Task initiation',          sub: 'Practical ways to start when stuck',                url: 'https://www.additudemag.com/how-to-start-tasks-adhd/', icon: 'ti-player-play', color: 'lavender' },
+    { title: 'Executive function explained', sub: 'What it is and how to work with it',            url: 'https://www.understood.org/articles/what-is-executive-function', icon: 'ti-brain', color: 'sky' },
   ],
   crisis: [
-    { title: 'Mind (UK)',              sub: 'Mental health support and crisis resources', url: 'https://www.mind.org.uk',                                                  icon: 'ti-heart',          color: 'peach' },
-    { title: 'Samaritans',             sub: 'Free, 24/7 listening — call 116 123',        url: 'https://www.samaritans.org',                                               icon: 'ti-phone',          color: 'sky' },
-    { title: 'Neurodivergent burnout', sub: 'Understanding and recovering from burnout',  url: 'https://neuroclastic.com/autistic-burnout/',                               icon: 'ti-flame',          color: 'amber' },
-    { title: 'Shout crisis text line', sub: 'Text HOME to 85258 (UK) — free, 24/7',       url: 'https://giveusashout.org',                                                 icon: 'ti-message-circle', color: 'lavender' },
-    { title: 'Crisis Care (NHS)',      sub: 'How to get urgent mental health help',       url: 'https://www.nhs.uk/mental-health/feelings-symptoms-behaviours/behaviours/help-for-suicidal-thoughts/', icon: 'ti-first-aid-kit', color: 'teal' },
+    { title: 'Mind (UK)',                sub: 'Mental health support and crisis resources',        url: 'https://www.mind.org.uk', icon: 'ti-heart', color: 'peach' },
+    { title: 'Samaritans',               sub: 'Free, 24/7 listening — call 116 123',               url: 'https://www.samaritans.org', icon: 'ti-phone', color: 'sky' },
+    { title: 'Shout crisis text line',   sub: 'Text HOME to 85258 (UK) — free, 24/7',              url: 'https://giveusashout.org', icon: 'ti-message-circle', color: 'lavender' },
+    { title: 'Neurodivergent burnout',   sub: 'Understanding and recovering from burnout',         url: 'https://neuroclastic.com/autistic-burnout/', icon: 'ti-flame', color: 'amber' },
+    { title: 'NHS — Urgent mental health',sub: 'How to get urgent NHS mental health help',         url: 'https://www.nhs.uk/mental-health/feelings-symptoms-behaviours/behaviours/help-for-suicidal-thoughts/', icon: 'ti-first-aid-kit', color: 'teal' },
   ],
 };
 
-const PALETTE = {
-  lavender: { bg: '#f5f3ff', border: '#ddd6fe', text: '#4c1d95', sub: '#6d28d9', icon: '#8b5cf6' },
-  teal:     { bg: '#ecfdf5', border: '#a7f3d0', text: '#047857', sub: '#059669', icon: '#10b981' },
-  sky:      { bg: '#f0f9ff', border: '#bae6fd', text: '#0369a1', sub: '#0284c7', icon: '#0ea5e9' },
-  amber:    { bg: '#fffbeb', border: '#fde68a', text: '#b45309', sub: '#d97706', icon: '#f59e0b' },
-  peach:    { bg: '#fef2f2', border: '#fecaca', text: '#9f1239', sub: '#be123c', icon: '#f43f5e' }
-};
+// ─── Main router ──────────────────────────────────────────
+export function renderMe() {
+  setTopbar('Me', 'Your support profile.');
 
-// ─── Reusable Components ─────────────────────────────────
-function renderBackButton() {
+  if (state.meView === 'resources')   return renderResources();
+  if (state.meView === 'scripts')     return renderScripts();
+  if (state.meView === 'sensory')     return renderSensory();
+  if (state.meView === 'essentials')  return renderEssentials();
+
+  return renderMeMenu();
+}
+
+// ─── Main menu ────────────────────────────────────────────
+function renderMeMenu() {
+  const menuItems = [
+    { k: 'resources',  l: 'Support resources',     sub: 'Guides, links, and crisis info',   icon: 'ti-link',           color: 'lavender' },
+    { k: 'scripts',    l: 'Communication scripts', sub: 'Templates for hard conversations', icon: 'ti-message-circle', color: 'sky' },
+    { k: 'sensory',    l: 'My sensory tools',      sub: 'Items and routines that regulate', icon: 'ti-heart',          color: 'peach' },
+    { k: 'essentials', l: 'My essentials',         sub: 'Minimum requirements for a day',   icon: 'ti-check',          color: 'teal' },
+  ];
+
+  document.getElementById('content').innerHTML = `
+    <div class="screen">
+
+      <!-- Branded header card -->
+      <div class="card teal" style="text-align:center;padding:1.5rem 1.25rem">
+        <svg width="48" height="48" viewBox="0 0 64 64" style="margin:0 auto 10px;display:block;color:var(--teal-deep)" aria-hidden="true">
+          <use href="#bowline-mark"></use>
+        </svg>
+        <div class="card-main" style="font-size:20px;letter-spacing:-0.02em">${BRAND ? BRAND.name : 'Bowline'}</div>
+        <div class="card-sub" style="margin-top:6px">${BRAND && BRAND.motto ? BRAND.motto : 'A calmer way through your day.'}</div>
+      </div>
+
+      <div class="section-label">
+        <i class="ti ti-user" style="color:var(--lavender);font-size:14px"></i> Your support profile
+      </div>
+
+      ${menuItems.map(item => `
+        <button class="btn" style="border-left:4px solid var(--${item.color});justify-content:flex-start;text-align:left;padding-left:14px"
+          onclick="openMeView('${item.k}')">
+          <span style="
+            width:36px;height:36px;border-radius:8px;
+            background:var(--${item.color}-l);
+            display:flex;align-items:center;justify-content:center;flex-shrink:0">
+            <i class="ti ${item.icon}" style="font-size:18px;color:var(--${item.color}-d)"></i>
+          </span>
+          <div style="flex:1;text-align:left">
+            <div style="font-size:14px;font-weight:700">${item.l}</div>
+            <div style="font-size:12px;font-weight:400;color:var(--text-muted);margin-top:2px">${item.sub}</div>
+          </div>
+          <i class="ti ti-chevron-right" style="font-size:16px;color:var(--text-muted);flex-shrink:0"></i>
+        </button>
+      `).join('')}
+
+      <!-- Quick stats card -->
+      ${renderQuickStats()}
+
+      <div class="notice green" style="margin-top:1.5rem">
+        <strong>In crisis?</strong> Samaritans 116 123 · Shout text HOME to 85258 · <a href="https://www.mind.org.uk/need-urgent-help/" target="_blank" rel="noopener noreferrer">Mind crisis support</a>
+      </div>
+
+    </div>
+  `;
+}
+
+function renderQuickStats() {
+  const titrationCount = (state.titrationEntries || []).length;
+  const moodCount      = (state.moodLog || []).length;
+  const masterCount    = (state.masterList || []).length;
+  const wishlistCount  = (state.wishlist || []).length;
+
+  if (titrationCount + moodCount + masterCount + wishlistCount === 0) return '';
+
   return `
-    <button onclick="exitToMeMenu()" style="background: transparent; border: none; color: #64748b; font-size: 14px; font-weight: 600; cursor: pointer; display: flex; align-items: center; gap: 6px; margin-bottom: 24px; padding: 0;">
-      <i class="ti ti-arrow-left" style="font-size: 18px;"></i> Back to profile
+    <div class="section-label">
+      <i class="ti ti-chart-bar" style="color:var(--sky);font-size:14px"></i> At a glance
+    </div>
+    <div class="card" style="padding:1rem 1.25rem">
+      <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:14px;text-align:center">
+        ${titrationCount > 0 ? `
+          <div>
+            <div style="font-size:22px;font-weight:700;color:var(--lavender-d);line-height:1">${titrationCount}</div>
+            <div style="font-size:11px;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.5px;margin-top:4px">Titration logs</div>
+          </div>
+        ` : ''}
+        ${moodCount > 0 ? `
+          <div>
+            <div style="font-size:22px;font-weight:700;color:var(--sky-d);line-height:1">${moodCount}</div>
+            <div style="font-size:11px;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.5px;margin-top:4px">Mood entries</div>
+          </div>
+        ` : ''}
+        ${masterCount > 0 ? `
+          <div>
+            <div style="font-size:22px;font-weight:700;color:var(--teal-d);line-height:1">${masterCount}</div>
+            <div style="font-size:11px;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.5px;margin-top:4px">Master list items</div>
+          </div>
+        ` : ''}
+        ${wishlistCount > 0 ? `
+          <div>
+            <div style="font-size:22px;font-weight:700;color:var(--amber-d);line-height:1">${wishlistCount}</div>
+            <div style="font-size:11px;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.5px;margin-top:4px">Wishlist items</div>
+          </div>
+        ` : ''}
+      </div>
+    </div>
+  `;
+}
+
+// ─── Back button helper ──────────────────────────────────
+function backToMenu() {
+  return `
+    <button class="btn" style="margin-bottom:10px;color:var(--text-muted);justify-content:flex-start" onclick="exitToMeMenu()">
+      <i class="ti ti-arrow-left"></i> Back to profile
     </button>
   `;
 }
 
-function renderPageTitle(title, description) {
-  return `
-    <div style="margin-bottom: 24px;">
-      <div style="font-size: 11px; font-weight: 800; color: #94a3b8; text-transform: uppercase; letter-spacing: 1.2px; margin-bottom: 8px;">SUPPORT PROFILE</div>
-      <div style="font-size: 22px; font-weight: 800; color: #1e293b; margin-bottom: 6px;">${title}</div>
-      <div style="font-size: 14px; color: #64748b;">${description}</div>
-    </div>
-  `;
-}
-
-// ─── Main Routing & Menu ─────────────────────────────────
-export function renderMe() {
-  setTopbar('Me', 'Your support profile.');
-
-  if (state.meView === 'resources') return renderResources();
-  if (state.meView === 'scripts')   return renderScripts();
-  if (state.meView === 'sensory')   return renderSensory();
-  if (state.meView === 'essentials')return renderEssentials();
-  
-  return renderMeMenu();
-}
-
-function renderMeMenu() {
-  const menuItems = [
-    { k: 'resources',  l: 'Support Resources',     sub: 'Guides, links, and crisis info',  icon: 'ti-link',           color: 'lavender' },
-    { k: 'scripts',    l: 'Communication Scripts', sub: 'Templates for hard conversations', icon: 'ti-message-circle', color: 'sky' },
-    { k: 'sensory',    l: 'My Sensory Tools',      sub: 'Items and routines that regulate', icon: 'ti-heart',          color: 'peach' },
-    { k: 'essentials', l: 'My Essentials',         sub: 'Minimum requirements for a day',   icon: 'ti-check',          color: 'teal' }
-  ];
-
-  document.getElementById('content').innerHTML = `
-    <div class="screen" style="max-width: 600px; margin: 0 auto; font-family: system-ui, -apple-system, sans-serif;">
-
-      <!-- Branded header -->
-      <div style="background: #fff; border: 1.5px solid #e2e8f0; border-radius: 12px; padding: 24px; text-align: center; margin-bottom: 24px;">
-        <img src="src/assets/bowline-lockup.png"
-             alt="Bowline"
-             style="max-width: 100%; height: auto; max-height: 40px; opacity: 0.9;" />
-      </div>
-
-      <div style="display: flex; flex-direction: column; gap: 12px; margin-bottom: 32px;">
-        ${menuItems.map(item => {
-          const pal = PALETTE[item.color];
-          return `
-            <button onclick="openMeView('${item.k}')"
-                    style="width: 100%; text-align: left; background: #fff; border: 1.5px solid #e2e8f0; border-left: 6px solid ${pal.icon}; border-radius: 12px; padding: 20px; display: flex; align-items: center; gap: 16px; cursor: pointer; transition: all 0.2s; font-family: inherit;">
-              <div style="width: 48px; height: 48px; border-radius: 12px; background: ${pal.bg}; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
-                <i class="ti ${item.icon}" style="font-size: 24px; color: ${pal.text};"></i>
-              </div>
-              <div style="flex: 1;">
-                <div style="font-size: 16px; font-weight: 700; color: #1e293b; margin-bottom: 4px;">${item.l}</div>
-                <div style="font-size: 13px; color: #64748b;">${item.sub}</div>
-              </div>
-              <i class="ti ti-chevron-right" style="font-size: 20px; color: #cbd5e1;"></i>
-            </button>
-          `;
-        }).join('')}
-      </div>
-
-      <div style="text-align: center; color: #94a3b8; font-size: 13px; margin-top: 20px;">
-        ${BRAND ? BRAND.motto : 'A calmer way through your day.'}
-      </div>
-
-    </div>
-  `;
-}
-
-// ─── Drill-down Views ────────────────────────────────────
-
+// ─── Resources ───────────────────────────────────────────
 function renderResources() {
   const links = SUPPORT_LINKS[state.supportTab] || [];
 
   document.getElementById('content').innerHTML = `
-    <div class="screen" style="max-width: 600px; margin: 0 auto; font-family: system-ui, -apple-system, sans-serif;">
-      
-      ${renderBackButton()}
-      ${renderPageTitle('Support Resources', 'External guides, articles, and crisis lines.')}
+    <div class="screen">
+      ${backToMenu()}
+
+      <div class="card lavender">
+        <div class="card-label">Support resources</div>
+        <div class="card-main" style="font-size:16px">External guides, articles, and crisis lines.</div>
+        <div class="card-sub" style="margin-top:6px">All links open in a new tab.</div>
+      </div>
 
       <!-- Support tabs -->
-      <div style="display: flex; gap: 8px; margin-bottom: 24px; overflow-x: auto; padding-bottom: 4px; -webkit-overflow-scrolling: touch;">
+      <div style="display:flex;gap:6px;overflow-x:auto;padding-bottom:4px;margin-bottom:8px;-webkit-overflow-scrolling:touch">
         ${SUPPORT_TABS.map(t => {
           const isActive = state.supportTab === t.k;
           return `
             <button onclick="switchSupportTab('${t.k}')"
-              style="padding: 8px 16px; white-space: nowrap; border-radius: 20px; font-size: 13px; font-weight: 700; cursor: pointer; transition: all 0.2s;
-                     border: 1.5px solid ${isActive ? '#8b5cf6' : '#e2e8f0'};
-                     background: ${isActive ? '#f5f3ff' : '#fff'};
-                     color: ${isActive ? '#4c1d95' : '#475569'};">
+              style="padding:7px 14px;white-space:nowrap;
+                     border:1.5px solid ${isActive ? 'var(--lavender)' : 'var(--border)'};
+                     border-radius:var(--r-pill);
+                     background:${isActive ? 'var(--lavender-l)' : 'var(--bg-card)'};
+                     color:${isActive ? 'var(--lavender-d)' : 'var(--text-primary)'};
+                     font-size:12px;font-weight:700;font-family:var(--font);cursor:pointer;flex-shrink:0">
               ${t.l}
             </button>
           `;
         }).join('')}
       </div>
 
-      <!-- Support Links -->
-      <div style="display: flex; flex-direction: column; gap: 10px;">
-        ${links.map(lk => {
-          const pal = PALETTE[lk.color] || PALETTE.lavender;
-          return `
-            <a href="${lk.url}" target="_blank" rel="noopener noreferrer" style="display: flex; align-items: center; gap: 16px; padding: 16px; background: #fff; border: 1.5px solid #e2e8f0; border-radius: 12px; text-decoration: none; transition: border-color 0.2s;">
-              <div style="width: 40px; height: 40px; border-radius: 10px; background: ${pal.bg}; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
-                <i class="ti ${lk.icon}" style="font-size: 20px; color: ${pal.text};"></i>
-              </div>
-              <div style="flex: 1; min-width: 0;">
-                <div style="font-size: 14px; font-weight: 700; color: #1e293b; margin-bottom: 4px;">${lk.title}</div>
-                <div style="font-size: 13px; color: #64748b; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${lk.sub}</div>
-              </div>
-              <i class="ti ti-external-link" style="font-size: 18px; color: #cbd5e1; flex-shrink: 0;"></i>
-            </a>
-          `;
-        }).join('')}
-      </div>
+      <!-- Support links -->
+      ${links.map(lk => `
+        <a href="${lk.url}" target="_blank" rel="noopener noreferrer" class="link-card">
+          <div class="link-icon" style="background:var(--${lk.color}-l)">
+            <i class="ti ${lk.icon}" style="color:var(--${lk.color}-d)"></i>
+          </div>
+          <div style="flex:1;min-width:0">
+            <div class="link-title">${lk.title}</div>
+            <div class="link-sub">${lk.sub}</div>
+          </div>
+          <i class="ti ti-external-link" style="font-size:16px;color:var(--text-muted);flex-shrink:0"></i>
+        </a>
+      `).join('')}
+
     </div>
   `;
 }
 
+// ─── Scripts ─────────────────────────────────────────────
 function renderScripts() {
   document.getElementById('content').innerHTML = `
-    <div class="screen" style="max-width: 600px; margin: 0 auto; font-family: system-ui, -apple-system, sans-serif;">
-      
-      ${renderBackButton()}
-      ${renderPageTitle('Communication Scripts', 'Templates to copy and paste when finding the words is hard.')}
-      
-      <div style="background: #f0f9ff; border: 1.5px solid #bae6fd; border-radius: 12px; padding: 16px; margin-bottom: 24px;">
-        <div style="font-size: 13px; color: #0369a1;">Tap the copy icon to copy a script to your clipboard.</div>
+    <div class="screen">
+      ${backToMenu()}
+
+      <div class="card sky">
+        <div class="card-label">Communication scripts</div>
+        <div class="card-main" style="font-size:16px">Templates for when finding the words is hard.</div>
+        <div class="card-sub" style="margin-top:6px">Tap copy. Edit to sound like you before sending.</div>
       </div>
 
-      <div style="background: #fff; border: 1.5px solid #e2e8f0; border-radius: 12px; overflow: hidden;">
-        ${SCRIPTS.map((s, idx) => `
-          <div style="padding: 16px; display: flex; align-items: flex-start; gap: 16px; border-bottom: ${idx < SCRIPTS.length - 1 ? '1.5px solid #e2e8f0' : 'none'};">
-            <div style="flex: 1;">
-              <div style="font-size: 14px; font-weight: 700; color: #1e293b; margin-bottom: 6px;">${s.l}</div>
-              <div style="font-size: 14px; color: #64748b; line-height: 1.5;">${s.t}</div>
-            </div>
-            <button onclick="copyScript(${idx}, this)"
-                    style="background: #f0f9ff; border: 1.5px solid #bae6fd; border-radius: 8px; cursor: pointer; padding: 8px 12px; color: #0ea5e9; font-weight: 700; font-size: 12px; display: flex; align-items: center; gap: 6px; flex-shrink: 0; transition: all 0.2s;"
-                    aria-label="Copy: ${s.l}">
-              <i class="ti ti-copy" style="font-size: 16px;"></i> Copy
-            </button>
+      ${SCRIPTS.map((s, idx) => `
+        <div class="card">
+          <div class="card-label">${s.l}</div>
+          <div style="font-size:14px;color:var(--text-primary);line-height:1.6;margin:8px 0 12px;padding:10px 12px;background:var(--bg-page);border-radius:var(--r-md);border:1px solid var(--border)">
+            "${s.t}"
           </div>
-        `).join('')}
-      </div>
+          <button class="btn sky" style="width:auto;padding:8px 14px;margin:0;font-size:13px" onclick="copyScript(${idx}, this)">
+            <i class="ti ti-copy"></i> Copy
+          </button>
+        </div>
+      `).join('')}
+
     </div>
   `;
 }
 
+// ─── Sensory tools ───────────────────────────────────────
 function renderSensory() {
   document.getElementById('content').innerHTML = `
-    <div class="screen" style="max-width: 600px; margin: 0 auto; font-family: system-ui, -apple-system, sans-serif;">
-      
-      ${renderBackButton()}
-      ${renderPageTitle('My Sensory Tools', 'Things that help regulate your nervous system.')}
-      
-      <div style="background: #fef2f2; border: 1.5px solid #fecaca; border-radius: 12px; padding: 16px; margin-bottom: 24px;">
-        <div style="font-size: 13px; color: #be123c;">Use these items to lower incoming stimulation or provide grounding pressure.</div>
+    <div class="screen">
+      ${backToMenu()}
+
+      <div class="card peach">
+        <div class="card-label">My sensory tools</div>
+        <div class="card-main" style="font-size:16px">Things that help regulate your nervous system.</div>
+        <div class="card-sub" style="margin-top:6px">Use these to lower incoming stimulation or provide grounding pressure.</div>
       </div>
 
-      <div style="display: flex; flex-wrap: wrap; gap: 10px;">
+      <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:8px">
         ${SENSORY_TOOLS.map(s => `
-          <span style="padding: 10px 18px; background: #fff; border: 1.5px solid #f43f5e; color: #e11d48; border-radius: 20px; font-size: 14px; font-weight: 700; box-shadow: 0 1px 2px rgba(0,0,0,0.02);">${s}</span>
-        `).join('')}
-      </div>
-    </div>
-  `;
-}
-
-function renderEssentials() {
-  document.getElementById('content').innerHTML = `
-    <div class="screen" style="max-width: 600px; margin: 0 auto; font-family: system-ui, -apple-system, sans-serif;">
-      
-      ${renderBackButton()}
-      ${renderPageTitle('My Essentials', 'The absolute bare minimum required for a survival day.')}
-      
-      <div style="background: #ecfdf5; border: 1.5px solid #a7f3d0; border-radius: 12px; padding: 16px; margin-bottom: 24px;">
-        <div style="font-size: 13px; color: #065f46; line-height: 1.5;">When you are in shutdown or burnout, drop everything else. Just do these.</div>
-      </div>
-
-      <div style="background: #fff; border: 1.5px solid #e2e8f0; border-radius: 12px; overflow: hidden; box-shadow: 0 1px 2px rgba(0,0,0,0.02);">
-        ${ESSENTIALS.map((e, idx) => `
-          <div style="padding: 18px 20px; display: flex; align-items: center; gap: 16px; border-bottom: ${idx < ESSENTIALS.length - 1 ? '1.5px solid #e2e8f0' : 'none'}; cursor: pointer; transition: background 0.2s;"
-               onclick="toggleEssential(this)">
-            <div class="task-check" style="width: 24px; height: 24px; border: 2px solid #cbd5e1; border-radius: 6px; display: flex; align-items: center; justify-content: center; color: white; transition: all 0.2s;" role="checkbox" aria-label="${e}"></div>
-            <div style="font-size: 15px; font-weight: 600; color: #334155; flex: 1;">${e}</div>
+          <div class="card peach" style="padding:14px 12px;text-align:center">
+            <i class="ti ${s.icon}" style="font-size:24px;color:var(--peach-d);display:block;margin-bottom:6px"></i>
+            <div style="font-size:13px;font-weight:700;color:var(--peach-d)">${s.l}</div>
           </div>
         `).join('')}
       </div>
-    </div>
 
-    <style>
-      .task-check.done {
-        background: #10b981;
-        border-color: #10b981 !important;
-      }
-    </style>
+      <div class="notice peach" style="margin-top:1.25rem">
+        <strong>Tip.</strong> Build your own sensory kit — keep one at home, one in your bag, one at work. Future-you will thank present-you.
+      </div>
+
+    </div>
   `;
 }
 
-// ─── Global Handlers ───
+// ─── Essentials ──────────────────────────────────────────
+function renderEssentials() {
+  document.getElementById('content').innerHTML = `
+    <div class="screen">
+      ${backToMenu()}
+
+      <div class="card teal">
+        <div class="card-label">My essentials</div>
+        <div class="card-main" style="font-size:16px">The bare minimum for a survival day.</div>
+        <div class="card-sub" style="margin-top:6px">When you are in shutdown or burnout, drop everything else. Just do these.</div>
+      </div>
+
+      <div class="card" style="padding:0.5rem 1.25rem">
+        ${ESSENTIALS.map((e, idx) => `
+          <div class="task-row" style="cursor:pointer" onclick="toggleEssential(this)">
+            <div class="task-check" style="border-color:var(--teal)" role="checkbox" aria-label="${e.l}"></div>
+            <i class="ti ${e.icon}" style="font-size:18px;color:var(--teal);flex-shrink:0;margin-top:2px"></i>
+            <div class="task-text" style="font-size:15px;font-weight:600">${e.l}</div>
+          </div>
+        `).join('')}
+      </div>
+
+      <div class="notice green" style="margin-top:1.25rem">
+        <strong>This is enough.</strong> If you did the essentials today, the day counts. Productivity is not the goal — staying well is.
+      </div>
+
+    </div>
+  `;
+}
+
+// ─── Window handlers ─────────────────────────────────────
 window.openMeView = (view) => {
   state.meView = view;
   renderMe();
@@ -291,35 +343,27 @@ window.exitToMeMenu = () => {
   renderMe();
 };
 
-window.switchSupportTab = (t) => { 
-  state.supportTab = t; 
-  renderMe(); 
+window.switchSupportTab = (t) => {
+  state.supportTab = t;
+  renderMe();
 };
 
 window.copyScript = (idx, btn) => {
   const textToCopy = SCRIPTS[idx].t;
   navigator.clipboard.writeText(textToCopy).catch(() => {});
-  
-  btn.innerHTML = '<i class="ti ti-check" style="font-size: 16px;"></i> Copied';
-  btn.style.background = '#d1fae5';
-  btn.style.borderColor = '#10b981';
-  btn.style.color = '#059669';
-  
-  setTimeout(() => { 
-    btn.innerHTML = '<i class="ti ti-copy" style="font-size: 16px;"></i> Copy'; 
-    btn.style.background = '#f0f9ff';
-    btn.style.borderColor = '#bae6fd';
-    btn.style.color = '#0ea5e9';
-  }, 1500);
+
+  const originalHTML = btn.innerHTML;
+  btn.innerHTML = '<i class="ti ti-check"></i> Copied';
+  setTimeout(() => { btn.innerHTML = originalHTML; }, 1500);
 };
 
 window.toggleEssential = (element) => {
   const check = element.querySelector('.task-check');
   if (!check) return;
-  
+
   check.classList.toggle('done');
   if (check.classList.contains('done')) {
-    check.innerHTML = '<i class="ti ti-check" style="font-size:16px"></i>';
+    check.innerHTML = '<i class="ti ti-check" style="font-size:14px"></i>';
   } else {
     check.innerHTML = '';
   }
