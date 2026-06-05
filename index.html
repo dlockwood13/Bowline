@@ -16,20 +16,21 @@
   <meta name="description" content="A daily support app for ADHD, autism, AuDHD, dyslexia, dyspraxia, executive dysfunction, and burnout." />
 
   <!-- ─── THEME COLORS (iOS & Android status bar) ─── -->
-  <meta name="theme-color" content="#7A9E84" />
+  <meta name="theme-color" content="#339A7E" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
   <meta name="apple-mobile-web-app-title" content="Bowline" />
   <meta name="apple-mobile-web-app-status-bar-style" content="default" />
 
   <!-- ─── ICONS ─── -->
-  <link rel="icon" type="image/svg+xml" href="src/assets/bowline-mark.svg" />
+  <link rel="icon" type="image/png" sizes="32x32" href="src/assets/favicon-32.png" />
+  <link rel="icon" type="image/png" sizes="16x16" href="src/assets/favicon-16.png" />
   <link rel="apple-touch-icon" href="src/assets/bowline-mark-180.png" />
   <link rel="icon" type="image/png" sizes="192x192" href="src/assets/bowline-mark-192.png" />
   <link rel="icon" type="image/png" sizes="512x512" href="src/assets/bowline-mark-512.png" />
 
   <!-- ─── PRELOAD CRITICAL ASSETS (Performance) ─── -->
-  <link rel="preload" href="src/assets/bowline-mark.svg" as="image" type="image/svg+xml" />
+  <link rel="preload" href="src/assets/bowline-mark-192.png" as="image" type="image/png" />
   <link rel="preload" href="https://fonts.googleapis.com/css2?family=Lexend:wght@400;500;600;700&family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400&display=swap" as="style" />
   <link rel="preload" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css" as="style" />
 
@@ -59,20 +60,6 @@
 </head>
 <body>
 
-  <!-- ─── SVG SPRITE (define the bowline mark once, use everywhere) ─── -->
-  <svg width="0" height="0" style="position:absolute" aria-hidden="true">
-    <defs>
-      <symbol id="bowline-mark" viewBox="0 0 64 64">
-        <g fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
-          <circle cx="28" cy="40" r="18" />
-          <ellipse cx="34" cy="22" rx="9" ry="11" />
-          <path d="M 38 8 L 38 18" />
-          <path d="M 38 30 Q 36 35 28 36" />
-        </g>
-      </symbol>
-    </defs>
-  </svg>
-
   <!-- ─── APP CONTAINER ─── -->
   <div class="app" id="app">
     <div class="topbar">
@@ -82,9 +69,7 @@
         onclick="go('splash')"
         aria-label="Back to Bowline home"
         title="Back to Bowline home">
-        <svg viewBox="0 0 64 64" aria-hidden="true">
-          <use href="#bowline-mark"></use>
-        </svg>
+        <img src="src/assets/bowline-mark-64.png" alt="" aria-hidden="true" />
       </button>
       <div id="topbar-content"></div>
     </div>
