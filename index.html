@@ -2,56 +2,56 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  
+
   <!-- ─── VIEWPORT: Native app experience on iOS & Android ─── -->
-  <meta name="viewport" 
-        content="width=device-width, initial-scale=1.0, viewport-fit=cover, 
+  <meta name="viewport"
+        content="width=device-width, initial-scale=1.0, viewport-fit=cover,
                  user-scalable=no, maximum-scale=1.0, minimum-scale=1.0" />
-  
+
   <!-- ─── APP MANIFEST ─── -->
   <link rel="manifest" href="src/assets/manifest.json" />
-  
+
   <!-- ─── TITLE & DESCRIPTION ─── -->
   <title>Bowline — A calmer way through your day</title>
   <meta name="description" content="A daily support app for ADHD, autism, AuDHD, dyslexia, dyspraxia, executive dysfunction, and burnout." />
-  
+
   <!-- ─── THEME COLORS (iOS & Android status bar) ─── -->
   <meta name="theme-color" content="#3F8F73" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
   <meta name="apple-mobile-web-app-title" content="Bowline" />
   <meta name="apple-mobile-web-app-status-bar-style" content="default" />
-  
+
   <!-- ─── ICONS ─── -->
   <link rel="icon" type="image/svg+xml" href="src/assets/bowline-mark.svg" />
   <link rel="apple-touch-icon" href="src/assets/bowline-mark-180.png" />
   <link rel="icon" type="image/png" sizes="192x192" href="src/assets/bowline-mark-192.png" />
   <link rel="icon" type="image/png" sizes="512x512" href="src/assets/bowline-mark-512.png" />
-  
+
   <!-- ─── PRELOAD CRITICAL ASSETS (Performance) ─── -->
   <link rel="preload" href="src/assets/bowline-mark.svg" as="image" type="image/svg+xml" />
   <link rel="preload" href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400&display=swap" as="style" />
   <link rel="preload" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css" as="style" />
-  
+
   <!-- ─── DNS PREFETCH & PRECONNECT ─── -->
   <link rel="dns-prefetch" href="https://fonts.googleapis.com" />
   <link rel="dns-prefetch" href="https://fonts.gstatic.com" />
   <link rel="dns-prefetch" href="https://cdn.jsdelivr.net" />
-  
+
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  
+
   <!-- ─── STYLESHEETS ─── -->
   <link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css" />
   <link rel="stylesheet" href="src/styles/main.css" />
-  
+
   <!-- ─── META: Prevent unwanted browser behaviors ─── -->
   <meta name="msapplication-tap-highlight" content="no" />
   <meta name="format-detection" content="telephone=no" />
   <meta name="format-detection" content="email=no" />
   <meta name="color-scheme" content="light dark" />
-  
+
   <!-- ─── META: iOS home screen ─── -->
   <meta name="mobile-web-app-capable" content="yes" />
 </head>
@@ -74,6 +74,16 @@
   <!-- ─── APP CONTAINER ─── -->
   <div class="app" id="app">
     <div class="topbar">
+      <!-- Persistent home button (returns to splash/landing) -->
+      <button
+        class="topbar-home"
+        onclick="go('splash')"
+        aria-label="Back to Bowline home"
+        title="Back to Bowline home">
+        <svg viewBox="0 0 64 64" aria-hidden="true">
+          <use href="#bowline-mark"></use>
+        </svg>
+      </button>
       <div id="topbar-content"></div>
     </div>
     <div class="screen" id="content"></div>
@@ -124,7 +134,7 @@
     document.addEventListener('touchstart', (e) => {
       lastY = e.touches[0].clientY;
     }, false);
-    
+
     document.addEventListener('touchmove', (e) => {
       const currentY = e.touches[0].clientY;
       if (currentY > lastY && window.scrollY === 0) {
