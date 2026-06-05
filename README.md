@@ -175,7 +175,7 @@ If you are in crisis, these come first:
 
 ## License
 
-**Copyright © 2025 D. Lockwood. All rights reserved.**
+**Copyright © 2026 D. Lockwood. All rights reserved.**
 
 Bowline is **proprietary software**. The source code is published in this repository for transparency and so users can see how the app works. It is **not open-source**.
 
