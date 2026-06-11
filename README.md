@@ -2,7 +2,7 @@
 
 **A calmer way through your day.**
 
-Bowline is a daily support app for neurodivergent adults — built around how ADHD, autism, AuDHD, dyslexia, dyspraxia, executive dysfunction, and burnout actually feel. Structure when you need it. Never trapped by it.
+Bowline is a daily support app for neurodivergent adults — built around how ADHD, autism, AuDHD, dyslexia, dyspraxia, executive dysfunction, and burnout actually feel. Structure when you need it. No judgment when you don't.
 
 🔗 **Live app:** [dlockwood13.github.io/Bowline](https://dlockwood13.github.io/Bowline/)
 
@@ -15,10 +15,10 @@ Bowline is a daily support app for neurodivergent adults — built around how AD
 Bowline meets you where your day actually is — not where a productivity app thinks you should be. The plan adapts to how you feel, not the other way round.
 
 ### Today
-Start by telling Bowline how the day feels — clear, foggy, tired, anxious, overstimulated, burnt out, in pain, low, angry, shut down, wired, or not sure. The screen adapts: suggestions, task visibility, and tools shift to match. A mood log builds quietly in the background so you can see patterns over time. Each day ends with a mood-matched mindfulness quote.
+Start by telling Bowline how the day feels — clear, foggy, tired, anxious, overstimulated, burnt out, in pain, low, angry, shut down, wired, or not sure. The screen adapts: suggestions, task visibility, and reset options all shift based on what you told it. No fake cheerfulness, no pressure.
 
 ### Now
-"What do I do next?" — without pressure. Tap **I am stuck** and Bowline asks why, then responds appropriately (stuck differently when it's "too big" vs "too boring"). **Make smaller** offers tiny first steps. **Body double** and **Timer** give you contained, low-stakes sessions. **Titration tracker** logs BP, HR, weight, mood, and severity-rated side effects when you're on ADHD medication — with history, trend sparklines, and a clean export for your prescriber.
+"What do I do next?" — without pressure. Tap **I am stuck** and Bowline asks why, then responds appropriately (stuck differently when it's "too big" vs "too boring"). **Make smaller** offers timed micro-tasks: 1–3 minute alternatives.
 
 ### Plan
 Tasks with energy levels, durations, and accents — not just a flat list.
@@ -46,11 +46,16 @@ Profile, settings, and crisis support — always one tap away.
 
 ## Why "Bowline"?
 
-A bowline is a knot that holds firm under load but unties easily when you pull it the right way. It does not lock you in. It does not slip. That is the shape of support we wanted: solid when you need to lean on it, never trapping you.
+A bowline is a knot that holds firm under load but unties easily when you pull it the right way. It does not lock you in. It does not slip. That is the shape of support we wanted: solid when you need it, easy to untangle when you do not.
 
 ---
 
 ## Built with
+
+**Tech Stack:**
+- **JavaScript** (89.4%)
+- **CSS** (8.8%)
+- **HTML** (1.8%)
 
 Vanilla JavaScript, HTML, and CSS — no build step, no framework. The whole app loads as static files and runs entirely in the browser.
 
@@ -105,7 +110,7 @@ These are the rules Bowline tries to hold to. They show up in copy, layout, and 
 - **Crisis is one tap away.** Crisis links are always visible on Me and inside Support tabs.
 - **Sensory calm.** Soft palette, generous spacing, no flashing, no popups, no surprise sounds.
 - **Mobile first.** Most users will be on a phone, often during a hard moment. Layout has to hold up at ~380px width.
-- **No dark patterns.** No streaks designed to manipulate. No FOMO. No notifications for engagement's sake. The titration streak is genuinely useful clinical data — that is the only "streak" in the app.
+- **No dark patterns.** No streaks designed to manipulate. No FOMO. No notifications for engagement's sake. The titration streak is genuinely useful clinical data — that is the only "streak" in Bowline.
 
 ---
 
@@ -191,7 +196,7 @@ Bowline is **proprietary software**. The source code is published in this reposi
 - ❌ Translate, port, or rebrand the app
 - ❌ Use Bowline's name, logo, or content for any product or service
 
-If you would like to use, license, or build on Bowline in any way, please [open an issue](https://github.com/dlockwood13/Bowline/issues) or get in touch directly. Reasonable requests — especially from non-profit, educational, or community settings — are welcomed.
+If you would like to use, license, or build on Bowline in any way, please [open an issue](https://github.com/dlockwood13/Bowline/issues) or get in touch directly. Reasonable requests — especially from people in the neurodivergent community — are taken seriously.
 
 For full license terms, see the [LICENSE](LICENSE) file in this repository.
 
